@@ -103,6 +103,16 @@ class chia_stats:
                     elif plot['size'] == 33:
                         logger.debug('Found k33 plot!')
                         self.plots_k33_portable += 1
+                        
+            logger.debug(f'og_count: {self.og_count}')
+            logger.debug(f'og_size: {self.og_size}')
+            logger.debug(f'portable_count: {self.portable_count}')
+            logger.debug(f'portable_size: {self.portable_size}')
+            
+            logger.debug(f'plots_k32_og: {self.plots_k32_og}')
+            logger.debug(f'plots_k33_og: {self.plots_k33_og}')
+            logger.debug(f'plots_k32_portable: {self.plots_k32_portable}')
+            logger.debug(f'plots_k33_portable: {self.plots_k33_portable}')
             #########################################################
             
             logger.info('Fetching blockchain state...')
@@ -114,6 +124,10 @@ class chia_stats:
             
             average_block_time = await get_average_block_time(fullnode_port)
             self.ttw = int((average_block_time) / (self.og_size / self.total_size))
+            
+            logger.debug(f'sync_status: {self.sync_status}')
+            logger.debug(f'total_size: {self.total_size}')
+            logger.debug(f'ttw: {self.ttw}')
             #########################################################
             
             logger.info('Fetching wallet state...')
@@ -121,6 +135,8 @@ class chia_stats:
             farmed_stat = await wallet.get_farmed_amount()
     
             self.chia_farmed = farmed_stat['farmed_amount']
+            
+            logger.debug(f'chia_farmed: {self.chia_farmed}')
             #########################################################          
             
         except:

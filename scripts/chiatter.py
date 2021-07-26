@@ -9,9 +9,10 @@ Warning: Built for use with python 3.6+
 
 from prometheus_client import start_http_server, Gauge
 from modules.chia_stats import chia_stats
-#from scripts.modules.truepool_stats import truepool_stats
+#from modules.truepool_stats import truepool_stats
 from configparser import ConfigParser
 from time import sleep
+import signal
 import threading
 import asyncio
 import os
@@ -43,10 +44,17 @@ chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced stat
 #TBD
 #--------------------------------------------------------------------------------
 
+def sigterm_handler(signum, frame):
+    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painfull. Bye!')
+    raise SystemExit(0)
+
 def http_server():
     start_http_server(8080)
 
 if __name__ == '__main__':
+    #catch SIGTERM and exit gracefully
+    signal.signal(signal.SIGTERM, sigterm_handler)
+    
     print('----------------------------------------------------------------------------------------------------')
     print('| Welcome to chiatter - the most basic/dense chia collection agent. Speak very slowly and clearly! |')
     print(f'----------------------------------------------------------------------------------------------------\n')
@@ -76,7 +84,6 @@ if __name__ == '__main__':
     print('')
     
 try:
-    # Generate some requests
     while True:
         if 'chia_stats' in modules:
             chia_stats_inst.clear_stats()

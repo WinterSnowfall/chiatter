@@ -399,6 +399,8 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 250,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -515,6 +517,8 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 250,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -633,7 +637,7 @@
       },
       "id": 123141,
       "panels": [],
-      "title": "TrueFarm",
+      "title": "TruePool",
       "type": "row"
     }
   ],
@@ -645,7 +649,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {
@@ -677,6 +681,6 @@
   },
   "timezone": "browser",
   "title": "Chia",
-  "uid": "KJNK4fW7z",
-  "version": 7
+  "uid": "wso-3fWnk",
+  "version": 9
 }
