@@ -1,6 +1,8 @@
 # chiatter
 A chia collection agent/Prometheus client that gathers various stats from a local chia node and exposes them to a Prometheus server & Grafana.
 
+![grafana_dashboard](Chiatter_Grafana.png)
+
 ## What do I need to do to get it running on my PC?
 
 **❄** You will need a **python3.6+** environment. Most Linux distros will come with python3 installed - make sure you pick one which comes with **python 3.6** or above.
@@ -20,6 +22,8 @@ It's up to you, really - the simple way is to use docker. Check out my dev "depl
 Boy, am I glad you asked! Yes, some stuff.
 
 **❄** Once you get Grafana running for the first time, you will need to create a Prometheus datasource in order to get those nice stats loaded for the charts and all. Here's a nifty screenshot on how to do that (it's simple really):
+
+![grafana_datasource](Grafana_Datasource.png)
 
 **❄** Charts? Dashboards? Where, how, you ask? I've included a sample dashboard of my very own design. Find the hidden import dashboard option in Grafana and used the provided json file (also under `misc`). Think of it as an NPC given side-quest and figure it out!
 
