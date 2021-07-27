@@ -104,7 +104,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 4,
         "x": 0,
         "y": 1
       },
@@ -134,7 +134,7 @@
           "refId": "A"
         }
       ],
-      "title": "Blockchain synced",
+      "title": "Blockchain Synced",
       "type": "stat"
     },
     {
@@ -145,7 +145,64 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 20,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 123145,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "chia_stats_current_height{}",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Blockchain Height",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 5,
+          "mappings": [],
+          "max": 10,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -162,8 +219,64 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 4,
         "x": 8,
+        "y": 1
+      },
+      "id": 123144,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "chia_stats_wallet_funds{} / 1000000000000",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Wallet Funds",
+      "type": "gauge"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "XCH"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 12,
         "y": 1
       },
       "id": 123129,
@@ -190,7 +303,7 @@
           "refId": "A"
         }
       ],
-      "title": "Chia farmed",
+      "title": "Amount Farmed - OG Plots",
       "type": "gauge"
     },
     {
@@ -274,7 +387,7 @@
           "refId": "D"
         }
       ],
-      "title": "Plot types",
+      "title": "Plot Type Distribution",
       "type": "piechart"
     },
     {
@@ -330,7 +443,7 @@
           "refId": "A"
         }
       ],
-      "title": "Total Network Space",
+      "title": "Total Network Space (Estimated)",
       "type": "stat"
     },
     {
@@ -381,13 +494,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_ttw{} / 2629800",
+          "expr": "chia_stats_og_time_to_win{} / 2629800",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Estimated time to win (OG plots)",
+      "title": "Time To Win - OG Plots (Estimated)",
       "type": "stat"
     },
     {
@@ -446,7 +559,7 @@
           "refId": "A"
         }
       ],
-      "title": "OG count",
+      "title": "OG Plot Count",
       "type": "bargauge"
     },
     {
@@ -505,7 +618,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "OG plots size",
+      "title": "OG Plots Total Size",
       "type": "stat"
     },
     {
@@ -564,7 +677,7 @@
           "refId": "A"
         }
       ],
-      "title": "Portable count",
+      "title": "Portable Plot Count",
       "type": "bargauge"
     },
     {
@@ -623,7 +736,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Portable plots size",
+      "title": "Portable Plots Total Size",
       "type": "stat"
     },
     {
@@ -649,7 +762,7 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -682,5 +795,5 @@
   "timezone": "browser",
   "title": "Chia",
   "uid": "wso-3fWnk",
-  "version": 9
+  "version": 29
 }

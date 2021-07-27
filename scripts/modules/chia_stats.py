@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.00
-@date: 26/07/2021
+@version: 1.10
+@date: 27/07/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -43,7 +43,10 @@ class chia_stats:
     og_size = 0
     portable_size = 0
     sync_status = False
-    total_size = 0  
+    total_size = 0
+    og_time_to_win = 0
+    current_height = 0
+    wallet_funds = 0
     
     def clear_stats(self):
         #note to self - it might make sense to accumulate some stats in 
@@ -58,7 +61,9 @@ class chia_stats:
         self.portable_size = 0
         self.sync_status = False
         self.total_size = 0
-        self.ttw = 0
+        self.og_time_to_win = 0
+        self.current_height = 0
+        self.wallet_funds = 0
     
     async def collect_stats(self):
         logger.info('+++ Starting data collection run +++')
@@ -123,11 +128,11 @@ class chia_stats:
             self.total_size = blockchain['space']
             
             average_block_time = await get_average_block_time(fullnode_port)
-            self.ttw = int((average_block_time) / (self.og_size / self.total_size))
+            self.og_time_to_win = int((average_block_time) / (self.og_size / self.total_size))
             
             logger.debug(f'sync_status: {self.sync_status}')
             logger.debug(f'total_size: {self.total_size}')
-            logger.debug(f'ttw: {self.ttw}')
+            logger.debug(f'og_time_to_win: {self.og_time_to_win}')
             #########################################################
             
             logger.info('Fetching wallet state...')
@@ -135,13 +140,21 @@ class chia_stats:
             farmed_stat = await wallet.get_farmed_amount()
     
             self.chia_farmed = farmed_stat['farmed_amount']
+            self.current_height = await wallet.get_height_info()
+            main_wallet = await wallet.get_wallets()
+            #assume only one wallet exists - might want to alter it in the future
+            main_wallet_balance = await wallet.get_wallet_balance(main_wallet[0]["id"])
+            self.wallet_funds = main_wallet_balance.get('confirmed_wallet_balance')
             
             logger.debug(f'chia_farmed: {self.chia_farmed}')
+            logger.debug(f'current_height: {self.current_height}')
+            logger.debug(f'wallet_funds: {self.wallet_funds}')
             #########################################################          
             
         except:
             #uncomment for debugging purposes only
             logger.error(traceback.format_exc())
+            raise
             
         finally:
             harvester.close()
