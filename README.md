@@ -25,7 +25,7 @@ Boy, am I glad you asked! Yes, some stuff.
 
 ![grafana_datasource](Grafana_Datasource.png)
 
-**❄** Charts? Dashboards? Where, how, you ask? I've included a sample dashboard of my very own design. Find the hidden import dashboard option in Grafana and used the provided json file (also under `misc`). Think of it as an NPC given side-quest and figure it out!
+**❄** Charts? Dashboards? Where, how, you ask? I've included a sample dashboard of my very own design. Find the hidden import dashboard option in Grafana and use the provided json file (also under `misc`). Think of it as an NPC given side-quest and figure it out!
 
 ## Why "chiatter"?
 

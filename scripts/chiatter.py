@@ -125,7 +125,7 @@ if __name__ == '__main__':
         print('Could not parse configuration file. Please make sure the appropriate structure is in place!')
         raise SystemExit(1)
     
-    # Start up the server to expose the metrics.
+    #start the Prometheus http server to expose the metrics
     http_server_thread = threading.Thread(target=http_server, args=(), daemon=True)
     http_server_thread.start()
     
@@ -136,24 +136,24 @@ if __name__ == '__main__':
     #a mere aestetic separator
     print('')
     
-try:
-    if 'chia_stats' in modules:
-        loop = asyncio.get_event_loop()
-        chia_stats_thread = threading.Thread(target=chia_stats_worker, args=((loop,)), daemon=True)
-        chia_stats_thread.start()
+    try:
+        if 'chia_stats' in modules:
+            loop = asyncio.get_event_loop()
+            chia_stats_thread = threading.Thread(target=chia_stats_worker, args=((loop,)), daemon=True)
+            chia_stats_thread.start()
+                
+        if 'truepool_stats' in modules:
+            truepool_stats_thread = threading.Thread(target=truepool_stats_worker, args=(), daemon=True)
+            truepool_stats_thread.start()
+                
+        while True:
+            if chia_stats_error_counter > WATCHDOG_THRESHOLD or truepool_stats_error_counter > WATCHDOG_THRESHOLD:
+                print('The chiatter watchdog has reached its error threshold. Stopping data collection.')
+                raise SystemExit(2)
+            else:
+                sleep(WATCHDOG_INTERVAL)
             
-    if 'truepool_stats' in modules:
-        truepool_stats_thread = threading.Thread(target=truepool_stats_worker, args=(), daemon=True)
-        truepool_stats_thread.start()
-            
-    while True:
-        if chia_stats_error_counter > WATCHDOG_THRESHOLD or truepool_stats_error_counter > WATCHDOG_THRESHOLD:
-            print('The chiatter watchdog has reached its error threshold. Stopping data collection.')
-            raise SystemExit(2)
-        else:
-            sleep(WATCHDOG_INTERVAL)
-        
-except KeyboardInterrupt:
-    pass
+    except KeyboardInterrupt:
+        pass
 
-print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painfull. Bye!')
+    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painfull. Bye!')
