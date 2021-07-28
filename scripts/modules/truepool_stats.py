@@ -26,7 +26,7 @@ logger_file_handler.setFormatter(logging.Formatter(logger_format))
 logging.basicConfig(format=logger_format, level=logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
 logger = logging.getLogger(__name__)
 #logging level for current logger
-logger.setLevel(logging.DEBUG) #DEBUG, INFO, WARNING, ERROR, CRITICAL
+logger.setLevel(logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
 logger.addHandler(logger_file_handler)
 
 HTTP_TIMEOUT = 5
