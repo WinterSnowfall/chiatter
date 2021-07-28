@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.10
-@date: 27/07/2021
+@version: 1.20
+@date: 28/07/2021
 
 Warning: Built for use with python 3.6+
 '''
 
 from prometheus_client import start_http_server, Gauge
 from modules.chia_stats import chia_stats
-#from modules.truepool_stats import truepool_stats
+from modules.truepool_stats import truepool_stats
 from configparser import ConfigParser
 from time import sleep
 import signal
@@ -48,8 +48,18 @@ chia_stats_current_height = Gauge('chia_stats_current_height', 'Current blockcha
 chia_stats_wallet_funds = Gauge('chia_stats_wallet_funds', 'Funds present in the main chia wallet')
 #--------------------------------------------------------------------------------
 
-#---------------------- truepool ------------------------------------------------
-#TBD
+#---------------------- truepool_stats ------------------------------------------
+truepool_stats_total_size = Gauge('truepool_stats_total_size', 'Estimated pool capacity')
+truepool_stats_total_farmers = Gauge('truepool_stats_total_farmers', 'Total number of pool members')
+truepool_stats_minutes_to_win = Gauge('truepool_stats_minutes_to_win', 'Estimated time to win')
+truepool_stats_blocks_won = Gauge('truepool_stats_blocks_won', 'Number of blocks won by the pool')
+truepool_stats_farmer_points = Gauge('truepool_stats_farmer_points', 'Total points a farmer has for the current reward cycle')
+truepool_stats_farmer_difficulty = Gauge('truepool_stats_farmer_difficulty', 'Current pool difficulty for the farmer')
+truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has from the overall rewards')
+truepool_stats_farmer_estimated_size= Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
+truepool_stats_farmer_ranking= Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
+truepool_stats_farmer_pool_earnings= Gauge('truepool_stats_farmer_pool_earnings', 'Total amount of rewards received by the farmer from the pool')
+truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
 #--------------------------------------------------------------------------------
 
 def sigterm_handler(signum, frame):
@@ -94,8 +104,28 @@ def chia_stats_worker(loop):
 def truepool_stats_worker():
     global truepool_stats_error_counter
     
-    #TBD
-    sleep(TRUEPOOL_STATS_COLLECTION_INTERVAL)
+    while True:
+        try:
+            truepool_stats_inst.clear_stats()
+            truepool_stats_inst.collect_stats()
+            
+            truepool_stats_total_size.set(truepool_stats_inst.pool_total_size)
+            truepool_stats_total_farmers.set(truepool_stats_inst.pool_total_farmers)
+            truepool_stats_minutes_to_win.set(truepool_stats_inst.pool_minutes_to_win)
+            truepool_stats_blocks_won.set(truepool_stats_inst.pool_blocks_won)
+            truepool_stats_farmer_points.set(truepool_stats_inst.farmer_points)
+            truepool_stats_farmer_difficulty.set(truepool_stats_inst.farmer_difficulty)
+            truepool_stats_farmer_points_percentage.set(truepool_stats_inst.farmer_points_percentage)
+            truepool_stats_farmer_estimated_size.set(truepool_stats_inst.farmer_estimated_size)
+            truepool_stats_farmer_ranking.set(truepool_stats_inst.farmer_ranking)
+            truepool_stats_farmer_pool_earnings.set(truepool_stats_inst.farmer_pool_earnings)
+            truepool_stats_partial_errors_24h.set(truepool_stats_inst.partial_errors_24h)
+        except:
+            truepool_stats_error_counter += TRUEPOOL_STATS_COLLECTION_INTERVAL
+            #uncomment for debugging purposes only
+            print(traceback.format_exc())
+            
+        sleep(TRUEPOOL_STATS_COLLECTION_INTERVAL)
 
 if __name__ == '__main__':
     #catch SIGTERM and exit gracefully
@@ -120,6 +150,7 @@ if __name__ == '__main__':
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
         if 'truepool_stats' in modules:
             TRUEPOOL_STATS_COLLECTION_INTERVAL = configParser['TRUEPOOL_STATS'].getint('collection_interval')
+            TRUEPOOL_LAUNCHER_ID = configParser['TRUEPOOL_STATS'].get('launcher_id')
             
     except:
         print('Could not parse configuration file. Please make sure the appropriate structure is in place!')
@@ -132,6 +163,10 @@ if __name__ == '__main__':
     if 'chia_stats' in modules:
         print('*** Loading the chia_stats module ***')
         chia_stats_inst = chia_stats();
+    if 'truepool_stats' in modules:
+        print('*** Loading the truepool_stats module ***')
+        truepool_stats_inst = truepool_stats();
+        truepool_stats_inst.set_farmer_launcher_id(TRUEPOOL_LAUNCHER_ID)
     
     #a mere aestetic separator
     print('')
