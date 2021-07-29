@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.20
-@date: 28/07/2021
+@version: 1.30
+@date: 29/07/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
 logger.addHandler(logger_file_handler)
 
+HTTP_SUCCESS_OK = 200
 HTTP_TIMEOUT = 5
 
 ##base url strings
@@ -38,7 +39,7 @@ PARTIALS_STATS_API_URL = 'https://truepool.io/v1/pool/partial'
 PAYOUT_STATS_API_URL = 'https://truepool.io/v1/pool/payout_address'
 
 class truepool_stats:
-    '''gather pool stats using the TruePool RESTful API'''
+    '''gather pool stats using the TruePool RESTful APIs'''
     
     _farmer_launcher_id = None
 
@@ -73,8 +74,6 @@ class truepool_stats:
         self._farmer_launcher_id = farmer_launcher_id
         
     def collect_stats(self):
-        
-        #maybe only show a warning in the future an only exclude farmer/partial specific stats
         if self._farmer_launcher_id is None:
             raise Exception('Farmer launcher id has not been set. Pool stats can not be collected!')
         
@@ -91,7 +90,7 @@ class truepool_stats:
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == 200:
+                if response.status_code == HTTP_SUCCESS_OK:
                     pool_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
                     self.pool_total_size = pool_stats_json['total_size']
@@ -103,6 +102,8 @@ class truepool_stats:
                     logger.debug(f'pool_total_farmers: {self.pool_total_farmers}')
                     logger.debug(f'pool_minutes_to_win: {self.pool_minutes_to_win}')
                     logger.debug(f'pool_blocks_won: {self.pool_blocks_won}')
+                else:
+                    logger.warning('Failed to connect to API endpoint for pool stats.')
                 #########################################################
                 
                 logger.info('Fetching farmer stats...')
@@ -111,7 +112,7 @@ class truepool_stats:
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == 200:
+                if response.status_code == HTTP_SUCCESS_OK:
                     global_farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
                     farmer_iterator = iter(global_farmer_stats_json)
@@ -126,12 +127,14 @@ class truepool_stats:
                             found_farmer = True
                     
                     logger.debug(f'farmer_ranking: {self.farmer_ranking}')
+                else:
+                    logger.warning('Failed to connect to API endpoint for farmer ranking stats.')
                 
                 response = session.get(FARMER_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}', timeout=HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == 200:
+                if response.status_code == HTTP_SUCCESS_OK:
                     farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results'][0]
                     
                     self.farmer_points = farmer_stats_json['points']
@@ -143,6 +146,8 @@ class truepool_stats:
                     logger.debug(f'farmer_difficulty: {self.farmer_difficulty}')
                     logger.debug(f'farmer_points_percentage: {self.farmer_points_percentage}')
                     logger.debug(f'farmer_estimated_size: {self.farmer_estimated_size}')
+                else:
+                    logger.warning('Failed to connect to API endpoint for farmer stats.')
                 #########################################################
                 
                 logger.info('Fetching partials stats...')
@@ -155,7 +160,7 @@ class truepool_stats:
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == 200:
+                if response.status_code == HTTP_SUCCESS_OK:
                     partials_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
                     for partial in partials_stats_json:
@@ -163,6 +168,8 @@ class truepool_stats:
                             self.partial_errors_24h += 1
                             
                     logger.debug(f'partial_errors_24h: {self.partial_errors_24h}')
+                else:
+                    logger.warning('Failed to connect to API endpoint for partials stats.')
                 #########################################################
                 
                 logger.info('Fetching payout stats...')
@@ -171,15 +178,17 @@ class truepool_stats:
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == 200:
+                if response.status_code == HTTP_SUCCESS_OK:
                     payouts_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
                     for payout in payouts_stats_json:
                         self.farmer_pool_earnings += payout['amount']
                             
                     logger.debug(f'farmer_pool_earnings: {self.farmer_pool_earnings}')
+                else:
+                    logger.warning('Failed to connect to API endpoint for payout stats.')
                 #########################################################
-                    
+                
         except:
             #uncomment for debugging purposes only
             logger.error(traceback.format_exc())

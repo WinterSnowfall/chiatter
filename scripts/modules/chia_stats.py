@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.20
-@date: 28/07/2021
+@version: 1.30
+@date: 29/07/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -32,7 +32,7 @@ logger.setLevel(logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
 logger.addHandler(logger_file_handler)
 
 class chia_stats:
-    '''gather stats using the chia sdk/client'''
+    '''gather stats using the chia RPC clients'''
     
     plots_k32_og = 0
     plots_k33_og = 0
