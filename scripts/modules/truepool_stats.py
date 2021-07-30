@@ -47,6 +47,7 @@ class truepool_stats:
     pool_total_farmers = 0
     pool_minutes_to_win = 0
     pool_blocks_won = 0
+    pool_seconds_since_last_win = 0
     farmer_points = 0
     farmer_difficulty = 0
     farmer_points_percentage = 0
@@ -62,6 +63,7 @@ class truepool_stats:
         self.pool_total_farmers = 0
         self.pool_minutes_to_win = 0
         self.pool_blocks_won = 0
+        self.pool_seconds_since_last_win = 0
         self.farmer_points = 0
         self.farmer_difficulty = 0
         self.farmer_points_percentage = 0
@@ -97,11 +99,13 @@ class truepool_stats:
                     self.pool_total_farmers = pool_stats_json['total_farmers']
                     self.pool_minutes_to_win = pool_stats_json['minutes_to_win']
                     self.pool_blocks_won = pool_stats_json['total_rewards_heights']
+                    self.pool_seconds_since_last_win = pool_stats_json['seconds_since_last_win']
                     
                     logger.debug(f'pool_total_size: {self.pool_total_size}')
                     logger.debug(f'pool_total_farmers: {self.pool_total_farmers}')
                     logger.debug(f'pool_minutes_to_win: {self.pool_minutes_to_win}')
                     logger.debug(f'pool_blocks_won: {self.pool_blocks_won}')
+                    logger.debug(f'pool_seconds_since_last_win: {self.pool_seconds_since_last_win}')
                 else:
                     logger.warning('Failed to connect to API endpoint for pool stats.')
                 #########################################################
