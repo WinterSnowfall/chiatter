@@ -43,6 +43,8 @@ class truepool_stats:
     
     _farmer_launcher_id = None
     _pool_blocks_won_prev = 0
+    _farmer_pool_earnings_prev = 0
+    _farmer_pool_earnings_stale = False
 
     pool_total_size = 0
     pool_total_farmers = 0
@@ -187,11 +189,13 @@ class truepool_stats:
                 #########################################################
                 
                 #########################################################
-                if self._pool_blocks_won_prev != self.pool_blocks_won:
+                if self._pool_blocks_won_prev != self.pool_blocks_won or self._farmer_pool_earnings_stale:
                     logger.info('Fetching payout stats...')
                     
                     #skip payout reads until the next block win
                     self._pool_blocks_won_prev = self.pool_blocks_won
+                    #ensure the stats are refresh until a change is detected (may come with a delay)
+                    self._farmer_pool_earnings_stale = True
                     
                     #can't be bothered with pagination (meant for the website anyway), 
                     #so use a resonable non-standard limit - may have to adjust later on
@@ -205,6 +209,12 @@ class truepool_stats:
                         
                         for payout in payouts_stats_json:
                             self.farmer_pool_earnings += payout['amount']
+                                
+                        if self.farmer_pool_earnings != self._farmer_pool_earnings_prev:
+                            self._farmer_pool_earnings_prev = self.farmer_pool_earnings
+                            self._farmer_pool_earnings_stale = False
+                        elif self._farmer_pool_earnings_stale:
+                            logger.debug('Farmer pool earnings are stale. Will recheck on next update.')
                                 
                         logger.debug(f'farmer_pool_earnings: {self.farmer_pool_earnings}')
                     else:
