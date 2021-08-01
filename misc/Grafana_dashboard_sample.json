@@ -437,7 +437,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_total_size{}",
+          "expr": "chia_stats_network_space_size{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -512,7 +512,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 250,
+          "max": 300,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -551,7 +551,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_og_count{}",
+          "expr": "chia_stats_plots_k32_og{} + chia_stats_plots_k33_og{}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -630,7 +630,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 250,
+          "max": 300,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -669,7 +669,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_portable_count{}",
+          "expr": "chia_stats_plots_k32_portable{} + chia_stats_plots_k33_portable{}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -761,7 +761,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 400,
+          "max": 500,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1533,5 +1533,5 @@
   "timezone": "browser",
   "title": "Chia",
   "uid": "wso-3fWnk",
-  "version": 91
+  "version": 105
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.30
-@date: 29/07/2021
+@version: 1.40
+@date: 01/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -34,16 +34,14 @@ logger.addHandler(logger_file_handler)
 class chia_stats:
     '''gather stats using the chia RPC clients'''
     
+    og_size = 0
+    portable_size = 0
     plots_k32_og = 0
     plots_k33_og = 0
     plots_k32_portable = 0
     plots_k33_portable = 0
-    og_count = 0
-    portable_count = 0
-    og_size = 0
-    portable_size = 0
     sync_status = False
-    total_size = 0
+    network_space_size = 0
     og_time_to_win = 0
     current_height = 0
     wallet_funds = 0
@@ -55,16 +53,14 @@ class chia_stats:
     def clear_stats(self):
         #note to self - it might make sense to accumulate some stats in 
         #the future, depending on what grafana charts are being exposed
+        self.og_size = 0
+        self.portable_size = 0
         self.plots_k32_og = 0
         self.plots_k33_og = 0
         self.plots_k32_portable = 0
         self.plots_k33_portable = 0
-        self.og_count = 0
-        self.portable_count = 0
-        self.og_size = 0
-        self.portable_size = 0
         self.sync_status = False
-        self.total_size = 0
+        self.network_space_size = 0
         self.og_time_to_win = 0
         self.current_height = 0
         self.wallet_funds = 0
@@ -92,7 +88,6 @@ class chia_stats:
             
             for plot in plots['plots']:
                 if plot['pool_public_key'] is not None:
-                    self.og_count += 1
                     self.og_size += plot["file_size"]
                     
                     if plot['size'] == 32:
@@ -103,7 +98,6 @@ class chia_stats:
                         self.plots_k33_og += 1
                     
                 else:
-                    self.portable_count += 1
                     self.portable_size += plot['file_size']
                     
                     if plot['size'] == 32:
@@ -113,11 +107,8 @@ class chia_stats:
                         logger.debug('Found k33 plot!')
                         self.plots_k33_portable += 1
                         
-            logger.debug(f'og_count: {self.og_count}')
             logger.debug(f'og_size: {self.og_size}')
-            logger.debug(f'portable_count: {self.portable_count}')
             logger.debug(f'portable_size: {self.portable_size}')
-            
             logger.debug(f'plots_k32_og: {self.plots_k32_og}')
             logger.debug(f'plots_k33_og: {self.plots_k33_og}')
             logger.debug(f'plots_k32_portable: {self.plots_k32_portable}')
@@ -129,13 +120,13 @@ class chia_stats:
             blockchain = await self.fullnode.get_blockchain_state()
             
             self.sync_status = blockchain['sync'].get('synced')
-            self.total_size = blockchain['space']
+            self.network_space_size = blockchain['space']
             
             average_block_time = await get_average_block_time(fullnode_port)
-            self.og_time_to_win = int((average_block_time) / (self.og_size / self.total_size))
+            self.og_time_to_win = int((average_block_time) / (self.og_size / self.network_space_size))
             
             logger.debug(f'sync_status: {self.sync_status}')
-            logger.debug(f'total_size: {self.total_size}')
+            logger.debug(f'network_space_size: {self.network_space_size}')
             logger.debug(f'og_time_to_win: {self.og_time_to_win}')
             #########################################################
             

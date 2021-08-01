@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.30
-@date: 29/07/2021
+@version: 1.40
+@date: 01/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -32,15 +32,13 @@ truepool_stats_error_counter = 0
 # Prometheus client metrics
 
 #---------------------- chia_stats ----------------------------------------------
-chia_stats_og_count = Gauge('chia_stats_og_count', 'Total number of og plots')
 chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
-chia_stats_portable_count = Gauge('chia_stats_portable_count', 'Total number of portable plots')
 chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
 chia_stats_plots_k32_og = Gauge('chia_stats_plots_k32_og', 'Number of og k32 plots')
 chia_stats_plots_k33_og = Gauge('chia_stats_plots_k33_og', 'Number of og k33 plots')
 chia_stats_plots_k32_portable = Gauge('chia_stats_plots_k32_portable', 'Number of portable k32 plots')
 chia_stats_plots_k33_portable = Gauge('chia_stats_plots_k33_portable', 'Number of portable k33 plots')
-chia_stats_total_size = Gauge('chia_stats_total_size', 'Total network space')
+chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
 chia_stats_chia_farmed = Gauge('chia_stats_chia_farmed', 'XCH farmed')
 chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
 chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
@@ -81,15 +79,13 @@ def chia_stats_worker(loop):
             coroutine = chia_stats_inst.collect_stats()
             loop.run_until_complete(coroutine)
             
-            chia_stats_og_count.set(chia_stats_inst.og_count)
             chia_stats_og_size.set(chia_stats_inst.og_size)
-            chia_stats_portable_count.set(chia_stats_inst.portable_count)
             chia_stats_portable_size.set(chia_stats_inst.portable_size)
             chia_stats_plots_k32_og.set(chia_stats_inst.plots_k32_og)
             chia_stats_plots_k33_og.set(chia_stats_inst.plots_k33_og)
             chia_stats_plots_k32_portable.set(chia_stats_inst.plots_k32_portable)
             chia_stats_plots_k33_portable.set(chia_stats_inst.plots_k33_portable)
-            chia_stats_total_size.set(chia_stats_inst.total_size)
+            chia_stats_network_space_size.set(chia_stats_inst.network_space_size)
             chia_stats_chia_farmed.set(chia_stats_inst.chia_farmed)
             chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
             chia_stats_sync_status.set(chia_stats_inst.sync_status)
