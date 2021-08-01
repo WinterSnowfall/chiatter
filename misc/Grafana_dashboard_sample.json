@@ -873,7 +873,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 10,
+          "max": 5,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1101,7 +1101,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 20,
+          "max": 40,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1157,7 +1157,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 25,
+          "max": 30,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1426,7 +1426,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_total_size{} * 100 / chia_stats_total_size",
+          "expr": "truepool_stats_total_size{} * 100 / chia_stats_network_space_size{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1533,5 +1533,5 @@
   "timezone": "browser",
   "title": "Chia",
   "uid": "wso-3fWnk",
-  "version": 105
+  "version": 108
 }

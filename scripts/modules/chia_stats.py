@@ -34,6 +34,12 @@ logger.addHandler(logger_file_handler)
 class chia_stats:
     '''gather stats using the chia RPC clients'''
     
+    _config = None
+    _hostname = None
+    _harvester_port = None
+    _fullnode_port = None
+    _wallet_port = None
+    
     og_size = 0
     portable_size = 0
     plots_k32_og = 0
@@ -46,13 +52,17 @@ class chia_stats:
     current_height = 0
     wallet_funds = 0
     
-    harvester = None
-    fullnode = None
-    wallet = None
+    def __init__(self):
+        logger.debug('Loading chia configuration...')
+        
+        self._config = load_config(DEFAULT_ROOT_PATH, 'config.yaml')
+        
+        self._hostname = self._config['self_hostname']
+        self._harvester_port = self._config['harvester']['rpc_port']
+        self._fullnode_port = self._config['full_node']['rpc_port']
+        self._wallet_port = self._config['wallet']['rpc_port']
     
     def clear_stats(self):
-        #note to self - it might make sense to accumulate some stats in 
-        #the future, depending on what grafana charts are being exposed
         self.og_size = 0
         self.portable_size = 0
         self.plots_k32_og = 0
@@ -68,23 +78,19 @@ class chia_stats:
     async def collect_stats(self):
         logger.info('+++ Starting data collection run +++')
         
-        config = load_config(DEFAULT_ROOT_PATH, 'config.yaml')
-        
-        self_hostname = config['self_hostname']
-        harvester_port = config['harvester']['rpc_port']
-        fullnode_port = config['full_node']['rpc_port']
-        wallet_port = config['wallet']['rpc_port']
-        
         logger.info('Initializing clients...')
         
-        self.harvester = await HarvesterRpcClient.create(self_hostname, harvester_port, DEFAULT_ROOT_PATH, config)
-        self.fullnode = await FullNodeRpcClient.create(self_hostname, fullnode_port, DEFAULT_ROOT_PATH, config)
-        self.wallet = await WalletRpcClient.create(self_hostname, wallet_port, DEFAULT_ROOT_PATH, config)
+        harvester = await HarvesterRpcClient.create(self._hostname, self._harvester_port, 
+                                                    DEFAULT_ROOT_PATH, self._config)
+        fullnode = await FullNodeRpcClient.create(self._hostname, self._fullnode_port, 
+                                                  DEFAULT_ROOT_PATH, self._config)
+        wallet = await WalletRpcClient.create(self._hostname, self._wallet_port, 
+                                              DEFAULT_ROOT_PATH, self._config)
         
         try:
             logger.info('Fetching harvester state...')
             #########################################################
-            plots = await self.harvester.get_plots()
+            plots = await harvester.get_plots()
             
             for plot in plots['plots']:
                 if plot['pool_public_key'] is not None:
@@ -117,12 +123,12 @@ class chia_stats:
             
             logger.info('Fetching blockchain state...')
             #########################################################
-            blockchain = await self.fullnode.get_blockchain_state()
+            blockchain = await fullnode.get_blockchain_state()
             
             self.sync_status = blockchain['sync'].get('synced')
             self.network_space_size = blockchain['space']
             
-            average_block_time = await get_average_block_time(fullnode_port)
+            average_block_time = await get_average_block_time(self._fullnode_port)
             self.og_time_to_win = int((average_block_time) / (self.og_size / self.network_space_size))
             
             logger.debug(f'sync_status: {self.sync_status}')
@@ -132,13 +138,13 @@ class chia_stats:
             
             logger.info('Fetching wallet state...')
             #########################################################
-            farmed_stat = await self.wallet.get_farmed_amount()
+            farmed_stat = await wallet.get_farmed_amount()
     
             self.chia_farmed = farmed_stat['farmed_amount']
-            self.current_height = await self.wallet.get_height_info()
-            main_wallet = await self.wallet.get_wallets()
+            self.current_height = await wallet.get_height_info()
+            main_wallet = await wallet.get_wallets()
             #assume only one wallet exists - might want to alter it in the future
-            main_wallet_balance = await self.wallet.get_wallet_balance(main_wallet[0]["id"])
+            main_wallet_balance = await wallet.get_wallet_balance(main_wallet[0]["id"])
             self.wallet_funds = main_wallet_balance.get('confirmed_wallet_balance')
             
             logger.debug(f'chia_farmed: {self.chia_farmed}')
@@ -152,9 +158,9 @@ class chia_stats:
             raise
             
         finally:
-            self.harvester.close()
-            self.fullnode.close()
-            self.wallet.close()
+            harvester.close()
+            fullnode.close()
+            wallet.close()
             
         logger.info('--- Data collection complete ---')
         

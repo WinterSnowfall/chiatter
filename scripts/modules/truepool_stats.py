@@ -57,8 +57,6 @@ class truepool_stats:
     partial_errors_24h = 0
     
     def clear_stats(self):
-        #note to self - it might make sense to accumulate some stats in 
-        #the future, depending on what grafana charts are being exposed
         self.pool_total_size = 0
         self.pool_total_farmers = 0
         self.pool_minutes_to_win = 0
@@ -112,7 +110,10 @@ class truepool_stats:
                 
                 logger.info('Fetching farmer stats...')
                 #########################################################
-                response = session.get(FARMER_STATS_API_URL + f'?ordering=-points', timeout=HTTP_TIMEOUT)
+                #can't be bothered with pagination (meant for the website anyway), 
+                #so use a resonable non-standard limit - based on total farmer count
+                response = session.get(FARMER_STATS_API_URL + f'?ordering=-points&limit={self.pool_total_farmers}', 
+                                       timeout=HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
@@ -122,19 +123,24 @@ class truepool_stats:
                     farmer_iterator = iter(global_farmer_stats_json)
                     found_farmer = False
                     
-                    while not found_farmer:
-                        current_farmer = next(farmer_iterator)
-                        self.farmer_ranking += 1
-                        
-                        if current_farmer['launcher_id'].strip() == self._farmer_launcher_id:
-                            logger.debug('Found the farmer!')
-                            found_farmer = True
+                    try:
+                        while not found_farmer:
+                            current_farmer = next(farmer_iterator)
+                            self.farmer_ranking += 1
+                            
+                            if current_farmer['launcher_id'].strip() == self._farmer_launcher_id:
+                                logger.debug('Found the farmer!')
+                                found_farmer = True
+                    except StopIteration:
+                        logger.error('Failed to find farmer based on the launcher id.')
+                        raise
                     
                     logger.debug(f'farmer_ranking: {self.farmer_ranking}')
                 else:
                     logger.warning('Failed to connect to API endpoint for farmer ranking stats.')
                 
-                response = session.get(FARMER_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}', timeout=HTTP_TIMEOUT)
+                response = session.get(FARMER_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}', 
+                                       timeout=HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
@@ -178,7 +184,10 @@ class truepool_stats:
                 
                 logger.info('Fetching payout stats...')
                 #########################################################
-                response = session.get(PAYOUT_STATS_API_URL + f'/?farmer={self._farmer_launcher_id}', timeout=HTTP_TIMEOUT)
+                #can't be bothered with pagination (meant for the website anyway), 
+                #so use a resonable non-standard limit - may have to adjust later on
+                response = session.get(PAYOUT_STATS_API_URL + f'/?farmer={self._farmer_launcher_id}&limit=500', 
+                                       timeout=HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
