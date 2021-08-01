@@ -55,10 +55,10 @@ truepool_stats_seconds_since_last_win = Gauge('truepool_stats_seconds_since_last
 truepool_stats_farmer_points = Gauge('truepool_stats_farmer_points', 'Total points a farmer has for the current reward cycle')
 truepool_stats_farmer_difficulty = Gauge('truepool_stats_farmer_difficulty', 'Current pool difficulty for the farmer')
 truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has from the overall rewards')
-truepool_stats_farmer_estimated_size= Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
-truepool_stats_farmer_ranking= Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
-truepool_stats_farmer_pool_earnings= Gauge('truepool_stats_farmer_pool_earnings', 'Total amount of rewards received by the farmer from the pool')
+truepool_stats_farmer_estimated_size = Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
+truepool_stats_farmer_ranking = Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
 truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
+truepool_stats_farmer_pool_earnings = Gauge('truepool_stats_farmer_pool_earnings', 'Total amount of rewards received by the farmer from the pool')
 #--------------------------------------------------------------------------------
 
 def sigterm_handler(signum, frame):
@@ -116,8 +116,8 @@ def truepool_stats_worker():
             truepool_stats_farmer_points_percentage.set(truepool_stats_inst.farmer_points_percentage)
             truepool_stats_farmer_estimated_size.set(truepool_stats_inst.farmer_estimated_size)
             truepool_stats_farmer_ranking.set(truepool_stats_inst.farmer_ranking)
-            truepool_stats_farmer_pool_earnings.set(truepool_stats_inst.farmer_pool_earnings)
             truepool_stats_partial_errors_24h.set(truepool_stats_inst.partial_errors_24h)
+            truepool_stats_farmer_pool_earnings.set(truepool_stats_inst.farmer_pool_earnings)
         except:
             truepool_stats_error_counter += TRUEPOOL_STATS_COLLECTION_INTERVAL
             #uncomment for debugging purposes only

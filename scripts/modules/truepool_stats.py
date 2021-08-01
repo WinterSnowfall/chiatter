@@ -42,6 +42,7 @@ class truepool_stats:
     '''gather pool stats using the TruePool RESTful APIs'''
     
     _farmer_launcher_id = None
+    _pool_blocks_won_prev = 0
 
     pool_total_size = 0
     pool_total_farmers = 0
@@ -53,8 +54,8 @@ class truepool_stats:
     farmer_points_percentage = 0
     farmer_estimated_size = 0
     farmer_ranking = 0
-    farmer_pool_earnings = 0
     partial_errors_24h = 0
+    farmer_pool_earnings = 0
     
     def clear_stats(self):
         self.pool_total_size = 0
@@ -67,8 +68,8 @@ class truepool_stats:
         self.farmer_points_percentage = 0
         self.farmer_estimated_size = 0
         self.farmer_ranking = 0
-        self.farmer_pool_earnings = 0
         self.partial_errors_24h = 0
+        #self.farmer_pool_earnings = 0
         
     def set_farmer_launcher_id(self, farmer_launcher_id):
         self._farmer_launcher_id = farmer_launcher_id
@@ -84,8 +85,9 @@ class truepool_stats:
                 four_score_and_twenty_four_hours_ago = int(datetime.timestamp(datetime.now() - timedelta(hours=24)))
                 logger.debug(f'four_score_and_twenty_four_hours_ago: {four_score_and_twenty_four_hours_ago}')
                 
-                logger.info('Fetching pool stats...')
                 #########################################################
+                logger.info('Fetching pool stats...')
+                                
                 response = session.get(POOL_INFO_API_URL, timeout=HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
@@ -108,8 +110,9 @@ class truepool_stats:
                     logger.warning('Failed to connect to API endpoint for pool stats.')
                 #########################################################
                 
-                logger.info('Fetching farmer stats...')
                 #########################################################
+                logger.info('Fetching farmer stats...')
+                                
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - based on total farmer count
                 response = session.get(FARMER_STATS_API_URL + f'?ordering=-points&limit={self.pool_total_farmers}', 
@@ -160,8 +163,9 @@ class truepool_stats:
                     logger.warning('Failed to connect to API endpoint for farmer stats.')
                 #########################################################
                 
-                logger.info('Fetching partials stats...')
                 #########################################################
+                logger.info('Fetching partials stats...')
+                
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - may have to adjust later on
                 response = session.get(PARTIALS_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}' + 
@@ -182,24 +186,32 @@ class truepool_stats:
                     logger.warning('Failed to connect to API endpoint for partials stats.')
                 #########################################################
                 
-                logger.info('Fetching payout stats...')
                 #########################################################
-                #can't be bothered with pagination (meant for the website anyway), 
-                #so use a resonable non-standard limit - may have to adjust later on
-                response = session.get(PAYOUT_STATS_API_URL + f'/?farmer={self._farmer_launcher_id}&limit=500', 
-                                       timeout=HTTP_TIMEOUT)
-                
-                logger.debug(f'HTTP response code is: {response.status_code}.')
-            
-                if response.status_code == HTTP_SUCCESS_OK:
-                    payouts_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
+                if self._pool_blocks_won_prev != self.pool_blocks_won:
+                    logger.info('Fetching payout stats...')
                     
-                    for payout in payouts_stats_json:
-                        self.farmer_pool_earnings += payout['amount']
-                            
-                    logger.debug(f'farmer_pool_earnings: {self.farmer_pool_earnings}')
+                    #skip payout reads until the next block win
+                    self._pool_blocks_won_prev = self.pool_blocks_won
+                    
+                    #can't be bothered with pagination (meant for the website anyway), 
+                    #so use a resonable non-standard limit - may have to adjust later on
+                    response = session.get(PAYOUT_STATS_API_URL + f'/?farmer={self._farmer_launcher_id}&limit=500', 
+                                           timeout=HTTP_TIMEOUT)
+                    
+                    logger.debug(f'HTTP response code is: {response.status_code}.')
+                
+                    if response.status_code == HTTP_SUCCESS_OK:
+                        payouts_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
+                        
+                        for payout in payouts_stats_json:
+                            self.farmer_pool_earnings += payout['amount']
+                                
+                        logger.debug(f'farmer_pool_earnings: {self.farmer_pool_earnings}')
+                    else:
+                        logger.warning('Failed to connect to API endpoint for payout stats.')
+                        
                 else:
-                    logger.warning('Failed to connect to API endpoint for payout stats.')
+                    logger.info('Skipping payout stats update until next block win.')
                 #########################################################
                 
         except:
@@ -208,4 +220,3 @@ class truepool_stats:
             raise
             
         logger.info('--- Data collection complete ---')
-    
