@@ -1,7 +1,7 @@
 # chiatter
 A chia collection agent/Prometheus client that gathers various stats from a local chia node and exposes them to a Prometheus server & Grafana.
 
-![grafana_dashboard](Chiatter_Grafana.png)
+![grafana_dashboard](chiatter_grafana.png)
 
 ## What do I need to do to get it running on my PC?
 
@@ -33,7 +33,7 @@ modules = chia_stats,truepool_stats
 launcher_id = <replace_with_your_launcher_id>
 ```
 
-If you don't want to use the TruePool module though, you don't have to make any changes whatsoever, stick to the defaults.
+You won't have to make any changes whatsoever if you don't plan on joining TruePool, so just stick to the defaults in that case (boooooo!).
 
 ## A Prometheus sever? Grafana? How the heck am I supposed to get those?
 
@@ -45,9 +45,9 @@ Boy, am I glad you asked! Yes, some stuff.
 
 **❄** Once you get Grafana running for the first time, you will need to create a Prometheus datasource in order to get those nice stats loaded for the charts and all. Here's a nifty screenshot on how to do that (it's simple really):
 
-![grafana_datasource](Grafana_Datasource.png)
+![grafana_datasource](grafana_datasource.png)
 
-**❄** Charts? Dashboards? Where, how, you ask? I've included a sample dashboard of my very own design. Find the hidden import dashboard option in Grafana and use the provided json file (also under `misc`). Think of it as an NPC given side-quest and figure it out!
+**❄** Charts? Dashboards? Where, how, you ask? I've included a sample dashboard of my very own design. Find the hidden import dashboard option in Grafana and use the provided `.json` file (also under `misc`). Think of it as an NPC given side-quest and figure it out to level up!
 
 ## Why "chiatter"?
 
