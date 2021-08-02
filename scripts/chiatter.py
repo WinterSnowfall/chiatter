@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.40
-@date: 01/08/2021
+@version: 1.50
+@date: 02/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -146,9 +146,11 @@ if __name__ == '__main__':
         #parse collection intervals conditionally for each module
         if 'chia_stats' in modules:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
+            CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
         if 'truepool_stats' in modules:
             TRUEPOOL_STATS_COLLECTION_INTERVAL = configParser['TRUEPOOL_STATS'].getint('collection_interval')
-            TRUEPOOL_LAUNCHER_ID = configParser['TRUEPOOL_STATS'].get('launcher_id')
+            TRUEPOOL_STATS_LAUNCHER_ID = configParser['TRUEPOOL_STATS'].get('launcher_id')
+            TRUEPOOL_STATS_LOGGING_LEVEL = configParser['TRUEPOOL_STATS'].get('logging_level')
             
     except:
         print('Could not parse configuration file. Please make sure the appropriate structure is in place!')
@@ -160,11 +162,11 @@ if __name__ == '__main__':
     
     if 'chia_stats' in modules:
         print('*** Loading the chia_stats module ***')
-        chia_stats_inst = chia_stats();
+        chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL);
     if 'truepool_stats' in modules:
         print('*** Loading the truepool_stats module ***')
-        truepool_stats_inst = truepool_stats();
-        truepool_stats_inst.set_farmer_launcher_id(TRUEPOOL_LAUNCHER_ID)
+        truepool_stats_inst = truepool_stats(TRUEPOOL_STATS_LOGGING_LEVEL);
+        truepool_stats_inst.set_farmer_launcher_id(TRUEPOOL_STATS_LAUNCHER_ID)
     
     #a mere aestetic separator
     print('')

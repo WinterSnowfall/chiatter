@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.40
-@date: 01/08/2021
+@version: 1.50
+@date: 02/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -23,41 +23,51 @@ logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=8388608, 
 logger_format = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
 logger_file_handler.setFormatter(logging.Formatter(logger_format))
 #logging level for other modules
-logging.basicConfig(format=logger_format, level=logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
+logging.basicConfig(format=logger_format, level=logging.ERROR)
 logger = logging.getLogger(__name__)
-#logging level for current logger
-logger.setLevel(logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
 logger.addHandler(logger_file_handler)
-
-HTTP_SUCCESS_OK = 200
-HTTP_TIMEOUT = 5
-
-##base url strings
-POOL_INFO_API_URL = 'https://truepool.io/v1/pool/info'
-FARMER_STATS_API_URL = 'https://truepool.io/v1/pool/farmer'
-PARTIALS_STATS_API_URL = 'https://truepool.io/v1/pool/partial'
-PAYOUT_STATS_API_URL = 'https://truepool.io/v1/pool/payout_address'
 
 class truepool_stats:
     '''gather pool stats using the TruePool RESTful APIs'''
     
-    _farmer_launcher_id = None
-    _pool_blocks_won_prev = 0
-    _farmer_pool_earnings_prev = 0
-    _farmer_pool_earnings_stale = False
+    _logging_level = logging.WARNING
+    
+    HTTP_SUCCESS_OK = 200
+    HTTP_TIMEOUT = 5
+    
+    ##base url strings
+    POOL_INFO_API_URL = 'https://truepool.io/v1/pool/info'
+    FARMER_STATS_API_URL = 'https://truepool.io/v1/pool/farmer'
+    PARTIALS_STATS_API_URL = 'https://truepool.io/v1/pool/partial'
+    PAYOUT_STATS_API_URL = 'https://truepool.io/v1/pool/payout_address'
 
-    pool_total_size = 0
-    pool_total_farmers = 0
-    pool_minutes_to_win = 0
-    pool_blocks_won = 0
-    pool_seconds_since_last_win = 0
-    farmer_points = 0
-    farmer_difficulty = 0
-    farmer_points_percentage = 0
-    farmer_estimated_size = 0
-    farmer_ranking = 0
-    partial_errors_24h = 0
-    farmer_pool_earnings = 0
+    def __init__(self, logging_level):
+        self._farmer_launcher_id = None
+        self._pool_blocks_won_prev = 0
+        self._farmer_pool_earnings_prev = 0
+        self._farmer_pool_earnings_stale = False
+    
+        self.pool_total_size = 0
+        self.pool_total_farmers = 0
+        self.pool_minutes_to_win = 0
+        self.pool_blocks_won = 0
+        self.pool_seconds_since_last_win = 0
+        self.farmer_points = 0
+        self.farmer_difficulty = 0
+        self.farmer_points_percentage = 0
+        self.farmer_estimated_size = 0
+        self.farmer_ranking = 0
+        self.partial_errors_24h = 0
+        self.farmer_pool_earnings = 0
+        
+        #defaults to WARNING otherwise
+        if logging_level == 'DEBUG':
+            self._logging_level = logging.DEBUG
+        elif logging_level == 'INFO':
+            self._logging_level = logging.INFO
+            
+        #logging level for current logger
+        logger.setLevel(self._logging_level)
     
     def clear_stats(self):
         self.pool_total_size = 0
@@ -90,11 +100,11 @@ class truepool_stats:
                 #########################################################
                 logger.info('Fetching pool stats...')
                                 
-                response = session.get(POOL_INFO_API_URL, timeout=HTTP_TIMEOUT)
+                response = session.get(truepool_stats.POOL_INFO_API_URL, timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == HTTP_SUCCESS_OK:
+                if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                     pool_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
                     self.pool_total_size = pool_stats_json['total_size']
@@ -117,12 +127,12 @@ class truepool_stats:
                                 
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - based on total farmer count
-                response = session.get(FARMER_STATS_API_URL + f'?ordering=-points&limit={self.pool_total_farmers}', 
-                                       timeout=HTTP_TIMEOUT)
+                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'?ordering=-points&limit={self.pool_total_farmers}', 
+                                       timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == HTTP_SUCCESS_OK:
+                if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                     global_farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
                     farmer_iterator = iter(global_farmer_stats_json)
@@ -144,12 +154,12 @@ class truepool_stats:
                 else:
                     logger.warning('Failed to connect to API endpoint for farmer ranking stats.')
                 
-                response = session.get(FARMER_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}', 
-                                       timeout=HTTP_TIMEOUT)
+                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}', 
+                                       timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == HTTP_SUCCESS_OK:
+                if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                     farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results'][0]
                     
                     self.farmer_points = farmer_stats_json['points']
@@ -170,13 +180,13 @@ class truepool_stats:
                 
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - may have to adjust later on
-                response = session.get(PARTIALS_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}' + 
+                response = session.get(truepool_stats.PARTIALS_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}' + 
                                        f'&start_timestamp={four_score_and_twenty_four_hours_ago}&limit=500', 
-                                       timeout=HTTP_TIMEOUT)
+                                       timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
-                if response.status_code == HTTP_SUCCESS_OK:
+                if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                     partials_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
                     for partial in partials_stats_json:
@@ -199,12 +209,12 @@ class truepool_stats:
                     
                     #can't be bothered with pagination (meant for the website anyway), 
                     #so use a resonable non-standard limit - may have to adjust later on
-                    response = session.get(PAYOUT_STATS_API_URL + f'/?farmer={self._farmer_launcher_id}&limit=500', 
-                                           timeout=HTTP_TIMEOUT)
+                    response = session.get(truepool_stats.PAYOUT_STATS_API_URL + f'/?farmer={self._farmer_launcher_id}&limit=500', 
+                                           timeout=truepool_stats.HTTP_TIMEOUT)
                     
                     logger.debug(f'HTTP response code is: {response.status_code}.')
                 
-                    if response.status_code == HTTP_SUCCESS_OK:
+                    if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                         payouts_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                         
                         for payout in payouts_stats_json:

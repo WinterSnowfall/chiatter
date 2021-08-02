@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.40
-@date: 01/08/2021
+@version: 1.50
+@date: 02/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -25,34 +25,37 @@ logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=8388608, 
 logger_format = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
 logger_file_handler.setFormatter(logging.Formatter(logger_format))
 #logging level for other modules
-logging.basicConfig(format=logger_format, level=logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
+logging.basicConfig(format=logger_format, level=logging.ERROR)
 logger = logging.getLogger(__name__)
-#logging level for current logger
-logger.setLevel(logging.INFO) #DEBUG, INFO, WARNING, ERROR, CRITICAL
 logger.addHandler(logger_file_handler)
 
 class chia_stats:
     '''gather stats using the chia RPC clients'''
     
-    _config = None
-    _hostname = None
-    _harvester_port = None
-    _fullnode_port = None
-    _wallet_port = None
+    _logging_level = logging.WARNING
     
-    og_size = 0
-    portable_size = 0
-    plots_k32_og = 0
-    plots_k33_og = 0
-    plots_k32_portable = 0
-    plots_k33_portable = 0
-    sync_status = False
-    network_space_size = 0
-    og_time_to_win = 0
-    current_height = 0
-    wallet_funds = 0
-    
-    def __init__(self):
+    def __init__(self, logging_level):
+        self.og_size = 0
+        self.portable_size = 0
+        self.plots_k32_og = 0
+        self.plots_k33_og = 0
+        self.plots_k32_portable = 0
+        self.plots_k33_portable = 0
+        self.sync_status = False
+        self.network_space_size = 0
+        self.og_time_to_win = 0
+        self.current_height = 0
+        self.wallet_funds = 0
+        
+        #defaults to WARNING otherwise
+        if logging_level == 'DEBUG':
+            self._logging_level = logging.DEBUG
+        elif logging_level == 'INFO':
+            self._logging_level = logging.INFO
+            
+        #logging level for current logger
+        logger.setLevel(self._logging_level)
+        
         logger.debug('Loading chia configuration...')
         
         self._config = load_config(DEFAULT_ROOT_PATH, 'config.yaml')
