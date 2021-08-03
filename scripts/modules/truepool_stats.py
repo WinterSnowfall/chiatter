@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.50
-@date: 02/08/2021
+@version: 1.51
+@date: 03/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -81,7 +81,6 @@ class truepool_stats:
         self.farmer_estimated_size = 0
         self.farmer_ranking = 0
         self.partial_errors_24h = 0
-        #self.farmer_pool_earnings = 0
         
     def set_farmer_launcher_id(self, farmer_launcher_id):
         self._farmer_launcher_id = farmer_launcher_id
@@ -216,6 +215,9 @@ class truepool_stats:
                 
                     if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                         payouts_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
+                        
+                        #clear existing value before updating
+                        self.farmer_pool_earnings = 0
                         
                         for payout in payouts_stats_json:
                             self.farmer_pool_earnings += payout['amount']
