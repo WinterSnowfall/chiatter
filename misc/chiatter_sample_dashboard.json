@@ -573,7 +573,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 300,
+          "max": 350,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -691,7 +691,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 300,
+          "max": 350,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -934,7 +934,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 5,
+          "max": 10,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1594,5 +1594,5 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "wso-3fWnk",
-  "version": 131
+  "version": 144
 }

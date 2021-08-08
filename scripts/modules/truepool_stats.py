@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.51
-@date: 03/08/2021
+@version: 1.60
+@date: 08/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -19,7 +19,7 @@ import traceback
 
 ##logging configuration block
 log_file_full_path = os.path.join('..', 'logs', 'truepool_stats.log')
-logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=8388608, backupCount=1, encoding='utf-8')
+logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=104857600, backupCount=2, encoding='utf-8')
 logger_format = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
 logger_file_handler.setFormatter(logging.Formatter(logger_format))
 #logging level for other modules

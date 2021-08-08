@@ -37,17 +37,11 @@ You won't have to make any changes whatsoever if you don't plan on joining TrueP
 
 ## A Prometheus sever? Grafana? How the heck am I supposed to get those?
 
-It's up to you, really - the simple way is to use docker. Check out my dev "deployment" script in the `misc` folder. It assumes you will want to run the Prometheus server and Grafana containers on the same machine as chiatter - otherwise some tinkering is required in `prometheus.yml` to point it to the host chiatter (and your full chia node) is actually running on.
+It's up to you, really - the simple way is to use docker. Check out my dev "deployment" script in the `misc` folder. It assumes you will want to run the Prometheus server and Grafana containers on the same machine as chiatter - otherwise some tinkering is required in `prometheus.yml` to point it to the host chiatter (and your full chia node) is actually running on. You may also need to adjust `datasources.yml` if you plan on running grafana on a different host than prometheus.
 
-## Anything else I need to know?
+## Charts? Dashboards? Where, how?
 
-Boy, am I glad you asked! Yes, some stuff.
-
-**❄** Once you get Grafana running for the first time, you will need to create a Prometheus datasource in order to get those nice stats loaded for the charts and all. Here's a nifty screenshot on how to do that (it's simple really):
-
-![grafana_datasource](grafana_datasource.png)
-
-**❄** Charts? Dashboards? Where, how, you ask? I've included a sample dashboard of my very own design. Find the hidden import dashboard option in Grafana and use the provided `.json` file (also under `misc`). Think of it as an NPC given side-quest and figure it out to level up!
+I've included a sample dashboard of my very own design. Find the hidden import dashboard option in Grafana and use the provided `.json` file (also under `misc`). Think of it as an NPC given side-quest and figure it out to level up!
 
 ## Why "chiatter"?
 
