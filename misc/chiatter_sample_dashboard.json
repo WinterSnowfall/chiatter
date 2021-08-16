@@ -104,7 +104,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 4,
+        "w": 3,
         "x": 0,
         "y": 1
       },
@@ -160,8 +160,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 4,
-        "x": 4,
+        "w": 6,
+        "x": 3,
         "y": 1
       },
       "id": 123145,
@@ -219,7 +219,7 @@
       "gridPos": {
         "h": 5,
         "w": 4,
-        "x": 8,
+        "x": 9,
         "y": 1
       },
       "id": 123129,
@@ -276,7 +276,7 @@
       "gridPos": {
         "h": 5,
         "w": 4,
-        "x": 12,
+        "x": 13,
         "y": 1
       },
       "id": 123144,
@@ -388,8 +388,8 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 8,
-        "x": 16,
+        "w": 7,
+        "x": 17,
         "y": 1
       },
       "id": 123139,
@@ -474,7 +474,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 11,
         "x": 0,
         "y": 6
       },
@@ -504,7 +504,7 @@
           "refId": "A"
         }
       ],
-      "title": "Total Network Space (Estimated)",
+      "title": "Total Netspace (Estimated)",
       "type": "stat"
     },
     {
@@ -514,13 +514,12 @@
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-purple",
+                "color": "light-green",
                 "value": null
               }
             ]
@@ -531,14 +530,14 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 11,
         "y": 6
       },
-      "id": 123131,
+      "id": 123161,
       "options": {
         "colorMode": "value",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
@@ -555,13 +554,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_og_time_to_win{} / 2629800",
+          "expr": "chia_stats_seconds_since_last_win / 2629800",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Time To Win - OG Plots (Estimated)",
+      "title": "Time Since Last Win (Personal)",
       "type": "stat"
     },
     {
@@ -573,7 +572,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 350,
+          "max": 400,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -588,8 +587,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 12,
+        "h": 5,
+        "w": 8,
         "x": 0,
         "y": 11
       },
@@ -630,6 +629,63 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-purple",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Months"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 8,
+        "y": 11
+      },
+      "id": 123131,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "chia_stats_og_time_to_win{} / 2629800",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Time To Win - OG Plots (Estimated)",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -645,9 +701,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 12,
+        "h": 5,
+        "w": 10,
+        "x": 14,
         "y": 11
       },
       "id": 123127,
@@ -691,7 +747,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 350,
+          "max": 400,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -706,10 +762,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 12,
+        "h": 5,
+        "w": 8,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "id": 123143,
       "interval": "5",
@@ -748,6 +804,63 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Months"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 8,
+        "y": 16
+      },
+      "id": 123160,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "chia_stats_portable_time_to_win{} / 2629800",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Time To Win - Portable Plots (Estimated)",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -763,10 +876,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 12,
-        "y": 15
+        "h": 5,
+        "w": 10,
+        "x": 14,
+        "y": 16
       },
       "id": 123142,
       "options": {
@@ -807,7 +920,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 21
       },
       "id": 123141,
       "panels": [],
@@ -838,10 +951,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 2,
+        "h": 3,
         "w": 8,
         "x": 0,
-        "y": 20
+        "y": 22
       },
       "id": 123150,
       "options": {
@@ -892,10 +1005,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 5,
+        "w": 6,
         "x": 8,
-        "y": 20
+        "y": 22
       },
       "id": 123158,
       "options": {
@@ -923,68 +1036,8 @@
           "refId": "A"
         }
       ],
-      "title": "Time Since Last Win",
+      "title": "Time Since Last Win (Pool)",
       "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 10,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              },
-              {
-                "color": "semi-dark-red",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 12,
-        "y": 20
-      },
-      "id": 123152,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {}
-      },
-      "pluginVersion": "8.1.0-29505pre",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "truepool_stats_partial_errors_24h{}",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Invalid Partials (Last 24h)",
-      "type": "gauge"
     },
     {
       "datasource": null,
@@ -1008,10 +1061,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
-        "x": 15,
-        "y": 20
+        "x": 14,
+        "y": 22
       },
       "id": 123153,
       "options": {
@@ -1064,10 +1117,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 18,
-        "y": 20
+        "h": 5,
+        "w": 7,
+        "x": 17,
+        "y": 22
       },
       "id": 123149,
       "options": {
@@ -1120,10 +1173,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 8,
         "x": 0,
-        "y": 22
+        "y": 25
       },
       "id": 123147,
       "options": {
@@ -1178,10 +1231,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 5,
+        "w": 3,
         "x": 8,
-        "y": 24
+        "y": 27
       },
       "id": 123155,
       "options": {
@@ -1218,14 +1271,18 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 30,
+          "max": 10,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-blue",
+                "color": "light-green",
                 "value": null
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 1
               }
             ]
           },
@@ -1234,12 +1291,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
-        "x": 12,
-        "y": 24
+        "x": 11,
+        "y": 27
       },
-      "id": 123148,
+      "id": 123152,
       "options": {
         "orientation": "auto",
         "reduceOptions": {
@@ -1257,13 +1314,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_difficulty{}",
+          "expr": "truepool_stats_partial_errors_24h{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Current Difficulty",
+      "title": "Invalid Partials (Last 24h)",
       "type": "gauge"
     },
     {
@@ -1290,10 +1347,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 15,
-        "y": 24
+        "h": 5,
+        "w": 5,
+        "x": 14,
+        "y": 27
       },
       "id": 123151,
       "options": {
@@ -1349,10 +1406,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 5,
         "x": 19,
-        "y": 24
+        "y": 27
       },
       "id": 123154,
       "options": {
@@ -1405,10 +1462,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 8,
         "x": 0,
-        "y": 27
+        "y": 31
       },
       "id": 123146,
       "options": {
@@ -1462,10 +1519,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 5,
+        "w": 3,
         "x": 8,
-        "y": 28
+        "y": 32
       },
       "id": 123159,
       "options": {
@@ -1493,8 +1550,64 @@
           "refId": "A"
         }
       ],
-      "title": "Pool Share Of Network Space",
+      "title": "Pool Share Of Netspace",
       "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 30,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 11,
+        "y": 32
+      },
+      "id": 123148,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "truepool_stats_farmer_difficulty{}",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Difficulty",
+      "type": "gauge"
     },
     {
       "datasource": null,
@@ -1518,10 +1631,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 12,
-        "y": 28
+        "h": 5,
+        "w": 10,
+        "x": 14,
+        "y": 32
       },
       "id": 123156,
       "options": {
@@ -1593,6 +1706,6 @@
   },
   "timezone": "browser",
   "title": "chiatter",
-  "uid": "wso-3fWnk",
-  "version": 144
+  "uid": "FGfG1LGnz",
+  "version": 63
 }

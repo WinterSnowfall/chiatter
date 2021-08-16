@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.60
-@date: 08/08/2021
+@version: 1.70
+@date: 16/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -28,38 +28,6 @@ conf_file_full_path = os.path.join('..', 'conf', 'chiatter.conf')
 watchdog_counter = 0
 chia_stats_error_counter = 0
 truepool_stats_error_counter = 0
-
-# Prometheus client metrics
-
-#---------------------- chia_stats ----------------------------------------------
-chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
-chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
-chia_stats_plots_k32_og = Gauge('chia_stats_plots_k32_og', 'Number of og k32 plots')
-chia_stats_plots_k33_og = Gauge('chia_stats_plots_k33_og', 'Number of og k33 plots')
-chia_stats_plots_k32_portable = Gauge('chia_stats_plots_k32_portable', 'Number of portable k32 plots')
-chia_stats_plots_k33_portable = Gauge('chia_stats_plots_k33_portable', 'Number of portable k33 plots')
-chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
-chia_stats_chia_farmed = Gauge('chia_stats_chia_farmed', 'XCH farmed')
-chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
-chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
-chia_stats_current_height = Gauge('chia_stats_current_height', 'Current blockchain height')
-chia_stats_wallet_funds = Gauge('chia_stats_wallet_funds', 'Funds present in the main chia wallet')
-#--------------------------------------------------------------------------------
-
-#---------------------- truepool_stats ------------------------------------------
-truepool_stats_total_size = Gauge('truepool_stats_total_size', 'Estimated pool capacity')
-truepool_stats_total_farmers = Gauge('truepool_stats_total_farmers', 'Total number of pool members')
-truepool_stats_minutes_to_win = Gauge('truepool_stats_minutes_to_win', 'Estimated time to win')
-truepool_stats_blocks_won = Gauge('truepool_stats_blocks_won', 'Number of blocks won by the pool')
-truepool_stats_seconds_since_last_win = Gauge('truepool_stats_seconds_since_last_win', 'Number of seconds since last block win')
-truepool_stats_farmer_points = Gauge('truepool_stats_farmer_points', 'Total points a farmer has for the current reward cycle')
-truepool_stats_farmer_difficulty = Gauge('truepool_stats_farmer_difficulty', 'Current pool difficulty for the farmer')
-truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has from the overall rewards')
-truepool_stats_farmer_estimated_size = Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
-truepool_stats_farmer_ranking = Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
-truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
-truepool_stats_farmer_pool_earnings = Gauge('truepool_stats_farmer_pool_earnings', 'Total amount of rewards received by the farmer from the pool')
-#--------------------------------------------------------------------------------
 
 def sigterm_handler(signum, frame):
     print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painfull. Bye!')
@@ -87,7 +55,9 @@ def chia_stats_worker(loop):
             chia_stats_plots_k33_portable.set(chia_stats_inst.plots_k33_portable)
             chia_stats_network_space_size.set(chia_stats_inst.network_space_size)
             chia_stats_chia_farmed.set(chia_stats_inst.chia_farmed)
+            chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
             chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
+            chia_stats_portable_time_to_win.set(chia_stats_inst.portable_time_to_win)
             chia_stats_sync_status.set(chia_stats_inst.sync_status)
             chia_stats_current_height.set(chia_stats_inst.current_height)
             chia_stats_wallet_funds.set(chia_stats_inst.wallet_funds)
@@ -155,6 +125,42 @@ if __name__ == '__main__':
     except:
         print('Could not parse configuration file. Please make sure the appropriate structure is in place!')
         raise SystemExit(1)
+    
+    ### Prometheus client metrics ####################################################################################################################
+    #
+    #---------------------- chia_stats ---------------------------------------------------------------------------------------------------------------
+    chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
+    chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
+    chia_stats_plots_k32_og = Gauge('chia_stats_plots_k32_og', 'Number of og k32 plots')
+    chia_stats_plots_k33_og = Gauge('chia_stats_plots_k33_og', 'Number of og k33 plots')
+    chia_stats_plots_k32_portable = Gauge('chia_stats_plots_k32_portable', 'Number of portable k32 plots')
+    chia_stats_plots_k33_portable = Gauge('chia_stats_plots_k33_portable', 'Number of portable k33 plots')
+    chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
+    chia_stats_chia_farmed = Gauge('chia_stats_chia_farmed', 'XCH farmed')
+    chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
+    chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
+    chia_stats_portable_time_to_win = Gauge('chia_stats_portable_time_to_win', 'Portable time to win')
+    chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
+    chia_stats_current_height = Gauge('chia_stats_current_height', 'Current blockchain height')
+    chia_stats_wallet_funds = Gauge('chia_stats_wallet_funds', 'Funds present in the main chia wallet')
+    #-------------------------------------------------------------------------------------------------------------------------------------------------
+    #
+    #---------------------- truepool_stats -----------------------------------------------------------------------------------------------------------
+    truepool_stats_total_size = Gauge('truepool_stats_total_size', 'Estimated pool capacity')
+    truepool_stats_total_farmers = Gauge('truepool_stats_total_farmers', 'Total number of pool members')
+    truepool_stats_minutes_to_win = Gauge('truepool_stats_minutes_to_win', 'Estimated time to win')
+    truepool_stats_blocks_won = Gauge('truepool_stats_blocks_won', 'Number of blocks won by the pool')
+    truepool_stats_seconds_since_last_win = Gauge('truepool_stats_seconds_since_last_win', 'Number of seconds since last block win (pool)')
+    truepool_stats_farmer_points = Gauge('truepool_stats_farmer_points', 'Total points a farmer has for the current reward cycle')
+    truepool_stats_farmer_difficulty = Gauge('truepool_stats_farmer_difficulty', 'Current pool difficulty for the farmer')
+    truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has from the overall rewards')
+    truepool_stats_farmer_estimated_size = Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
+    truepool_stats_farmer_ranking = Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
+    truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
+    truepool_stats_farmer_pool_earnings = Gauge('truepool_stats_farmer_pool_earnings', 'Total amount of rewards received by the farmer from the pool')
+    #-------------------------------------------------------------------------------------------------------------------------------------------------
+    #
+    ##################################################################################################################################################
     
     #start the Prometheus http server to expose the metrics
     http_server_thread = threading.Thread(target=http_server, args=(), daemon=True)
