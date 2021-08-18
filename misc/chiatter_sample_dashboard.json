@@ -68,7 +68,7 @@
       },
       "id": 123135,
       "panels": [],
-      "title": "Local Chia Farm",
+      "title": "Full Node Stats",
       "type": "row"
     },
     {
@@ -363,7 +363,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-purple",
+                  "fixedColor": "dark-green",
                   "mode": "fixed"
                 }
               }
@@ -378,7 +378,37 @@
               {
                 "id": "color",
                 "value": {
+                  "fixedColor": "light-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "K32 (Portable Self-Pooling)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
                   "fixedColor": "light-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "K33 (Portable Self-Pooling)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-purple",
                   "mode": "fixed"
                 }
               }
@@ -418,14 +448,14 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_plots_k32_og{}",
+          "expr": "chia_stats_og_plots_k32{}",
           "interval": "",
           "legendFormat": "K32 (OG)",
           "refId": "A"
         },
         {
           "exemplar": true,
-          "expr": "chia_stats_plots_k33_og{}",
+          "expr": "chia_stats_og_plots_k33{}",
           "hide": false,
           "interval": "",
           "legendFormat": "K33 (OG)",
@@ -433,7 +463,7 @@
         },
         {
           "exemplar": true,
-          "expr": "chia_stats_plots_k32_portable{}",
+          "expr": "chia_stats_portable_plots_k32{}",
           "hide": false,
           "interval": "",
           "legendFormat": "K32 (Portable)",
@@ -441,11 +471,27 @@
         },
         {
           "exemplar": true,
-          "expr": "chia_stats_plots_k33_portable",
+          "expr": "chia_stats_portable_plots_k33{}",
           "hide": false,
           "interval": "",
           "legendFormat": "K33 (Portable)",
           "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "chia_stats_self_portable_plots_k32{}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "K32 (Portable Self-Pooling)",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "chia_stats_self_portable_plots_k33{}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "K33 (Portable Self-Pooling)",
+          "refId": "F"
         }
       ],
       "title": "Plot Type Distribution",
@@ -560,8 +606,22 @@
           "refId": "A"
         }
       ],
-      "title": "Time Since Last Win (Personal)",
+      "title": "Time Since Last Win",
       "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 123168,
+      "panels": [],
+      "title": "Portable Plots - Self Pooling",
+      "type": "row"
     },
     {
       "datasource": null,
@@ -590,9 +650,9 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 11
+        "y": 12
       },
-      "id": 123125,
+      "id": 123162,
       "interval": "5",
       "options": {
         "displayMode": "lcd",
@@ -611,7 +671,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_plots_k32_og{} + chia_stats_plots_k33_og{}",
+          "expr": "chia_stats_self_portable_plots_k32{} + chia_stats_self_portable_plots_k33{}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -619,7 +679,7 @@
           "refId": "A"
         }
       ],
-      "title": "OG Plot Count",
+      "title": "Plot Count",
       "type": "bargauge"
     },
     {
@@ -648,9 +708,9 @@
         "h": 5,
         "w": 6,
         "x": 8,
-        "y": 11
+        "y": 12
       },
-      "id": 123131,
+      "id": 123163,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -670,13 +730,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_og_time_to_win{} / 2629800",
+          "expr": "chia_stats_self_portable_time_to_win{} / 2629800",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Time To Win - OG Plots (Estimated)",
+      "title": "Time To Win (Estimated)",
       "type": "stat"
     },
     {
@@ -704,9 +764,9 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 11
+        "y": 12
       },
-      "id": 123127,
+      "id": 123164,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -726,7 +786,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "chia_stats_og_size{}",
+          "expr": "chia_stats_self_portable_size{}",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -735,8 +795,22 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "OG Plots Total Size",
+      "title": "Total Plots Size",
       "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 123170,
+      "panels": [],
+      "title": "Portable Plots - Pool",
+      "type": "row"
     },
     {
       "datasource": null,
@@ -765,7 +839,7 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 16
+        "y": 18
       },
       "id": 123143,
       "interval": "5",
@@ -786,7 +860,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_plots_k32_portable{} + chia_stats_plots_k33_portable{}",
+          "expr": "chia_stats_portable_plots_k32{} + chia_stats_portable_plots_k33{}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -794,7 +868,7 @@
           "refId": "A"
         }
       ],
-      "title": "Portable Plot Count",
+      "title": "Plot Count",
       "type": "bargauge"
     },
     {
@@ -823,7 +897,7 @@
         "h": 5,
         "w": 6,
         "x": 8,
-        "y": 16
+        "y": 18
       },
       "id": 123160,
       "options": {
@@ -851,7 +925,7 @@
           "refId": "A"
         }
       ],
-      "title": "Time To Win - Portable Plots (Estimated)",
+      "title": "Time To Win (Estimated)",
       "type": "stat"
     },
     {
@@ -879,7 +953,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 16
+        "y": 18
       },
       "id": 123142,
       "options": {
@@ -910,7 +984,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Portable Plots Total Size",
+      "title": "Total Plots Size",
       "type": "stat"
     },
     {
@@ -920,7 +994,196 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 23
+      },
+      "id": 123166,
+      "panels": [],
+      "title": "OG Plots",
+      "type": "row"
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 400,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 24
+      },
+      "id": 123125,
+      "interval": "5",
+      "options": {
+        "displayMode": "lcd",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "chia_stats_og_plots_k32{} + chia_stats_og_plots_k33{}",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Plot Count",
+      "type": "bargauge"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Months"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 8,
+        "y": 24
+      },
+      "id": 123131,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "chia_stats_og_time_to_win{} / 2629800",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Time To Win (Estimated)",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 10,
+        "x": 14,
+        "y": 24
+      },
+      "id": 123127,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "chia_stats_og_size{}",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Plots Size",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
       },
       "id": 123141,
       "panels": [],
@@ -954,7 +1217,7 @@
         "h": 3,
         "w": 8,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 123150,
       "options": {
@@ -1008,7 +1271,7 @@
         "h": 5,
         "w": 6,
         "x": 8,
-        "y": 22
+        "y": 30
       },
       "id": 123158,
       "options": {
@@ -1064,7 +1327,7 @@
         "h": 5,
         "w": 3,
         "x": 14,
-        "y": 22
+        "y": 30
       },
       "id": 123153,
       "options": {
@@ -1120,7 +1383,7 @@
         "h": 5,
         "w": 7,
         "x": 17,
-        "y": 22
+        "y": 30
       },
       "id": 123149,
       "options": {
@@ -1176,7 +1439,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 25
+        "y": 33
       },
       "id": 123147,
       "options": {
@@ -1234,7 +1497,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 27
+        "y": 35
       },
       "id": 123155,
       "options": {
@@ -1294,7 +1557,7 @@
         "h": 5,
         "w": 3,
         "x": 11,
-        "y": 27
+        "y": 35
       },
       "id": 123152,
       "options": {
@@ -1350,7 +1613,7 @@
         "h": 5,
         "w": 5,
         "x": 14,
-        "y": 27
+        "y": 35
       },
       "id": 123151,
       "options": {
@@ -1409,7 +1672,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 27
+        "y": 35
       },
       "id": 123154,
       "options": {
@@ -1465,7 +1728,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 39
       },
       "id": 123146,
       "options": {
@@ -1522,7 +1785,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 32
+        "y": 40
       },
       "id": 123159,
       "options": {
@@ -1580,7 +1843,7 @@
         "h": 5,
         "w": 3,
         "x": 11,
-        "y": 32
+        "y": 40
       },
       "id": 123148,
       "options": {
@@ -1634,7 +1897,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 32
+        "y": 40
       },
       "id": 123156,
       "options": {
@@ -1707,5 +1970,5 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "FGfG1LGnz",
-  "version": 63
+  "version": 71
 }

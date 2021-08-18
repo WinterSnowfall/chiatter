@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.70
-@date: 16/08/2021
+@version: 1.80
+@date: 17/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -12,9 +12,11 @@ from chia.rpc.harvester_rpc_client import HarvesterRpcClient
 from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.rpc.full_node_rpc_client import FullNodeRpcClient
 from chia.util.default_root import DEFAULT_ROOT_PATH
+from chia.util import bech32m
 from chia.cmds.farm_funcs import get_average_block_time
 import logging
 import os
+import binascii
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 #uncomment for debugging purposes only
@@ -36,20 +38,26 @@ class chia_stats:
     _logging_level = logging.WARNING
     
     def __init__(self, logging_level):
+        self._self_pooling_contract_address = None
+        self._decoded_puzzle_hash = None
         self._chia_farmed_prev = 0
         self._seconds_since_last_win_prev = 0
         self._seconds_since_last_win_stale = False
         
         self.og_size = 0
         self.portable_size = 0
-        self.plots_k32_og = 0
-        self.plots_k33_og = 0
-        self.plots_k32_portable = 0
-        self.plots_k33_portable = 0
+        self.self_portable_size = 0
+        self.plots_og_k32 = 0
+        self.plots_og_k33 = 0
+        self.plots_portable_k32 = 0
+        self.plots_portable_k33 = 0
+        self.plots_self_portable_k32 = 0
+        self.plots_self_portable_k33 = 0
         self.sync_status = False
         self.network_space_size = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
+        self.self_portable_time_to_win = 0
         self.current_height = 0
         self.wallet_funds = 0
         self.chia_farmed = 0
@@ -72,21 +80,33 @@ class chia_stats:
         self._harvester_port = self._config['harvester']['rpc_port']
         self._fullnode_port = self._config['full_node']['rpc_port']
         self._wallet_port = self._config['wallet']['rpc_port']
-    
+        
     def clear_stats(self):
         self.og_size = 0
         self.portable_size = 0
-        self.plots_k32_og = 0
-        self.plots_k33_og = 0
-        self.plots_k32_portable = 0
-        self.plots_k33_portable = 0
+        self.self_portable_size = 0
+        self.plots_og_k32 = 0
+        self.plots_og_k33 = 0
+        self.plots_portable_k32 = 0
+        self.plots_portable_k33 = 0
+        self.plots_self_portable_k32 = 0
+        self.plots_self_portable_k33 = 0
         self.sync_status = False
         self.network_space_size = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
+        self.self_portable_time_to_win = 0
         self.current_height = 0
         self.wallet_funds = 0
         self.chia_farmed = 0
+        
+    def set_self_pooling_contract_address(self, self_pooling_contract_address):
+        self._self_pooling_contract_address = self_pooling_contract_address
+        
+        decoded_bytes = bech32m.decode_puzzle_hash(self._self_pooling_contract_address)
+        self._decoded_puzzle_hash = '0x' + binascii.hexlify(decoded_bytes).decode('utf8')
+        
+        logger.debug(f'_decoded_puzzle_hash: {self._decoded_puzzle_hash}')
     
     async def collect_stats(self):
         logger.info('+++ Starting data collection run +++')
@@ -106,32 +126,46 @@ class chia_stats:
             plots = await harvester.get_plots()
             
             for plot in plots['plots']:
+                #logger.debug(f'plot: {plot}')
+                
                 if plot['pool_public_key'] is not None:
                     self.og_size += plot["file_size"]
                     
                     if plot['size'] == 32:
                         #logger.debug('Found k32 plot!')
-                        self.plots_k32_og += 1
+                        self.plots_og_k32 += 1
                     elif plot['size'] == 33:
                         #logger.debug('Found k33 plot!')
-                        self.plots_k33_og += 1
+                        self.plots_og_k33 += 1
                     
                 else:
-                    self.portable_size += plot['file_size']
-                    
-                    if plot['size'] == 32:
-                        #logger.debug('Found k32 plot!')
-                        self.plots_k32_portable += 1
-                    elif plot['size'] == 33:
-                        #logger.debug('Found k33 plot!')
-                        self.plots_k33_portable += 1
+                    if (self._self_pooling_contract_address is not None and 
+                        plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
+                        if plot['size'] == 32:
+                            #logger.debug('Found k32 plot!')
+                            self.plots_self_portable_k32 += 1
+                        elif plot['size'] == 33:
+                            #logger.debug('Found k33 plot!')
+                            self.plots_self_portable_k33 += 1
+                        self.self_portable_size += plot['file_size']
+                    else:
+                        if plot['size'] == 32:
+                            #logger.debug('Found k32 plot!')
+                            self.plots_portable_k32 += 1
+                        elif plot['size'] == 33:
+                            #logger.debug('Found k33 plot!')
+                            self.plots_portable_k33 += 1
+                        self.portable_size += plot['file_size']
                         
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
-            logger.debug(f'plots_k32_og: {self.plots_k32_og}')
-            logger.debug(f'plots_k33_og: {self.plots_k33_og}')
-            logger.debug(f'plots_k32_portable: {self.plots_k32_portable}')
-            logger.debug(f'plots_k33_portable: {self.plots_k33_portable}')
+            logger.debug(f'self_portable_size: {self.self_portable_size}')
+            logger.debug(f'plots_og_k32: {self.plots_og_k32}')
+            logger.debug(f'plots_og_k33: {self.plots_og_k33}')
+            logger.debug(f'plots_portable_k32: {self.plots_portable_k32}')
+            logger.debug(f'plots_portable_k33: {self.plots_portable_k33}')
+            logger.debug(f'plots_self_portable_k32: {self.plots_self_portable_k32}')
+            logger.debug(f'plots_self_portable_k33: {self.plots_self_portable_k33}')
             #########################################################
             
             logger.info('Fetching blockchain state...')
@@ -142,13 +176,19 @@ class chia_stats:
             self.network_space_size = blockchain['space']
             
             average_block_time = await get_average_block_time(self._fullnode_port)
-            self.og_time_to_win = int((average_block_time) / (self.og_size / self.network_space_size))
-            self.portable_time_to_win = int((average_block_time) / (self.portable_size / self.network_space_size))
             
+            if self.og_size != 0:
+                self.og_time_to_win = int((average_block_time) / (self.og_size / self.network_space_size))           
+            if self.portable_size != 0:
+                self.portable_time_to_win = int((average_block_time) / (self.portable_size / self.network_space_size))
+            if self.self_portable_size != 0:
+                self.self_portable_time_to_win = int((average_block_time) / (self.self_portable_size 
+                                                                             / self.network_space_size))
             logger.debug(f'sync_status: {self.sync_status}')
             logger.debug(f'network_space_size: {self.network_space_size}')
             logger.debug(f'og_time_to_win: {self.og_time_to_win}')
             logger.debug(f'portable_time_to_win: {self.portable_time_to_win}')
+            logger.debug(f'self_portable_time_to_win: {self.self_portable_time_to_win}')
             #########################################################
             
             logger.info('Fetching wallet state...')

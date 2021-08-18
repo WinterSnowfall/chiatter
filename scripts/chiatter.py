@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.70
-@date: 16/08/2021
+@version: 1.80
+@date: 17/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -24,6 +24,9 @@ configParser = ConfigParser()
 
 ##conf file block
 conf_file_full_path = os.path.join('..', 'conf', 'chiatter.conf')
+
+CHIA_STATS_SELF_POOLING_OG = 'og'
+CHIA_STATS_SELF_POOLING_PORTABLE = 'portable'
 
 watchdog_counter = 0
 chia_stats_error_counter = 0
@@ -47,20 +50,29 @@ def chia_stats_worker(loop):
             coroutine = chia_stats_inst.collect_stats()
             loop.run_until_complete(coroutine)
             
-            chia_stats_og_size.set(chia_stats_inst.og_size)
             chia_stats_portable_size.set(chia_stats_inst.portable_size)
-            chia_stats_plots_k32_og.set(chia_stats_inst.plots_k32_og)
-            chia_stats_plots_k33_og.set(chia_stats_inst.plots_k33_og)
-            chia_stats_plots_k32_portable.set(chia_stats_inst.plots_k32_portable)
-            chia_stats_plots_k33_portable.set(chia_stats_inst.plots_k33_portable)
-            chia_stats_network_space_size.set(chia_stats_inst.network_space_size)
-            chia_stats_chia_farmed.set(chia_stats_inst.chia_farmed)
-            chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
-            chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
+            chia_stats_portable_plots_k32.set(chia_stats_inst.plots_portable_k32)
+            chia_stats_portable_plots_k33.set(chia_stats_inst.plots_portable_k33)
             chia_stats_portable_time_to_win.set(chia_stats_inst.portable_time_to_win)
+            
             chia_stats_sync_status.set(chia_stats_inst.sync_status)
             chia_stats_current_height.set(chia_stats_inst.current_height)
+            chia_stats_chia_farmed.set(chia_stats_inst.chia_farmed)
             chia_stats_wallet_funds.set(chia_stats_inst.wallet_funds)
+            chia_stats_network_space_size.set(chia_stats_inst.network_space_size)
+            chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
+            
+            if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
+                chia_stats_og_size.set(chia_stats_inst.og_size)
+                chia_stats_og_plots_k32.set(chia_stats_inst.plots_og_k32)
+                chia_stats_og_plots_k33.set(chia_stats_inst.plots_og_k33)
+                chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
+                
+            if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
+                chia_stats_self_portable_size.set(chia_stats_inst.self_portable_size)
+                chia_stats_self_portable_plots_k32.set(chia_stats_inst.plots_self_portable_k32)
+                chia_stats_self_portable_plots_k33.set(chia_stats_inst.plots_self_portable_k33)
+                chia_stats_self_portable_time_to_win.set(chia_stats_inst.self_portable_time_to_win)
         except:
             chia_stats_error_counter += CHIA_STATS_COLLECTION_INTERVAL
             #uncomment for debugging purposes only
@@ -117,6 +129,9 @@ if __name__ == '__main__':
         if 'chia_stats' in modules:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
+            self_pooling_types = configParser['CHIA_STATS'].get('self_pooling_types')
+            self_pooling_types = [pooling_type.strip() for pooling_type in self_pooling_types.split(',')]
+            CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS = configParser['CHIA_STATS'].get('self_pooling_contact_address')
         if 'truepool_stats' in modules:
             TRUEPOOL_STATS_COLLECTION_INTERVAL = configParser['TRUEPOOL_STATS'].getint('collection_interval')
             TRUEPOOL_STATS_LAUNCHER_ID = configParser['TRUEPOOL_STATS'].get('launcher_id')
@@ -129,20 +144,29 @@ if __name__ == '__main__':
     ### Prometheus client metrics ####################################################################################################################
     #
     #---------------------- chia_stats ---------------------------------------------------------------------------------------------------------------
-    chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
     chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
-    chia_stats_plots_k32_og = Gauge('chia_stats_plots_k32_og', 'Number of og k32 plots')
-    chia_stats_plots_k33_og = Gauge('chia_stats_plots_k33_og', 'Number of og k33 plots')
-    chia_stats_plots_k32_portable = Gauge('chia_stats_plots_k32_portable', 'Number of portable k32 plots')
-    chia_stats_plots_k33_portable = Gauge('chia_stats_plots_k33_portable', 'Number of portable k33 plots')
-    chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
-    chia_stats_chia_farmed = Gauge('chia_stats_chia_farmed', 'XCH farmed')
-    chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
-    chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
+    chia_stats_portable_plots_k32 = Gauge('chia_stats_portable_plots_k32', 'Number of portable k32 plots')
+    chia_stats_portable_plots_k33 = Gauge('chia_stats_portable_plots_k33', 'Number of portable k33 plots')
     chia_stats_portable_time_to_win = Gauge('chia_stats_portable_time_to_win', 'Portable time to win')
+    #
     chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
     chia_stats_current_height = Gauge('chia_stats_current_height', 'Current blockchain height')
+    chia_stats_chia_farmed = Gauge('chia_stats_chia_farmed', 'XCH farmed')
     chia_stats_wallet_funds = Gauge('chia_stats_wallet_funds', 'Funds present in the main chia wallet')
+    chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
+    chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
+    #
+    if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
+        chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
+        chia_stats_og_plots_k32 = Gauge('chia_stats_og_plots_k32', 'Number of og k32 plots')
+        chia_stats_og_plots_k33 = Gauge('chia_stats_og_plots_k33', 'Number of og k33 plots')
+        chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
+    #   
+    if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
+        chia_stats_self_portable_size = Gauge('chia_stats_self_portable_size', 'Total size of portable self-pooling plots')
+        chia_stats_self_portable_plots_k32 = Gauge('chia_stats_self_portable_plots_k32', 'Number of portable self-pooling k32 plots')
+        chia_stats_self_portable_plots_k33 = Gauge('chia_stats_self_portable_plots_k33', 'Number of portable self-pooling k33 plots')
+        chia_stats_self_portable_time_to_win = Gauge('chia_stats_self_portable_time_to_win', 'Portable self-pooling time to win')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
     #---------------------- truepool_stats -----------------------------------------------------------------------------------------------------------
@@ -168,10 +192,12 @@ if __name__ == '__main__':
     
     if 'chia_stats' in modules:
         print('*** Loading the chia_stats module ***')
-        chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL);
+        chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL)
+        if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
+            chia_stats_inst.set_self_pooling_contract_address(CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS)
     if 'truepool_stats' in modules:
         print('*** Loading the truepool_stats module ***')
-        truepool_stats_inst = truepool_stats(TRUEPOOL_STATS_LOGGING_LEVEL);
+        truepool_stats_inst = truepool_stats(TRUEPOOL_STATS_LOGGING_LEVEL)
         truepool_stats_inst.set_farmer_launcher_id(TRUEPOOL_STATS_LAUNCHER_ID)
     
     #a mere aestetic separator
