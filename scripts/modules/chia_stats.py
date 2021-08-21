@@ -126,8 +126,6 @@ class chia_stats:
             plots = await harvester.get_plots()
             
             for plot in plots['plots']:
-                #logger.debug(f'plot: {plot}')
-                
                 if plot['pool_public_key'] is not None:
                     self.og_size += plot["file_size"]
                     
