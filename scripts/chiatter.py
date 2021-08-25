@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.80
-@date: 17/08/2021
+@version: 1.90
+@date: 25/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -56,10 +56,12 @@ def chia_stats_worker(loop):
             chia_stats_portable_time_to_win.set(chia_stats_inst.portable_time_to_win)
             
             chia_stats_sync_status.set(chia_stats_inst.sync_status)
+            chia_stats_difficulty.set(chia_stats_inst.difficulty)
             chia_stats_current_height.set(chia_stats_inst.current_height)
             chia_stats_chia_farmed.set(chia_stats_inst.chia_farmed)
             chia_stats_wallet_funds.set(chia_stats_inst.wallet_funds)
             chia_stats_network_space_size.set(chia_stats_inst.network_space_size)
+            chia_stats_full_node_connections.set(chia_stats_inst.full_node_connections)
             chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
             
             if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
@@ -150,10 +152,12 @@ if __name__ == '__main__':
     chia_stats_portable_time_to_win = Gauge('chia_stats_portable_time_to_win', 'Portable time to win')
     #
     chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
+    chia_stats_difficulty = Gauge('chia_stats_difficulty', 'Current difficulty on mainnet')
     chia_stats_current_height = Gauge('chia_stats_current_height', 'Current blockchain height')
     chia_stats_chia_farmed = Gauge('chia_stats_chia_farmed', 'XCH farmed')
     chia_stats_wallet_funds = Gauge('chia_stats_wallet_funds', 'Funds present in the main chia wallet')
     chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
+    chia_stats_full_node_connections = Gauge('chia_stats_full_node_connections', 'Number of full node connections')
     chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
     #
     if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:

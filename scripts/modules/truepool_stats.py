@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.80
-@date: 17/08/2021
+@version: 1.90
+@date: 25/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -33,7 +33,7 @@ class truepool_stats:
     _logging_level = logging.WARNING
     
     HTTP_SUCCESS_OK = 200
-    HTTP_TIMEOUT = 5
+    HTTP_TIMEOUT = 10
     
     ##base url strings
     POOL_INFO_API_URL = 'https://truepool.io/v1/pool/info'

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.80
-@date: 17/08/2021
+@version: 1.90
+@date: 25/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -54,7 +54,9 @@ class chia_stats:
         self.plots_self_portable_k32 = 0
         self.plots_self_portable_k33 = 0
         self.sync_status = False
+        self.difficulty = 0
         self.network_space_size = 0
+        self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
         self.self_portable_time_to_win = 0
@@ -92,7 +94,9 @@ class chia_stats:
         self.plots_self_portable_k32 = 0
         self.plots_self_portable_k33 = 0
         self.sync_status = False
+        self.difficulty = 0
         self.network_space_size = 0
+        self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
         self.self_portable_time_to_win = 0
@@ -171,7 +175,15 @@ class chia_stats:
             blockchain = await fullnode.get_blockchain_state()
             
             self.sync_status = blockchain['sync'].get('synced')
+            self.difficulty = blockchain['difficulty']
             self.network_space_size = blockchain['space']
+            
+            connections = await fullnode.get_connections()
+            
+            for connection in connections:
+                #only count full node connections (type 1)
+                if connection['type'] == 1:
+                    self.full_node_connections += 1
             
             average_block_time = await get_average_block_time(self._fullnode_port)
             
@@ -183,7 +195,9 @@ class chia_stats:
                 self.self_portable_time_to_win = int((average_block_time) / (self.self_portable_size 
                                                                              / self.network_space_size))
             logger.debug(f'sync_status: {self.sync_status}')
+            logger.debug(f'difficulty: {self.difficulty}')
             logger.debug(f'network_space_size: {self.network_space_size}')
+            logger.debug(f'full_node_connections: {self.full_node_connections}')
             logger.debug(f'og_time_to_win: {self.og_time_to_win}')
             logger.debug(f'portable_time_to_win: {self.portable_time_to_win}')
             logger.debug(f'self_portable_time_to_win: {self.self_portable_time_to_win}')
