@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.90
-@date: 25/08/2021
+@version: 2.00
+@date: 28/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -96,8 +96,10 @@ def truepool_stats_worker():
             truepool_stats_blocks_won.set(truepool_stats_inst.pool_blocks_won)
             truepool_stats_seconds_since_last_win.set(truepool_stats_inst.pool_seconds_since_last_win)
             truepool_stats_farmer_points.set(truepool_stats_inst.farmer_points)
+            truepool_stats_farmer_points_pplns.set(truepool_stats_inst.farmer_points_pplns)
             truepool_stats_farmer_difficulty.set(truepool_stats_inst.farmer_difficulty)
             truepool_stats_farmer_points_percentage.set(truepool_stats_inst.farmer_points_percentage)
+            truepool_stats_farmer_share_pplns.set(truepool_stats_inst.farmer_share_pplns)
             truepool_stats_farmer_estimated_size.set(truepool_stats_inst.farmer_estimated_size)
             truepool_stats_farmer_ranking.set(truepool_stats_inst.farmer_ranking)
             truepool_stats_partial_errors_24h.set(truepool_stats_inst.partial_errors_24h)
@@ -180,8 +182,10 @@ if __name__ == '__main__':
     truepool_stats_blocks_won = Gauge('truepool_stats_blocks_won', 'Number of blocks won by the pool')
     truepool_stats_seconds_since_last_win = Gauge('truepool_stats_seconds_since_last_win', 'Number of seconds since last block win (pool)')
     truepool_stats_farmer_points = Gauge('truepool_stats_farmer_points', 'Total points a farmer has for the current reward cycle')
+    truepool_stats_farmer_points_pplns = Gauge('truepool_stats_farmer_points_pplns', 'Pool wide total of PPLNS points')
     truepool_stats_farmer_difficulty = Gauge('truepool_stats_farmer_difficulty', 'Current pool difficulty for the farmer')
-    truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has from the overall rewards')
+    truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has of the overall rewards')
+    truepool_stats_farmer_share_pplns = Gauge('truepool_stats_farmer_share_pplns', 'Percentage the farmer has of the pool total PPLNS points')
     truepool_stats_farmer_estimated_size = Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
     truepool_stats_farmer_ranking = Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
     truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 1.90
-@date: 25/08/2021
+@version: 2.00
+@date: 28/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -53,8 +53,10 @@ class truepool_stats:
         self.pool_blocks_won = 0
         self.pool_seconds_since_last_win = 0
         self.farmer_points = 0
+        self.farmer_points_pplns = 0
         self.farmer_difficulty = 0
         self.farmer_points_percentage = 0
+        self.farmer_share_pplns = 0
         self.farmer_estimated_size = 0
         self.farmer_ranking = 0
         self.partial_errors_24h = 0
@@ -76,8 +78,10 @@ class truepool_stats:
         self.pool_blocks_won = 0
         self.pool_seconds_since_last_win = 0
         self.farmer_points = 0
+        self.farmer_points_pplns = 0
         self.farmer_difficulty = 0
         self.farmer_points_percentage = 0
+        self.farmer_share_pplns = 0
         self.farmer_estimated_size = 0
         self.farmer_ranking = 0
         self.partial_errors_24h = 0
@@ -153,22 +157,26 @@ class truepool_stats:
                 else:
                     logger.warning('Failed to connect to API endpoint for farmer ranking stats.')
                 
-                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}', 
+                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'/{self._farmer_launcher_id}', 
                                        timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
                 if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
-                    farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results'][0]
+                    farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
                     self.farmer_points = farmer_stats_json['points']
+                    self.farmer_points_pplns = farmer_stats_json['points_pplns']
                     self.farmer_difficulty = farmer_stats_json['difficulty']
                     self.farmer_points_percentage = farmer_stats_json['points_percentage']
+                    self.farmer_share_pplns = farmer_stats_json['share_pplns']
                     self.farmer_estimated_size = farmer_stats_json['farm_estimated_size']
                     
                     logger.debug(f'farmer_points: {self.farmer_points}')
+                    logger.debug(f'farmer_points_pplns: {self.farmer_points_pplns}')
                     logger.debug(f'farmer_difficulty: {self.farmer_difficulty}')
                     logger.debug(f'farmer_points_percentage: {self.farmer_points_percentage}')
+                    logger.debug(f'farmer_share_pplns: {self.farmer_share_pplns}')
                     logger.debug(f'farmer_estimated_size: {self.farmer_estimated_size}')
                 else:
                     logger.warning('Failed to connect to API endpoint for farmer stats.')
