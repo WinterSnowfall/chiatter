@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.00
-@date: 28/08/2021
+@version: 2.10
+@date: 31/08/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -24,7 +24,7 @@ import traceback
 
 ##logging configuration block
 log_file_full_path = os.path.join('..', 'logs', 'chia_stats.log')
-logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=104857600, backupCount=2, encoding='utf-8')
+logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=16777216, backupCount=2, encoding='utf-8')
 logger_format = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
 logger_file_handler.setFormatter(logging.Formatter(logger_format))
 #logging level for other modules
@@ -41,8 +41,8 @@ class chia_stats:
         self._self_pooling_contract_address = None
         self._decoded_puzzle_hash = None
         self._chia_farmed_prev = 0
-        self._seconds_since_last_win_prev = 0
         self._seconds_since_last_win_stale = False
+        self._last_win_max_time = 0
         
         self.og_size = 0
         self.portable_size = 0
@@ -224,26 +224,21 @@ class chia_stats:
             #simple transaction-based block win time detection logic
             if self._seconds_since_last_win_stale:
                 wallet_transactions = await wallet.get_transactions(main_wallet[0]["id"])
-                max_time = 0
                 
                 for transaction_record in wallet_transactions:
                     if int(transaction_record.amount) == 250000000000:
                         logger.debug('Found transaction with a block win share amount.')
                         current_time = int(transaction_record.created_at_time)
-                        if current_time > max_time:
-                            max_time = current_time
-                
-                self.seconds_since_last_win = int(datetime.timestamp(datetime.now())) - max_time
-                
-                if self.seconds_since_last_win != self._seconds_since_last_win_prev:
-                    self._seconds_since_last_win_prev = self.seconds_since_last_win
-                    self._seconds_since_last_win_stale = False
-                elif self._farmer_pool_earnings_stale:
-                    logger.debug('Seconds since last win amount is stale. Will recheck on next update.')
-                    
-                logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
+                        if current_time > self._last_win_max_time:
+                            self._last_win_max_time = current_time
+                            
+                self._seconds_since_last_win_stale = False
             else:
-                logger.info('Skipping seconds since last win update until next block win.')
+                logger.info('Skipping _last_win_max_time update until next block win.')
+                
+            self.seconds_since_last_win = int(datetime.timestamp(datetime.now())) - self._last_win_max_time
+                
+            logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
             #########################################################
             
         except:
