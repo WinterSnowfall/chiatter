@@ -35,6 +35,10 @@ class truepool_stats:
     HTTP_SUCCESS_OK = 200
     HTTP_TIMEOUT = 10
     
+    #ordering used for the farmer ranking query
+    #options: points, points_pplns (- stands for descending)
+    FARMER_ORDERING = '-points_pplns'
+    
     ##base url strings
     POOL_INFO_API_URL = 'https://truepool.io/v1/pool/info'
     FARMER_STATS_API_URL = 'https://truepool.io/v1/pool/farmer'
@@ -130,8 +134,8 @@ class truepool_stats:
                                 
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - based on total farmer count
-                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'?ordering=-points&limit={self.pool_total_farmers}', 
-                                       timeout=truepool_stats.HTTP_TIMEOUT)
+                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'?ordering={truepool_stats.FARMER_ORDERING}' + 
+                                       f'&limit={self.pool_total_farmers}', timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             

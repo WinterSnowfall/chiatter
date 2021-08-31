@@ -257,7 +257,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 20,
+          "max": 12,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1526,13 +1526,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_points{}",
+          "expr": "truepool_stats_farmer_points_pplns{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Current Points",
+      "title": "Current Points (PPLNS)",
       "type": "stat"
     },
     {
@@ -1815,13 +1815,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_points_percentage{}",
+          "expr": "truepool_stats_farmer_share_pplns{} * 100",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Share Of Upcoming Reward",
+      "title": "Share Of Upcoming Reward (PPLNS)",
       "type": "stat"
     },
     {
@@ -1874,7 +1874,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_points_percentage{} * 1.7325 / 100",
+          "expr": "truepool_stats_farmer_share_pplns{} * 1.7325",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2149,6 +2149,6 @@
   },
   "timezone": "browser",
   "title": "chiatter",
-  "uid": "FGfG1LGnz",
-  "version": 94
+  "uid": "4ICjQO4nz",
+  "version": 8
 }

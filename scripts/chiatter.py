@@ -185,7 +185,7 @@ if __name__ == '__main__':
     truepool_stats_farmer_points_pplns = Gauge('truepool_stats_farmer_points_pplns', 'Total points a farmer has over a certain PPLNS interval')
     truepool_stats_farmer_difficulty = Gauge('truepool_stats_farmer_difficulty', 'Current pool difficulty for the farmer')
     truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has of the overall rewards')
-    truepool_stats_farmer_share_pplns = Gauge('truepool_stats_farmer_share_pplns', 'Percentage the farmer has of the pool PPLNS points over a certain interval')
+    truepool_stats_farmer_share_pplns = Gauge('truepool_stats_farmer_share_pplns', 'Fraction the farmer has of the pool PPLNS points over a certain interval')
     truepool_stats_farmer_estimated_size = Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
     truepool_stats_farmer_ranking = Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
     truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
