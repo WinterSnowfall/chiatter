@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.10
-@date: 31/08/2021
+@version: 2.20
+@date: 25/09/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -226,17 +226,25 @@ class chia_stats:
                 wallet_transactions = await wallet.get_transactions(main_wallet[0]["id"])
                 
                 for transaction_record in wallet_transactions:
+                    logger.debug(transaction_record)
                     if int(transaction_record.amount) == 250000000000:
                         logger.debug('Found transaction with a block win share amount.')
                         current_time = int(transaction_record.created_at_time)
                         if current_time > self._last_win_max_time:
                             self._last_win_max_time = current_time
                             
+                if self._last_win_max_time == 0:
+                    #this may currently happen due to a hard limit of 50 transactions (bug) in the RPC API
+                    logger.warning('Unable to find a valid block win transaction.')
+                            
                 self._seconds_since_last_win_stale = False
             else:
                 logger.info('Skipping _last_win_max_time update until next block win.')
-                
-            self.seconds_since_last_win = int(datetime.timestamp(datetime.now())) - self._last_win_max_time
+            
+            if self._last_win_max_time != 0:
+                self.seconds_since_last_win = int(datetime.timestamp(datetime.now())) - self._last_win_max_time
+            else:
+                self.seconds_since_last_win = 0
                 
             logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
             #########################################################
