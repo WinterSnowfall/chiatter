@@ -226,7 +226,6 @@ class chia_stats:
                 wallet_transactions = await wallet.get_transactions(main_wallet[0]["id"])
                 
                 for transaction_record in wallet_transactions:
-                    logger.debug(transaction_record)
                     if int(transaction_record.amount) == 250000000000:
                         logger.debug('Found transaction with a block win share amount.')
                         current_time = int(transaction_record.created_at_time)
