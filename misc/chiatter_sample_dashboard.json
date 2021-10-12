@@ -257,7 +257,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 12,
+          "max": 10,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -512,7 +512,7 @@
         {
           "exemplar": true,
           "expr": "chia_stats_og_plots_k32{}",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "K32 (OG)",
           "refId": "A"
@@ -520,7 +520,7 @@
         {
           "exemplar": true,
           "expr": "chia_stats_og_plots_k33{}",
-          "hide": false,
+          "hide": true,
           "interval": "",
           "legendFormat": "K33 (OG)",
           "refId": "B"
@@ -543,7 +543,7 @@
         },
         {
           "exemplar": true,
-          "expr": "chia_stats_self_portable_plots_k32{}",
+          "expr": "chia_stats_sp_portable_plots_k32{}",
           "hide": false,
           "interval": "",
           "legendFormat": "K32 (Portable Self-Pooling)",
@@ -551,7 +551,7 @@
         },
         {
           "exemplar": true,
-          "expr": "chia_stats_self_portable_plots_k33{}",
+          "expr": "chia_stats_sp_portable_plots_k33{}",
           "hide": false,
           "interval": "",
           "legendFormat": "K33 (Portable Self-Pooling)",
@@ -568,6 +568,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -731,7 +732,7 @@
       "type": "gauge"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -740,184 +741,185 @@
         "y": 11
       },
       "id": 123166,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": null,
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "max": 400,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 0,
+            "y": 12
+          },
+          "id": 123125,
+          "interval": "5",
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.1.0-29505pre",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "chia_stats_og_plots_k32{} + chia_stats_og_plots_k33{}",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Plot Count",
+          "type": "bargauge"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "Months"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 8,
+            "y": 12
+          },
+          "id": 123131,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.0-29505pre",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "chia_stats_og_time_to_win{} / 2629800",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Time To Win (Estimated)",
+          "type": "stat"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "light-green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 10,
+            "x": 14,
+            "y": 12
+          },
+          "id": 123127,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.0-29505pre",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "chia_stats_og_size{}",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total Plots Size",
+          "type": "stat"
+        }
+      ],
       "title": "OG Plots",
       "type": "row"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 400,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 0,
-        "y": 12
-      },
-      "id": 123125,
-      "interval": "5",
-      "options": {
-        "displayMode": "lcd",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.1.0-29505pre",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "chia_stats_og_plots_k32{} + chia_stats_og_plots_k33{}",
-          "format": "time_series",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Plot Count",
-      "type": "bargauge"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "Months"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 8,
-        "y": 12
-      },
-      "id": 123131,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.0-29505pre",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "chia_stats_og_time_to_win{} / 2629800",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Time To Win (Estimated)",
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 10,
-        "x": 14,
-        "y": 12
-      },
-      "id": 123127,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.0-29505pre",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "chia_stats_og_size{}",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Total Plots Size",
-      "type": "stat"
     },
     {
       "collapsed": false,
@@ -926,7 +928,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 12
       },
       "id": 123168,
       "panels": [],
@@ -942,7 +944,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 400,
+          "max": 600,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -960,7 +962,7 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 18
+        "y": 13
       },
       "id": 123162,
       "interval": "5",
@@ -981,7 +983,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_self_portable_plots_k32{} + chia_stats_self_portable_plots_k33{}",
+          "expr": "chia_stats_sp_portable_plots_k32{} + chia_stats_sp_portable_plots_k33{}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -1018,7 +1020,7 @@
         "h": 5,
         "w": 6,
         "x": 8,
-        "y": 18
+        "y": 13
       },
       "id": 123163,
       "options": {
@@ -1040,7 +1042,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_self_portable_time_to_win{} / 2629800",
+          "expr": "chia_stats_sp_portable_time_to_win{} / 2629800",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1056,6 +1058,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1074,7 +1077,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 18
+        "y": 13
       },
       "id": 123164,
       "options": {
@@ -1096,7 +1099,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "chia_stats_self_portable_size{}",
+          "expr": "chia_stats_sp_portable_size{}",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -1115,7 +1118,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 18
       },
       "id": 123170,
       "panels": [],
@@ -1131,7 +1134,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 400,
+          "max": 600,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1149,7 +1152,7 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 24
+        "y": 19
       },
       "id": 123143,
       "interval": "5",
@@ -1207,7 +1210,7 @@
         "h": 5,
         "w": 6,
         "x": 8,
-        "y": 24
+        "y": 19
       },
       "id": 123160,
       "options": {
@@ -1245,6 +1248,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1263,7 +1267,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 24
+        "y": 19
       },
       "id": 123142,
       "options": {
@@ -1304,7 +1308,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 24
       },
       "id": 123141,
       "panels": [],
@@ -1319,7 +1323,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 500,
+          "max": 600,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1338,7 +1342,7 @@
         "h": 3,
         "w": 8,
         "x": 0,
-        "y": 30
+        "y": 25
       },
       "id": 123150,
       "options": {
@@ -1358,13 +1362,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_total_farmers{}",
+          "expr": "truepool_stats_farmers{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Pool Members Count",
+      "title": "Members Count",
       "type": "bargauge"
     },
     {
@@ -1392,7 +1396,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 30
+        "y": 25
       },
       "id": 123158,
       "options": {
@@ -1414,7 +1418,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_seconds_since_last_win / 3600",
+          "expr": "truepool_stats_time_since_last_win{} / 3600",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1448,7 +1452,7 @@
         "h": 5,
         "w": 3,
         "x": 11,
-        "y": 30
+        "y": 25
       },
       "id": 123153,
       "options": {
@@ -1470,69 +1474,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_ranking{}",
+          "expr": "truepool_stats_launcher_ranking{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
       "title": "Leaderboard Rank",
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 14,
-        "y": 30
-      },
-      "id": 123149,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.0-29505pre",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "truepool_stats_farmer_points_pplns{}",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Current Points (PPLNS)",
       "type": "stat"
     },
     {
@@ -1562,8 +1510,8 @@
       "gridPos": {
         "h": 5,
         "w": 5,
-        "x": 19,
-        "y": 30
+        "x": 14,
+        "y": 25
       },
       "id": 123154,
       "options": {
@@ -1585,13 +1533,69 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_pool_earnings{} / 1000000000000",
+          "expr": "truepool_stats_launcher_pool_earnings{} / 1000000000000",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
       "title": "Total Rewards Received",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 19,
+        "y": 25
+      },
+      "id": 123149,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "truepool_stats_launcher_points_pplns{}",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Points (PPLNS)",
       "type": "stat"
     },
     {
@@ -1619,7 +1623,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 33
+        "y": 28
       },
       "id": 123147,
       "options": {
@@ -1641,7 +1645,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_minutes_to_win{} / 60",
+          "expr": "truepool_stats_estimate_win{} / 60",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1658,7 +1662,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 100,
+          "max": 200,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1677,7 +1681,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 35
+        "y": 30
       },
       "id": 123155,
       "options": {
@@ -1697,7 +1701,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_blocks_won{}",
+          "expr": "truepool_stats_rewards_blocks{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1714,7 +1718,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 8,
+          "max": 12,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1737,7 +1741,7 @@
         "h": 5,
         "w": 3,
         "x": 11,
-        "y": 35
+        "y": 30
       },
       "id": 123152,
       "options": {
@@ -1773,64 +1777,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 4,
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 14,
-        "y": 35
-      },
-      "id": 123151,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.0-29505pre",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "truepool_stats_farmer_share_pplns{} * 100",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Share Of Upcoming Reward (PPLNS)",
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "decimals": 5,
           "mappings": [],
           "max": 2,
@@ -1851,8 +1797,8 @@
       "gridPos": {
         "h": 5,
         "w": 5,
-        "x": 19,
-        "y": 35
+        "x": 14,
+        "y": 30
       },
       "id": 123171,
       "options": {
@@ -1874,7 +1820,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_share_pplns{} * 1.7325",
+          "expr": "truepool_stats_launcher_share_pplns{} * 1.7325",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1890,6 +1836,65 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 4,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 19,
+        "y": 30
+      },
+      "id": 123151,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0-29505pre",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "truepool_stats_launcher_share_pplns{} * 100",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Share Of Upcoming Reward (PPLNS)",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1908,7 +1913,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 39
+        "y": 34
       },
       "id": 123146,
       "options": {
@@ -1930,13 +1935,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_total_size{}",
+          "expr": "truepool_stats_space{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Total Pool Space (Estimated)",
+      "title": "Pool Space (Estimated)",
       "type": "stat"
     },
     {
@@ -1965,7 +1970,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 40
+        "y": 35
       },
       "id": 123159,
       "options": {
@@ -1987,7 +1992,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_total_size{} * 100 / chia_stats_network_space_size{}",
+          "expr": "truepool_stats_space{} * 100 / chia_stats_network_space_size{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2004,7 +2009,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 30,
+          "max": 50,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -2023,7 +2028,7 @@
         "h": 5,
         "w": 3,
         "x": 11,
-        "y": 40
+        "y": 35
       },
       "id": 123148,
       "options": {
@@ -2043,13 +2048,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_difficulty{}",
+          "expr": "truepool_stats_launcher_difficulty{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Current Pool Difficulty",
+      "title": "Current Difficulty (Pool)",
       "type": "gauge"
     },
     {
@@ -2059,6 +2064,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -2077,7 +2083,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 40
+        "y": 35
       },
       "id": 123156,
       "options": {
@@ -2099,7 +2105,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmer_estimated_size{}",
+          "expr": "truepool_stats_launcher_estimated_size{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -2150,5 +2156,5 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "4ICjQO4nz",
-  "version": 8
+  "version": 53
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.20
-@date: 25/09/2021
+@version: 2.30
+@date: 02/10/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -46,20 +46,20 @@ class chia_stats:
         
         self.og_size = 0
         self.portable_size = 0
-        self.self_portable_size = 0
+        self.sp_portable_size = 0
         self.plots_og_k32 = 0
         self.plots_og_k33 = 0
         self.plots_portable_k32 = 0
         self.plots_portable_k33 = 0
-        self.plots_self_portable_k32 = 0
-        self.plots_self_portable_k33 = 0
+        self.plots_sp_portable_k32 = 0
+        self.plots_sp_portable_k33 = 0
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
         self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
-        self.self_portable_time_to_win = 0
+        self.sp_portable_time_to_win = 0
         self.current_height = 0
         self.wallet_funds = 0
         self.chia_farmed = 0
@@ -86,20 +86,20 @@ class chia_stats:
     def clear_stats(self):
         self.og_size = 0
         self.portable_size = 0
-        self.self_portable_size = 0
+        self.sp_portable_size = 0
         self.plots_og_k32 = 0
         self.plots_og_k33 = 0
         self.plots_portable_k32 = 0
         self.plots_portable_k33 = 0
-        self.plots_self_portable_k32 = 0
-        self.plots_self_portable_k33 = 0
+        self.plots_sp_portable_k32 = 0
+        self.plots_sp_portable_k33 = 0
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
         self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
-        self.self_portable_time_to_win = 0
+        self.sp_portable_time_to_win = 0
         self.current_height = 0
         self.wallet_funds = 0
         self.chia_farmed = 0
@@ -134,40 +134,40 @@ class chia_stats:
                     self.og_size += plot["file_size"]
                     
                     if plot['size'] == 32:
-                        #logger.debug('Found k32 plot!')
+                        #logger.debug('Found k32 OG plot!')
                         self.plots_og_k32 += 1
                     elif plot['size'] == 33:
-                        #logger.debug('Found k33 plot!')
+                        #logger.debug('Found k33 OG plot!')
                         self.plots_og_k33 += 1
                     
                 else:
                     if (self._self_pooling_contract_address is not None and 
                         plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
                         if plot['size'] == 32:
-                            #logger.debug('Found k32 plot!')
-                            self.plots_self_portable_k32 += 1
+                            #logger.debug('Found k32 self-pooling plot!')
+                            self.plots_sp_portable_k32 += 1
                         elif plot['size'] == 33:
-                            #logger.debug('Found k33 plot!')
-                            self.plots_self_portable_k33 += 1
-                        self.self_portable_size += plot['file_size']
+                            #logger.debug('Found k33 self-pooling plot!')
+                            self.plots_sp_portable_k33 += 1
+                        self.sp_portable_size += plot['file_size']
                     else:
                         if plot['size'] == 32:
-                            #logger.debug('Found k32 plot!')
+                            #logger.debug('Found k32 portable plot!')
                             self.plots_portable_k32 += 1
                         elif plot['size'] == 33:
-                            #logger.debug('Found k33 plot!')
+                            #logger.debug('Found k33 portable plot!')
                             self.plots_portable_k33 += 1
                         self.portable_size += plot['file_size']
                         
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
-            logger.debug(f'self_portable_size: {self.self_portable_size}')
+            logger.debug(f'sp_portable_size: {self.sp_portable_size}')
             logger.debug(f'plots_og_k32: {self.plots_og_k32}')
             logger.debug(f'plots_og_k33: {self.plots_og_k33}')
             logger.debug(f'plots_portable_k32: {self.plots_portable_k32}')
             logger.debug(f'plots_portable_k33: {self.plots_portable_k33}')
-            logger.debug(f'plots_self_portable_k32: {self.plots_self_portable_k32}')
-            logger.debug(f'plots_self_portable_k33: {self.plots_self_portable_k33}')
+            logger.debug(f'plots_sp_portable_k32: {self.plots_sp_portable_k32}')
+            logger.debug(f'plots_sp_portable_k33: {self.plots_sp_portable_k33}')
             #########################################################
             
             logger.info('Fetching blockchain state...')
@@ -188,19 +188,22 @@ class chia_stats:
             average_block_time = await get_average_block_time(self._fullnode_port)
             
             if self.og_size != 0:
-                self.og_time_to_win = int((average_block_time) / (self.og_size / self.network_space_size))           
+                self.og_time_to_win = int((average_block_time) / 
+                                          (self.og_size / self.network_space_size))           
             if self.portable_size != 0:
-                self.portable_time_to_win = int((average_block_time) / (self.portable_size / self.network_space_size))
-            if self.self_portable_size != 0:
-                self.self_portable_time_to_win = int((average_block_time) / (self.self_portable_size 
-                                                                             / self.network_space_size))
+                self.portable_time_to_win = int((average_block_time) / 
+                                                (self.portable_size / self.network_space_size))
+            if self.sp_portable_size != 0:
+                self.sp_portable_time_to_win = int((average_block_time) / 
+                                                   (self.sp_portable_size / self.network_space_size))
+            
             logger.debug(f'sync_status: {self.sync_status}')
             logger.debug(f'difficulty: {self.difficulty}')
             logger.debug(f'network_space_size: {self.network_space_size}')
             logger.debug(f'full_node_connections: {self.full_node_connections}')
             logger.debug(f'og_time_to_win: {self.og_time_to_win}')
             logger.debug(f'portable_time_to_win: {self.portable_time_to_win}')
-            logger.debug(f'self_portable_time_to_win: {self.self_portable_time_to_win}')
+            logger.debug(f'sp_portable_time_to_win: {self.sp_portable_time_to_win}')
             #########################################################
             
             logger.info('Fetching wallet state...')

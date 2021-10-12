@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.20
-@date: 25/09/2021
+@version: 2.30
+@date: 02/10/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -37,34 +37,35 @@ class truepool_stats:
     
     #ordering used for the farmer ranking query
     #options: points, points_pplns (- stands for descending)
-    FARMER_ORDERING = '-points_pplns'
+    LAUNCHER_ORDERING = '-points_pplns'
     
-    ##base url strings
-    POOL_INFO_API_URL = 'https://truepool.io/v1/pool/info'
-    FARMER_STATS_API_URL = 'https://truepool.io/v1/pool/farmer'
-    PARTIALS_STATS_API_URL = 'https://truepool.io/v1/pool/partial'
-    PAYOUT_STATS_API_URL = 'https://truepool.io/v1/pool/payout_address'
+    TRUEPOOL_BASE_URL = 'https://truepool.io'
+    ##API endpoint URLs
+    POOL_STATS_API_URL = TRUEPOOL_BASE_URL + '/api/v1.0/stats'
+    LAUNCHER_STATS_API_URL = TRUEPOOL_BASE_URL + '/api/v1.0/launcher'
+    PAYOUT_STATS_API_URL = TRUEPOOL_BASE_URL + '/api/v1.0/payoutaddress'
+    PARTIALS_STATS_API_URL = TRUEPOOL_BASE_URL + '/api/v1.0/partial'
 
     def __init__(self, logging_level):
-        self._farmer_launcher_id = None
-        self._pool_blocks_won_prev = 0
-        self._farmer_pool_earnings_prev = 0
-        self._farmer_pool_earnings_stale = False
+        self._launcher_id = None
+        self._pool_rewards_blocks_prev = 0
+        self._launcher_pool_earnings_prev = 0
+        self._launcher_pool_earnings_stale = False
     
-        self.pool_total_size = 0
-        self.pool_total_farmers = 0
-        self.pool_minutes_to_win = 0
-        self.pool_blocks_won = 0
-        self.pool_seconds_since_last_win = 0
-        self.farmer_points = 0
-        self.farmer_points_pplns = 0
-        self.farmer_difficulty = 0
-        self.farmer_points_percentage = 0
-        self.farmer_share_pplns = 0
-        self.farmer_estimated_size = 0
-        self.farmer_ranking = 0
+        self.pool_space = 0
+        self.pool_farmers = 0
+        self.pool_estimate_win = 0
+        self.pool_rewards_blocks = 0
+        self.pool_time_since_last_win = 0
+        self.launcher_points = 0
+        self.launcher_points_pplns = 0
+        self.launcher_difficulty = 0
+        self.launcher_points_of_total = 0
+        self.launcher_share_pplns = 0
+        self.launcher_estimated_size = 0
+        self.launcher_ranking = 0
+        self.launcher_pool_earnings = 0
         self.partial_errors_24h = 0
-        self.farmer_pool_earnings = 0
         
         #defaults to WARNING otherwise
         if logging_level == 'DEBUG':
@@ -76,26 +77,26 @@ class truepool_stats:
         logger.setLevel(self._logging_level)
     
     def clear_stats(self):
-        self.pool_total_size = 0
-        self.pool_total_farmers = 0
-        self.pool_minutes_to_win = 0
-        self.pool_blocks_won = 0
-        self.pool_seconds_since_last_win = 0
-        self.farmer_points = 0
-        self.farmer_points_pplns = 0
-        self.farmer_difficulty = 0
-        self.farmer_points_percentage = 0
-        self.farmer_share_pplns = 0
-        self.farmer_estimated_size = 0
-        self.farmer_ranking = 0
+        self.pool_space = 0
+        self.pool_farmers = 0
+        self.pool_estimate_win = 0
+        self.pool_rewards_blocks = 0
+        self.pool_time_since_last_win = 0
+        self.launcher_points = 0
+        self.launcher_points_pplns = 0
+        self.launcher_difficulty = 0
+        self.launcher_points_of_total = 0
+        self.launcher_share_pplns = 0
+        self.launcher_estimated_size = 0
+        self.launcher_ranking = 0
         self.partial_errors_24h = 0
         
-    def set_farmer_launcher_id(self, farmer_launcher_id):
-        self._farmer_launcher_id = farmer_launcher_id
+    def set_launcher_id(self, launcher_id):
+        self._launcher_id = launcher_id
         
     def collect_stats(self):
-        if self._farmer_launcher_id is None:
-            raise Exception('Farmer launcher id has not been set. Pool stats can not be collected!')
+        if self._launcher_id is None:
+            raise Exception('Launcher id has not been set. Pool stats can not be collected!')
         
         logger.info('+++ Starting data collection run +++')
         
@@ -107,83 +108,122 @@ class truepool_stats:
                 #########################################################
                 logger.info('Fetching pool stats...')
                                 
-                response = session.get(truepool_stats.POOL_INFO_API_URL, timeout=truepool_stats.HTTP_TIMEOUT)
+                response = session.get(truepool_stats.POOL_STATS_API_URL, timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
                 if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                     pool_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
-                    self.pool_total_size = pool_stats_json['total_size']
-                    self.pool_total_farmers = pool_stats_json['total_farmers']
-                    self.pool_minutes_to_win = pool_stats_json['minutes_to_win']
-                    self.pool_blocks_won = pool_stats_json['total_rewards_heights']
-                    self.pool_seconds_since_last_win = pool_stats_json['seconds_since_last_win']
+                    self.pool_space = pool_stats_json['pool_space']
+                    self.pool_farmers = pool_stats_json['farmers']
+                    self.pool_estimate_win = pool_stats_json['estimate_win']
+                    self.pool_rewards_blocks = pool_stats_json['rewards_blocks']
+                    self.pool_time_since_last_win = pool_stats_json['time_since_last_win']
                     
-                    logger.debug(f'pool_total_size: {self.pool_total_size}')
-                    logger.debug(f'pool_total_farmers: {self.pool_total_farmers}')
-                    logger.debug(f'pool_minutes_to_win: {self.pool_minutes_to_win}')
-                    logger.debug(f'pool_blocks_won: {self.pool_blocks_won}')
-                    logger.debug(f'pool_seconds_since_last_win: {self.pool_seconds_since_last_win}')
+                    logger.debug(f'pool_space: {self.pool_space}')
+                    logger.debug(f'pool_farmers: {self.pool_farmers}')
+                    logger.debug(f'pool_estimate_win: {self.pool_estimate_win}')
+                    logger.debug(f'pool_rewards_blocks: {self.pool_rewards_blocks}')
+                    logger.debug(f'pool_time_since_last_win: {self.pool_time_since_last_win}')
                 else:
                     logger.warning('Failed to connect to API endpoint for pool stats.')
                 #########################################################
                 
                 #########################################################
-                logger.info('Fetching farmer stats...')
+                logger.info('Fetching launcher stats...')
                                 
                 #can't be bothered with pagination (meant for the website anyway), 
-                #so use a resonable non-standard limit - based on total farmer count
-                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'?ordering={truepool_stats.FARMER_ORDERING}' + 
-                                       f'&limit={self.pool_total_farmers}', timeout=truepool_stats.HTTP_TIMEOUT)
+                #so use a resonable non-standard limit - based on farmer count
+                response = session.get(truepool_stats.LAUNCHER_STATS_API_URL + f'?ordering={truepool_stats.LAUNCHER_ORDERING}' + 
+                                       f'&limit={self.pool_farmers}', timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
                 if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
                     global_farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
-                    farmer_iterator = iter(global_farmer_stats_json)
-                    found_farmer = False
+                    launcher_iterator = iter(global_farmer_stats_json)
+                    found_launcher = False
                     
                     try:
-                        while not found_farmer:
-                            current_farmer = next(farmer_iterator)
-                            self.farmer_ranking += 1
+                        while not found_launcher:
+                            current_farmer = next(launcher_iterator)
+                            self.launcher_ranking += 1
                             
-                            if current_farmer['launcher_id'].strip() == self._farmer_launcher_id:
-                                logger.debug('Found the farmer!')
-                                found_farmer = True
+                            if current_farmer['launcher_id'].strip() == self._launcher_id:
+                                logger.debug('Found the launcher!')
+                                found_launcher = True
                     except StopIteration:
-                        logger.error('Failed to find farmer based on the launcher id.')
+                        logger.error('Failed to find an entry based on the launcher id.')
                         raise
                     
-                    logger.debug(f'farmer_ranking: {self.farmer_ranking}')
+                    logger.debug(f'launcher_ranking: {self.launcher_ranking}')
                 else:
-                    logger.warning('Failed to connect to API endpoint for farmer ranking stats.')
+                    logger.warning('Failed to connect to API endpoint for launcher ranking stats.')
                 
-                response = session.get(truepool_stats.FARMER_STATS_API_URL + f'/{self._farmer_launcher_id}', 
+                response = session.get(truepool_stats.LAUNCHER_STATS_API_URL + f'/{self._launcher_id}', 
                                        timeout=truepool_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
                 if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
-                    farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
+                    launcher_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
-                    self.farmer_points = farmer_stats_json['points']
-                    self.farmer_points_pplns = farmer_stats_json['points_pplns']
-                    self.farmer_difficulty = farmer_stats_json['difficulty']
-                    self.farmer_points_percentage = farmer_stats_json['points_percentage']
-                    self.farmer_share_pplns = farmer_stats_json['share_pplns']
-                    self.farmer_estimated_size = farmer_stats_json['farm_estimated_size']
+                    self.launcher_points = launcher_stats_json['points']
+                    self.launcher_points_pplns = launcher_stats_json['points_pplns']
+                    self.launcher_difficulty = launcher_stats_json['difficulty']
+                    self.launcher_points_of_total = launcher_stats_json['points_of_total']
+                    self.launcher_share_pplns = launcher_stats_json['share_pplns']
+                    self.launcher_estimated_size = launcher_stats_json['estimated_size']
                     
-                    logger.debug(f'farmer_points: {self.farmer_points}')
-                    logger.debug(f'farmer_points_pplns: {self.farmer_points_pplns}')
-                    logger.debug(f'farmer_difficulty: {self.farmer_difficulty}')
-                    logger.debug(f'farmer_points_percentage: {self.farmer_points_percentage}')
-                    logger.debug(f'farmer_share_pplns: {self.farmer_share_pplns}')
-                    logger.debug(f'farmer_estimated_size: {self.farmer_estimated_size}')
+                    logger.debug(f'launcher_points: {self.launcher_points}')
+                    logger.debug(f'launcher_points_pplns: {self.launcher_points_pplns}')
+                    logger.debug(f'launcher_difficulty: {self.launcher_difficulty}')
+                    logger.debug(f'launcher_points_of_total: {self.launcher_points_of_total}')
+                    logger.debug(f'launcher_share_pplns: {self.launcher_share_pplns}')
+                    logger.debug(f'launcher_estimated_size: {self.launcher_estimated_size}')
                 else:
-                    logger.warning('Failed to connect to API endpoint for farmer stats.')
+                    logger.warning('Failed to connect to API endpoint for launcher stats.')
+                #########################################################
+                
+                #########################################################
+                if self._pool_rewards_blocks_prev != self.pool_rewards_blocks or self._launcher_pool_earnings_stale:
+                    logger.info('Fetching payout (address) stats...')
+                    
+                    #skip payout reads until the next block win
+                    self._pool_rewards_blocks_prev = self.pool_rewards_blocks
+                    #ensure the stats are refresh until a change is detected (may come with a delay)
+                    self._launcher_pool_earnings_stale = True
+                    
+                    #can't be bothered with pagination (meant for the website anyway), 
+                    #so use a resonable non-standard limit - may have to adjust later on
+                    response = session.get(truepool_stats.PAYOUT_STATS_API_URL + f'/?launcher={self._launcher_id}&limit=500', 
+                                           timeout=truepool_stats.HTTP_TIMEOUT)
+                    
+                    logger.debug(f'HTTP response code is: {response.status_code}.')
+                
+                    if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
+                        payouts_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
+                        
+                        #clear existing value before updating
+                        self.launcher_pool_earnings = 0
+                        
+                        for payout in payouts_stats_json:
+                            self.launcher_pool_earnings += payout['amount']
+                                
+                        if self.launcher_pool_earnings != self._launcher_pool_earnings_prev:
+                            self._launcher_pool_earnings_prev = self.launcher_pool_earnings
+                            self._launcher_pool_earnings_stale = False
+                        elif self._launcher_pool_earnings_stale:
+                            logger.debug('Launcher pool earnings are stale. Will recheck on next update.')
+                                
+                        logger.debug(f'launcher_pool_earnings: {self.launcher_pool_earnings}')
+                    else:
+                        logger.warning('Failed to connect to API endpoint for payout stats.')
+                        
+                else:
+                    logger.info('Skipping payout stats update until next block win.')
                 #########################################################
                 
                 #########################################################
@@ -191,7 +231,7 @@ class truepool_stats:
                 
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - may have to adjust later on
-                response = session.get(truepool_stats.PARTIALS_STATS_API_URL + f'/?launcher_id={self._farmer_launcher_id}' + 
+                response = session.get(truepool_stats.PARTIALS_STATS_API_URL + f'?launcher={self._launcher_id}' + 
                                        f'&start_timestamp={four_score_and_twenty_four_hours_ago}&limit=500', 
                                        timeout=truepool_stats.HTTP_TIMEOUT)
                 
@@ -207,45 +247,6 @@ class truepool_stats:
                     logger.debug(f'partial_errors_24h: {self.partial_errors_24h}')
                 else:
                     logger.warning('Failed to connect to API endpoint for partials stats.')
-                #########################################################
-                
-                #########################################################
-                if self._pool_blocks_won_prev != self.pool_blocks_won or self._farmer_pool_earnings_stale:
-                    logger.info('Fetching payout stats...')
-                    
-                    #skip payout reads until the next block win
-                    self._pool_blocks_won_prev = self.pool_blocks_won
-                    #ensure the stats are refresh until a change is detected (may come with a delay)
-                    self._farmer_pool_earnings_stale = True
-                    
-                    #can't be bothered with pagination (meant for the website anyway), 
-                    #so use a resonable non-standard limit - may have to adjust later on
-                    response = session.get(truepool_stats.PAYOUT_STATS_API_URL + f'/?farmer={self._farmer_launcher_id}&limit=500', 
-                                           timeout=truepool_stats.HTTP_TIMEOUT)
-                    
-                    logger.debug(f'HTTP response code is: {response.status_code}.')
-                
-                    if response.status_code == truepool_stats.HTTP_SUCCESS_OK:
-                        payouts_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
-                        
-                        #clear existing value before updating
-                        self.farmer_pool_earnings = 0
-                        
-                        for payout in payouts_stats_json:
-                            self.farmer_pool_earnings += payout['amount']
-                                
-                        if self.farmer_pool_earnings != self._farmer_pool_earnings_prev:
-                            self._farmer_pool_earnings_prev = self.farmer_pool_earnings
-                            self._farmer_pool_earnings_stale = False
-                        elif self._farmer_pool_earnings_stale:
-                            logger.debug('Farmer pool earnings are stale. Will recheck on next update.')
-                                
-                        logger.debug(f'farmer_pool_earnings: {self.farmer_pool_earnings}')
-                    else:
-                        logger.warning('Failed to connect to API endpoint for payout stats.')
-                        
-                else:
-                    logger.info('Skipping payout stats update until next block win.')
                 #########################################################
                 
         except:

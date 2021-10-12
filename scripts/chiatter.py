@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.20
-@date: 25/09/2021
+@version: 2.30
+@date: 02/10/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -33,7 +33,7 @@ chia_stats_error_counter = 0
 truepool_stats_error_counter = 0
 
 def sigterm_handler(signum, frame):
-    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painfull. Bye!')
+    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painful. Bye!')
     raise SystemExit(0)
 
 def http_server():
@@ -71,10 +71,10 @@ def chia_stats_worker(loop):
                 chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
                 
             if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
-                chia_stats_self_portable_size.set(chia_stats_inst.self_portable_size)
-                chia_stats_self_portable_plots_k32.set(chia_stats_inst.plots_self_portable_k32)
-                chia_stats_self_portable_plots_k33.set(chia_stats_inst.plots_self_portable_k33)
-                chia_stats_self_portable_time_to_win.set(chia_stats_inst.self_portable_time_to_win)
+                chia_stats_sp_portable_size.set(chia_stats_inst.sp_portable_size)
+                chia_stats_sp_portable_plots_k32.set(chia_stats_inst.plots_sp_portable_k32)
+                chia_stats_sp_portable_plots_k33.set(chia_stats_inst.plots_sp_portable_k33)
+                chia_stats_sp_portable_time_to_win.set(chia_stats_inst.sp_portable_time_to_win)
         except:
             chia_stats_error_counter += CHIA_STATS_COLLECTION_INTERVAL
             #uncomment for debugging purposes only
@@ -90,20 +90,20 @@ def truepool_stats_worker():
             truepool_stats_inst.clear_stats()
             truepool_stats_inst.collect_stats()
             
-            truepool_stats_total_size.set(truepool_stats_inst.pool_total_size)
-            truepool_stats_total_farmers.set(truepool_stats_inst.pool_total_farmers)
-            truepool_stats_minutes_to_win.set(truepool_stats_inst.pool_minutes_to_win)
-            truepool_stats_blocks_won.set(truepool_stats_inst.pool_blocks_won)
-            truepool_stats_seconds_since_last_win.set(truepool_stats_inst.pool_seconds_since_last_win)
-            truepool_stats_farmer_points.set(truepool_stats_inst.farmer_points)
-            truepool_stats_farmer_points_pplns.set(truepool_stats_inst.farmer_points_pplns)
-            truepool_stats_farmer_difficulty.set(truepool_stats_inst.farmer_difficulty)
-            truepool_stats_farmer_points_percentage.set(truepool_stats_inst.farmer_points_percentage)
-            truepool_stats_farmer_share_pplns.set(truepool_stats_inst.farmer_share_pplns)
-            truepool_stats_farmer_estimated_size.set(truepool_stats_inst.farmer_estimated_size)
-            truepool_stats_farmer_ranking.set(truepool_stats_inst.farmer_ranking)
+            truepool_stats_space.set(truepool_stats_inst.pool_space)
+            truepool_stats_farmers.set(truepool_stats_inst.pool_farmers)
+            truepool_stats_estimate_win.set(truepool_stats_inst.pool_estimate_win)
+            truepool_stats_rewards_blocks.set(truepool_stats_inst.pool_rewards_blocks)
+            truepool_stats_time_since_last_win.set(truepool_stats_inst.pool_time_since_last_win)
+            truepool_stats_launcher_points.set(truepool_stats_inst.launcher_points)
+            truepool_stats_launcher_points_pplns.set(truepool_stats_inst.launcher_points_pplns)
+            truepool_stats_launcher_difficulty.set(truepool_stats_inst.launcher_difficulty)
+            truepool_stats_launcher_points_of_total.set(truepool_stats_inst.launcher_points_of_total)
+            truepool_stats_launcher_share_pplns.set(truepool_stats_inst.launcher_share_pplns)
+            truepool_stats_launcher_estimated_size.set(truepool_stats_inst.launcher_estimated_size)
+            truepool_stats_launcher_ranking.set(truepool_stats_inst.launcher_ranking)
+            truepool_stats_launcher_pool_earnings.set(truepool_stats_inst.launcher_pool_earnings)
             truepool_stats_partial_errors_24h.set(truepool_stats_inst.partial_errors_24h)
-            truepool_stats_farmer_pool_earnings.set(truepool_stats_inst.farmer_pool_earnings)
         except:
             truepool_stats_error_counter += TRUEPOOL_STATS_COLLECTION_INTERVAL
             #uncomment for debugging purposes only
@@ -169,27 +169,27 @@ if __name__ == '__main__':
         chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
     #   
     if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
-        chia_stats_self_portable_size = Gauge('chia_stats_self_portable_size', 'Total size of portable self-pooling plots')
-        chia_stats_self_portable_plots_k32 = Gauge('chia_stats_self_portable_plots_k32', 'Number of portable self-pooling k32 plots')
-        chia_stats_self_portable_plots_k33 = Gauge('chia_stats_self_portable_plots_k33', 'Number of portable self-pooling k33 plots')
-        chia_stats_self_portable_time_to_win = Gauge('chia_stats_self_portable_time_to_win', 'Portable self-pooling time to win')
+        chia_stats_sp_portable_size = Gauge('chia_stats_sp_portable_size', 'Total size of portable self-pooling plots')
+        chia_stats_sp_portable_plots_k32 = Gauge('chia_stats_sp_portable_plots_k32', 'Number of portable self-pooling k32 plots')
+        chia_stats_sp_portable_plots_k33 = Gauge('chia_stats_sp_portable_plots_k33', 'Number of portable self-pooling k33 plots')
+        chia_stats_sp_portable_time_to_win = Gauge('chia_stats_sp_portable_time_to_win', 'Portable self-pooling time to win')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
     #---------------------- truepool_stats -----------------------------------------------------------------------------------------------------------
-    truepool_stats_total_size = Gauge('truepool_stats_total_size', 'Estimated pool capacity')
-    truepool_stats_total_farmers = Gauge('truepool_stats_total_farmers', 'Total number of pool members')
-    truepool_stats_minutes_to_win = Gauge('truepool_stats_minutes_to_win', 'Estimated time to win')
-    truepool_stats_blocks_won = Gauge('truepool_stats_blocks_won', 'Number of blocks won by the pool')
-    truepool_stats_seconds_since_last_win = Gauge('truepool_stats_seconds_since_last_win', 'Number of seconds since last block win (pool)')
-    truepool_stats_farmer_points = Gauge('truepool_stats_farmer_points', 'Total points a farmer has for the current reward cycle')
-    truepool_stats_farmer_points_pplns = Gauge('truepool_stats_farmer_points_pplns', 'Total points a farmer has over a certain PPLNS interval')
-    truepool_stats_farmer_difficulty = Gauge('truepool_stats_farmer_difficulty', 'Current pool difficulty for the farmer')
-    truepool_stats_farmer_points_percentage = Gauge('truepool_stats_farmer_points_percentage', 'Percentage the farmer has of the overall rewards')
-    truepool_stats_farmer_share_pplns = Gauge('truepool_stats_farmer_share_pplns', 'Fraction the farmer has of the pool PPLNS points over a certain interval')
-    truepool_stats_farmer_estimated_size = Gauge('truepool_stats_farmer_estimated_size', 'Estimated size of a farmer\'s contribution to the pool')
-    truepool_stats_farmer_ranking = Gauge('truepool_stats_farmer_ranking', 'Position the farmer is occupying on the leaderboard')
+    truepool_stats_space = Gauge('truepool_stats_space', 'Estimated pool capacity')
+    truepool_stats_farmers = Gauge('truepool_stats_farmers', 'Total number of pool members')
+    truepool_stats_estimate_win = Gauge('truepool_stats_estimate_win', 'Estimated time to win')
+    truepool_stats_rewards_blocks = Gauge('truepool_stats_rewards_blocks', 'Number of blocks won/rewarded by the pool')
+    truepool_stats_time_since_last_win = Gauge('truepool_stats_time_since_last_win', 'Time since last block win/reward')
+    truepool_stats_launcher_points = Gauge('truepool_stats_launcher_points', 'Total points a launcher has for the current reward cycle')
+    truepool_stats_launcher_points_pplns = Gauge('truepool_stats_launcher_points_pplns', 'Total points a launcher has over the PPLNS interval')
+    truepool_stats_launcher_difficulty = Gauge('truepool_stats_launcher_difficulty', 'Current pool difficulty for the launcher')
+    truepool_stats_launcher_points_of_total = Gauge('truepool_stats_launcher_points_of_total', 'Percentage the launcher has of the overall rewards')
+    truepool_stats_launcher_share_pplns = Gauge('truepool_stats_launcher_share_pplns', 'Fraction the launcher has of the pool points over the PPLNS interval')
+    truepool_stats_launcher_estimated_size = Gauge('truepool_stats_launcher_estimated_size', 'Estimated size of a launcher\'s contribution to the pool')
+    truepool_stats_launcher_ranking = Gauge('truepool_stats_launcher_ranking', 'Launcher rank, as seen on the TruePool leaderboard')
+    truepool_stats_launcher_pool_earnings = Gauge('truepool_stats_launcher_pool_earnings', 'Total amount of rewards received by the launcher from the pool')
     truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
-    truepool_stats_farmer_pool_earnings = Gauge('truepool_stats_farmer_pool_earnings', 'Total amount of rewards received by the farmer from the pool')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
     ##################################################################################################################################################
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     if 'truepool_stats' in modules:
         print('*** Loading the truepool_stats module ***')
         truepool_stats_inst = truepool_stats(TRUEPOOL_STATS_LOGGING_LEVEL)
-        truepool_stats_inst.set_farmer_launcher_id(TRUEPOOL_STATS_LAUNCHER_ID)
+        truepool_stats_inst.set_launcher_id(TRUEPOOL_STATS_LAUNCHER_ID)
     
     #a mere aestetic separator
     print('')
@@ -231,4 +231,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
 
-    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painfull. Bye!')
+    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painful. Bye!')
