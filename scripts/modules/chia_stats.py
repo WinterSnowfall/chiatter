@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.30
-@date: 02/10/2021
+@version: 2.40
+@date: 16/10/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -17,6 +17,7 @@ from chia.cmds.farm_funcs import get_average_block_time
 import logging
 import os
 import binascii
+from aiohttp.client_exceptions import ClientConnectorError
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 #uncomment for debugging purposes only
@@ -101,8 +102,6 @@ class chia_stats:
         self.portable_time_to_win = 0
         self.sp_portable_time_to_win = 0
         self.current_height = 0
-        self.wallet_funds = 0
-        self.chia_farmed = 0
         
     def set_self_pooling_contract_address(self, self_pooling_contract_address):
         self._self_pooling_contract_address = self_pooling_contract_address
@@ -250,6 +249,9 @@ class chia_stats:
                 
             logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
             #########################################################
+            
+        except ClientConnectorError:
+            logger.warning('Chia RPC API call failed. Full node may be down.')
             
         except:
             #uncomment for debugging purposes only

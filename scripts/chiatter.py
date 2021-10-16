@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.30
-@date: 02/10/2021
+@version: 2.40
+@date: 16/10/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -16,8 +16,6 @@ import signal
 import threading
 import asyncio
 import os
-#uncomment for debugging purposes only
-import traceback
 
 ##global parameters init
 configParser = ConfigParser()
@@ -77,8 +75,6 @@ def chia_stats_worker(loop):
                 chia_stats_sp_portable_time_to_win.set(chia_stats_inst.sp_portable_time_to_win)
         except:
             chia_stats_error_counter += CHIA_STATS_COLLECTION_INTERVAL
-            #uncomment for debugging purposes only
-            print(traceback.format_exc())
             
         sleep(CHIA_STATS_COLLECTION_INTERVAL)
     
@@ -106,8 +102,6 @@ def truepool_stats_worker():
             truepool_stats_partial_errors_24h.set(truepool_stats_inst.partial_errors_24h)
         except:
             truepool_stats_error_counter += TRUEPOOL_STATS_COLLECTION_INTERVAL
-            #uncomment for debugging purposes only
-            print(traceback.format_exc())
             
         sleep(TRUEPOOL_STATS_COLLECTION_INTERVAL)
 
@@ -223,7 +217,7 @@ if __name__ == '__main__':
                 
         while True:
             if chia_stats_error_counter > WATCHDOG_THRESHOLD or truepool_stats_error_counter > WATCHDOG_THRESHOLD:
-                print('The chiatter watchdog has reached its error threshold. Stopping data collection.')
+                print('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
                 raise SystemExit(2)
             else:
                 sleep(WATCHDOG_INTERVAL)
