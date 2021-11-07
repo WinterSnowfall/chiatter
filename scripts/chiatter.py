@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.40
-@date: 16/10/2021
+@version: 2.50
+@date: 06/11/2021
 
 Warning: Built for use with python 3.6+
 '''
@@ -129,7 +129,7 @@ if __name__ == '__main__':
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
             self_pooling_types = configParser['CHIA_STATS'].get('self_pooling_types')
             self_pooling_types = [pooling_type.strip() for pooling_type in self_pooling_types.split(',')]
-            CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS = configParser['CHIA_STATS'].get('self_pooling_contact_address')
+            CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS = configParser['CHIA_STATS'].get('self_pooling_contact_address').strip()
         if 'truepool_stats' in modules:
             TRUEPOOL_STATS_COLLECTION_INTERVAL = configParser['TRUEPOOL_STATS'].getint('collection_interval')
             TRUEPOOL_STATS_LAUNCHER_ID = configParser['TRUEPOOL_STATS'].get('launcher_id')
@@ -195,7 +195,8 @@ if __name__ == '__main__':
     if 'chia_stats' in modules:
         print('*** Loading the chia_stats module ***')
         chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL)
-        if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
+        if (CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types and 
+            CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS != ''):
             chia_stats_inst.set_self_pooling_contract_address(CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS)
     if 'truepool_stats' in modules:
         print('*** Loading the truepool_stats module ***')
