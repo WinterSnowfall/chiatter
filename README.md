@@ -13,18 +13,18 @@ A chia collection agent/Prometheus client that gathers various stats from a loca
 
 **❄** HTTP port 8080 must be open for business (firewalls included), since the Prometheus server will need to access it in order to scrape and aggregate all the stats.
 
-## TruePool? What is that? Do I need it?
+## OpenChia? What is that? Do I need it?
 
-[TruePool](https://truepool.io/) is a very stable and active chia pool, which I can wholeheartedly recommend. That being said, no, you don't necessarily need it and it's disabled in the config file provided with this codebase.
+[OpenChia](https://openchia.io/) is an open source chia pool, which I can wholeheartedly recommend. That being said, no, you don't necessarily need it and it's disabled in the config file provided with this codebase.
 
-## Ok then, let's say I join TruePool and want to give it a spin? What then?
+## Ok then, let's say I join OpenChia and want to give it a spin? What then?
 
 Two things:
 
 **❄** Set the following in `chiatter.conf`:
 
 ```
-modules = chia_stats,truepool_stats
+modules = chia_stats,openchia_stats
 ```
 
 **❄** Also replace the following placeholder with your NFT launcher id. You can get the required string either by using the chia CLI or the UI interface.
@@ -33,7 +33,7 @@ modules = chia_stats,truepool_stats
 launcher_id = <replace_with_your_launcher_id>
 ```
 
-You won't have to make any changes whatsoever if you don't plan on joining TruePool, so just stick to the defaults in that case (boooooo!).
+You won't have to make any changes whatsoever if you don't plan on joining OpenChia, so just stick to the defaults in that case (boooooo!).
 
 ## A Prometheus sever? Grafana? How the heck am I supposed to get those?
 

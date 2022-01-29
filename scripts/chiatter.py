@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.50
-@date: 06/11/2021
+@version: 2.60
+@date: 29/01/2022
 
 Warning: Built for use with python 3.6+
 '''
 
 from prometheus_client import start_http_server, Gauge
 from modules.chia_stats import chia_stats
-from modules.truepool_stats import truepool_stats
+from modules.openchia_stats import openchia_stats
 from configparser import ConfigParser
 from time import sleep
 import signal
@@ -28,7 +28,7 @@ CHIA_STATS_SELF_POOLING_PORTABLE = 'portable'
 
 watchdog_counter = 0
 chia_stats_error_counter = 0
-truepool_stats_error_counter = 0
+openchia_stats_error_counter = 0
 
 def sigterm_handler(signum, frame):
     print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painful. Bye!')
@@ -78,32 +78,32 @@ def chia_stats_worker(loop):
             
         sleep(CHIA_STATS_COLLECTION_INTERVAL)
     
-def truepool_stats_worker():
-    global truepool_stats_error_counter
+def openchia_stats_worker():
+    global openchia_stats_error_counter
     
     while True:
         try:
-            truepool_stats_inst.clear_stats()
-            truepool_stats_inst.collect_stats()
+            openchia_stats_inst.clear_stats()
+            openchia_stats_inst.collect_stats()
             
-            truepool_stats_space.set(truepool_stats_inst.pool_space)
-            truepool_stats_farmers.set(truepool_stats_inst.pool_farmers)
-            truepool_stats_estimate_win.set(truepool_stats_inst.pool_estimate_win)
-            truepool_stats_rewards_blocks.set(truepool_stats_inst.pool_rewards_blocks)
-            truepool_stats_time_since_last_win.set(truepool_stats_inst.pool_time_since_last_win)
-            truepool_stats_launcher_points.set(truepool_stats_inst.launcher_points)
-            truepool_stats_launcher_points_pplns.set(truepool_stats_inst.launcher_points_pplns)
-            truepool_stats_launcher_difficulty.set(truepool_stats_inst.launcher_difficulty)
-            truepool_stats_launcher_points_of_total.set(truepool_stats_inst.launcher_points_of_total)
-            truepool_stats_launcher_share_pplns.set(truepool_stats_inst.launcher_share_pplns)
-            truepool_stats_launcher_estimated_size.set(truepool_stats_inst.launcher_estimated_size)
-            truepool_stats_launcher_ranking.set(truepool_stats_inst.launcher_ranking)
-            truepool_stats_launcher_pool_earnings.set(truepool_stats_inst.launcher_pool_earnings)
-            truepool_stats_partial_errors_24h.set(truepool_stats_inst.partial_errors_24h)
+            openchia_stats_space.set(openchia_stats_inst.pool_space)
+            openchia_stats_farmers.set(openchia_stats_inst.pool_farmers)
+            openchia_stats_estimate_win.set(openchia_stats_inst.pool_estimate_win)
+            openchia_stats_rewards_blocks.set(openchia_stats_inst.pool_rewards_blocks)
+            openchia_stats_time_since_last_win.set(openchia_stats_inst.pool_time_since_last_win)
+            openchia_stats_launcher_points.set(openchia_stats_inst.launcher_points)
+            openchia_stats_launcher_points_pplns.set(openchia_stats_inst.launcher_points_pplns)
+            openchia_stats_launcher_difficulty.set(openchia_stats_inst.launcher_difficulty)
+            openchia_stats_launcher_points_of_total.set(openchia_stats_inst.launcher_points_of_total)
+            openchia_stats_launcher_share_pplns.set(openchia_stats_inst.launcher_share_pplns)
+            openchia_stats_launcher_estimated_size.set(openchia_stats_inst.launcher_estimated_size)
+            openchia_stats_launcher_ranking.set(openchia_stats_inst.launcher_ranking)
+            openchia_stats_launcher_pool_earnings.set(openchia_stats_inst.launcher_pool_earnings)
+            openchia_stats_partial_errors_24h.set(openchia_stats_inst.partial_errors_24h)
         except:
-            truepool_stats_error_counter += TRUEPOOL_STATS_COLLECTION_INTERVAL
+            openchia_stats_error_counter += OPENCHIA_STATS_COLLECTION_INTERVAL
             
-        sleep(TRUEPOOL_STATS_COLLECTION_INTERVAL)
+        sleep(OPENCHIA_STATS_COLLECTION_INTERVAL)
 
 if __name__ == '__main__':
     #catch SIGTERM and exit gracefully
@@ -130,10 +130,10 @@ if __name__ == '__main__':
             self_pooling_types = configParser['CHIA_STATS'].get('self_pooling_types')
             self_pooling_types = [pooling_type.strip() for pooling_type in self_pooling_types.split(',')]
             CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS = configParser['CHIA_STATS'].get('self_pooling_contact_address').strip()
-        if 'truepool_stats' in modules:
-            TRUEPOOL_STATS_COLLECTION_INTERVAL = configParser['TRUEPOOL_STATS'].getint('collection_interval')
-            TRUEPOOL_STATS_LAUNCHER_ID = configParser['TRUEPOOL_STATS'].get('launcher_id')
-            TRUEPOOL_STATS_LOGGING_LEVEL = configParser['TRUEPOOL_STATS'].get('logging_level')
+        if 'openchia_stats' in modules:
+            OPENCHIA_STATS_COLLECTION_INTERVAL = configParser['OPENCHIA_STATS'].getint('collection_interval')
+            OPENCHIA_STATS_LAUNCHER_ID = configParser['OPENCHIA_STATS'].get('launcher_id')
+            OPENCHIA_STATS_LOGGING_LEVEL = configParser['OPENCHIA_STATS'].get('logging_level')
             
     except:
         print('Could not parse configuration file. Please make sure the appropriate structure is in place!')
@@ -169,21 +169,21 @@ if __name__ == '__main__':
         chia_stats_sp_portable_time_to_win = Gauge('chia_stats_sp_portable_time_to_win', 'Portable self-pooling time to win')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
-    #---------------------- truepool_stats -----------------------------------------------------------------------------------------------------------
-    truepool_stats_space = Gauge('truepool_stats_space', 'Estimated pool capacity')
-    truepool_stats_farmers = Gauge('truepool_stats_farmers', 'Total number of pool members')
-    truepool_stats_estimate_win = Gauge('truepool_stats_estimate_win', 'Estimated time to win')
-    truepool_stats_rewards_blocks = Gauge('truepool_stats_rewards_blocks', 'Number of blocks won/rewarded by the pool')
-    truepool_stats_time_since_last_win = Gauge('truepool_stats_time_since_last_win', 'Time since last block win/reward')
-    truepool_stats_launcher_points = Gauge('truepool_stats_launcher_points', 'Total points a launcher has for the current reward cycle')
-    truepool_stats_launcher_points_pplns = Gauge('truepool_stats_launcher_points_pplns', 'Total points a launcher has over the PPLNS interval')
-    truepool_stats_launcher_difficulty = Gauge('truepool_stats_launcher_difficulty', 'Current pool difficulty for the launcher')
-    truepool_stats_launcher_points_of_total = Gauge('truepool_stats_launcher_points_of_total', 'Percentage the launcher has of the overall rewards')
-    truepool_stats_launcher_share_pplns = Gauge('truepool_stats_launcher_share_pplns', 'Fraction the launcher has of the pool points over the PPLNS interval')
-    truepool_stats_launcher_estimated_size = Gauge('truepool_stats_launcher_estimated_size', 'Estimated size of a launcher\'s contribution to the pool')
-    truepool_stats_launcher_ranking = Gauge('truepool_stats_launcher_ranking', 'Launcher rank, as seen on the TruePool leaderboard')
-    truepool_stats_launcher_pool_earnings = Gauge('truepool_stats_launcher_pool_earnings', 'Total amount of rewards received by the launcher from the pool')
-    truepool_stats_partial_errors_24h = Gauge('truepool_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
+    #---------------------- openchia_stats -----------------------------------------------------------------------------------------------------------
+    openchia_stats_space = Gauge('openchia_stats_space', 'Estimated pool capacity')
+    openchia_stats_farmers = Gauge('openchia_stats_farmers', 'Total number of pool members')
+    openchia_stats_estimate_win = Gauge('openchia_stats_estimate_win', 'Estimated time to win')
+    openchia_stats_rewards_blocks = Gauge('openchia_stats_rewards_blocks', 'Number of blocks won/rewarded by the pool')
+    openchia_stats_time_since_last_win = Gauge('openchia_stats_time_since_last_win', 'Time since last block win/reward')
+    openchia_stats_launcher_points = Gauge('openchia_stats_launcher_points', 'Total points a launcher has for the current reward cycle')
+    openchia_stats_launcher_points_pplns = Gauge('openchia_stats_launcher_points_pplns', 'Total points a launcher has over the PPLNS interval')
+    openchia_stats_launcher_difficulty = Gauge('openchia_stats_launcher_difficulty', 'Current pool difficulty for the launcher')
+    openchia_stats_launcher_points_of_total = Gauge('openchia_stats_launcher_points_of_total', 'Percentage the launcher has of the overall rewards')
+    openchia_stats_launcher_share_pplns = Gauge('openchia_stats_launcher_share_pplns', 'Fraction the launcher has of the pool points over the PPLNS interval')
+    openchia_stats_launcher_estimated_size = Gauge('openchia_stats_launcher_estimated_size', 'Estimated size of a launcher\'s contribution to the pool')
+    openchia_stats_launcher_ranking = Gauge('openchia_stats_launcher_ranking', 'Launcher rank, as seen on the OpenChia leaderboard')
+    openchia_stats_launcher_pool_earnings = Gauge('openchia_stats_launcher_pool_earnings', 'Total amount of rewards received by the launcher from the pool')
+    openchia_stats_partial_errors_24h = Gauge('openchia_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
     ##################################################################################################################################################
@@ -198,10 +198,10 @@ if __name__ == '__main__':
         if (CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types and 
             CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS != ''):
             chia_stats_inst.set_self_pooling_contract_address(CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS)
-    if 'truepool_stats' in modules:
-        print('*** Loading the truepool_stats module ***')
-        truepool_stats_inst = truepool_stats(TRUEPOOL_STATS_LOGGING_LEVEL)
-        truepool_stats_inst.set_launcher_id(TRUEPOOL_STATS_LAUNCHER_ID)
+    if 'openchia_stats' in modules:
+        print('*** Loading the openchia_stats module ***')
+        openchia_stats_inst = openchia_stats(OPENCHIA_STATS_LOGGING_LEVEL)
+        openchia_stats_inst.set_launcher_id(OPENCHIA_STATS_LAUNCHER_ID)
     
     #a mere aestetic separator
     print('')
@@ -212,12 +212,12 @@ if __name__ == '__main__':
             chia_stats_thread = threading.Thread(target=chia_stats_worker, args=((loop,)), daemon=True)
             chia_stats_thread.start()
                 
-        if 'truepool_stats' in modules:
-            truepool_stats_thread = threading.Thread(target=truepool_stats_worker, args=(), daemon=True)
-            truepool_stats_thread.start()
+        if 'openchia_stats' in modules:
+            openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(), daemon=True)
+            openchia_stats_thread.start()
                 
         while True:
-            if chia_stats_error_counter > WATCHDOG_THRESHOLD or truepool_stats_error_counter > WATCHDOG_THRESHOLD:
+            if chia_stats_error_counter > WATCHDOG_THRESHOLD or openchia_stats_error_counter > WATCHDOG_THRESHOLD:
                 print('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
                 raise SystemExit(2)
             else:

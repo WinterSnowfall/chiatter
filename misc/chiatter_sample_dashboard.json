@@ -210,7 +210,7 @@
               }
             ]
           },
-          "unit": "Months"
+          "unit": "Days"
         },
         "overrides": []
       },
@@ -240,7 +240,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_seconds_since_last_win / 2629800",
+          "expr": "chia_stats_seconds_since_last_win / 86400",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -257,7 +257,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 8,
+          "max": 50,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -321,7 +321,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 10,
+          "max": 20,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -651,7 +651,7 @@
           },
           "decimals": 5,
           "mappings": [],
-          "max": 10,
+          "max": 20,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -722,7 +722,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 700,
+          "max": 750,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -790,7 +790,7 @@
               }
             ]
           },
-          "unit": "Months"
+          "unit": "Days"
         },
         "overrides": []
       },
@@ -820,7 +820,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "chia_stats_portable_time_to_win{} / 2629800",
+          "expr": "chia_stats_portable_time_to_win{} / 86400",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -900,7 +900,7 @@
       },
       "id": 123141,
       "panels": [],
-      "title": "TruePool",
+      "title": "OpenChia Pool Stats",
       "type": "row"
     },
     {
@@ -911,7 +911,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 600,
+          "max": 250,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -950,13 +950,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_farmers{}",
+          "expr": "openchia_stats_farmers{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Members Count",
+      "title": "Active Farmers Count",
       "type": "bargauge"
     },
     {
@@ -1006,7 +1006,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_time_since_last_win{} / 3600",
+          "expr": "openchia_stats_time_since_last_win{} / 3600",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1062,7 +1062,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_launcher_ranking{}",
+          "expr": "openchia_stats_launcher_ranking{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1121,7 +1121,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_launcher_pool_earnings{} / 1000000000000",
+          "expr": "openchia_stats_launcher_pool_earnings{} / 1000000000000",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1177,7 +1177,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_launcher_points_pplns{}",
+          "expr": "openchia_stats_launcher_points_pplns{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1233,7 +1233,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_estimate_win{} / 60",
+          "expr": "openchia_stats_estimate_win{} / 60",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1250,7 +1250,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 500,
+          "max": 1000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1289,7 +1289,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_rewards_blocks{}",
+          "expr": "openchia_stats_rewards_blocks{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1306,7 +1306,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 12,
+          "max": 16,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1349,13 +1349,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_partial_errors_24h{}",
+          "expr": "openchia_stats_partial_errors_24h{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Invalid Partials (Last 24h)",
+      "title": "Invalid Partials (24h)",
       "type": "gauge"
     },
     {
@@ -1408,7 +1408,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_launcher_share_pplns{} * 1.7325",
+          "expr": "openchia_stats_launcher_share_pplns{} * 1.7325",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1466,7 +1466,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_launcher_share_pplns{} * 100",
+          "expr": "openchia_stats_launcher_share_pplns{} * 100",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1523,7 +1523,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_space{}",
+          "expr": "openchia_stats_space{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1580,13 +1580,13 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_space{} * 100 / chia_stats_network_space_size{}",
+          "expr": "openchia_stats_space{} * 100 / chia_stats_network_space_size{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Pool Share Of Netspace",
+      "title": "Pool % Of Netspace",
       "type": "stat"
     },
     {
@@ -1597,7 +1597,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 30,
+          "max": 50,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1636,7 +1636,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_launcher_difficulty{}",
+          "expr": "openchia_stats_launcher_difficulty{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1693,7 +1693,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "truepool_stats_launcher_estimated_size{}",
+          "expr": "openchia_stats_launcher_estimated_size{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1743,6 +1743,6 @@
   },
   "timezone": "browser",
   "title": "chiatter",
-  "uid": "4ICjQO4nz",
-  "version": 72
+  "uid": "G_T-VMbnz",
+  "version": 24
 }
