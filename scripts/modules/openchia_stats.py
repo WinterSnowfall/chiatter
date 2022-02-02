@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.61
-@date: 01/02/2022
+@version: 2.62
+@date: 02/02/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -236,7 +236,7 @@ class openchia_stats:
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - may have to adjust later on
                 response = session.get(openchia_stats.PARTIALS_STATS_API_URL + f'?launcher={self._launcher_id}' + 
-                                       f'&start_timestamp={four_score_and_twenty_four_hours_ago}&limit=1000', 
+                                       f'&min_timestamp={four_score_and_twenty_four_hours_ago}&limit=1000', 
                                        timeout=openchia_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
