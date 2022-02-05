@@ -7,11 +7,37 @@ A chia collection agent/Prometheus client that gathers various stats from a loca
 
 **❄** You will need a **python3.6+** environment. Most Linux distros will come with python3 installed - make sure you pick one which comes with **python 3.6** or above.
 
-**❄** The following python3 packages need to be installed: `prometheus_client, chia-blockchain (& dependencies)`. I leave the details up to you. As long as they're in the PYTHONPATH, chiatter will not complain.
+**❄** The following python3 packages need to be installed: `prometheus_client, chia-blockchain` (and dependencies). I leave the details up to you. As long as they're in the PYTHONPATH, chiatter will not complain.
 
 **❄** A full chia node running on the same host. No, it's not possible to run it remotely at this point!
 
 **❄** HTTP port 8080 must be open for business (firewalls included), since the Prometheus server will need to access it in order to scrape and aggregate all the stats.
+
+## If I used the chia CLI installer how do I get chiatter working?
+
+Assuming `~/chia-blockchain` is the folder where you've installed the chia-blockchain, you need to go through the following steps in order to set up chiatter:
+
+**1.** Create a softlink to the `~/chia-blockchain/chia` folder under `~/chiatter/scripts` by running:
+
+```
+cd ~/chiatter/scripts
+ln -s ~/chia-blockchain/chia chia
+```
+
+**2.** Enable the chia python venv:
+
+```
+cd ~/chia-blockchain
+. ./activate
+```
+
+**3.** Install the chiatter dependencies inside the venv:
+
+```
+python -m pip install prometheus_client requests
+```
+
+And that's it, you can now run chiatter from within the vnev.
 
 ## OpenChia? What is that? Do I need it?
 
