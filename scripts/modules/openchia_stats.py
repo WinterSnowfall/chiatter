@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.63
-@date: 05/02/2022
+@version: 2.70
+@date: 06/02/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -41,6 +41,7 @@ class openchia_stats:
     
     OPENCHIA_BASE_URL = 'https://openchia.io'
     ##API endpoint URLs
+    BLOCK_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/block'
     POOL_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/stats'
     LAUNCHER_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/launcher'
     PAYOUT_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/payoutaddress'
@@ -57,6 +58,8 @@ class openchia_stats:
         self._pool_rewards_blocks_prev = 0
         self._launcher_pool_earnings_prev = 0
         self._launcher_pool_earnings_stale = False
+        self._block_timestamp_prev = 0
+        self._block_seconds_since_last_win_stale = False
     
         self.pool_space = 0
         self.pool_farmers = 0
@@ -71,6 +74,7 @@ class openchia_stats:
         self.launcher_estimated_size = 0
         self.launcher_ranking = 0
         self.launcher_pool_earnings = 0
+        self.seconds_since_last_win = 0
         self.partial_errors_24h = 0
         
         #defaults to WARNING otherwise
@@ -95,6 +99,7 @@ class openchia_stats:
         self.launcher_share_pplns = 0
         self.launcher_estimated_size = 0
         self.launcher_ranking = 0
+        self.seconds_since_last_win = 0
         self.partial_errors_24h = 0
         
     def set_launcher_id(self, launcher_id):
@@ -136,12 +141,19 @@ class openchia_stats:
                     logger.warning('Failed to connect to API endpoint for pool stats.')
                 #########################################################
                 
+                #trigger a payout & won block read if the number of reported blocks changes
+                if self._pool_rewards_blocks_prev != self.pool_rewards_blocks:
+                    self._launcher_pool_earnings_stale = True
+                    self._block_seconds_since_last_win_stale = True
+                    #skip payout & won block reads until the next block win
+                    self._pool_rewards_blocks_prev = self.pool_rewards_blocks
+                
                 #########################################################
                 logger.info('Fetching launcher stats...')
                                 
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - based on farmer count
-                response = session.get(openchia_stats.LAUNCHER_STATS_API_URL + f'?ordering={openchia_stats.LAUNCHER_ORDERING}' + 
+                response = session.get(openchia_stats.LAUNCHER_STATS_API_URL + f'/?ordering={openchia_stats.LAUNCHER_ORDERING}' + 
                                        f'&limit={self.pool_farmers}', timeout=openchia_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
@@ -194,13 +206,8 @@ class openchia_stats:
                 #########################################################
                 
                 #########################################################
-                if self._pool_rewards_blocks_prev != self.pool_rewards_blocks or self._launcher_pool_earnings_stale:
+                if self._launcher_pool_earnings_stale:
                     logger.info('Fetching payout (address) stats...')
-                    
-                    #skip payout reads until the next block win
-                    self._pool_rewards_blocks_prev = self.pool_rewards_blocks
-                    #ensure the stats are refresh until a change is detected (may come with a delay)
-                    self._launcher_pool_earnings_stale = True
                     
                     #can't be bothered with pagination (meant for the website anyway), 
                     #so use a resonable non-standard limit - may have to adjust later on
@@ -237,11 +244,58 @@ class openchia_stats:
                 #########################################################
                 
                 #########################################################
+                if self._block_seconds_since_last_win_stale:
+                    logger.info('Fetching block stats...')
+                    
+                    #only get the latest won block for the configured launcher
+                    response = session.get(openchia_stats.BLOCK_STATS_API_URL + f'/?farmed_by={self._launcher_id}' +
+                                           '&ordering=timestamp&limit=1', timeout=openchia_stats.HTTP_TIMEOUT)
+                    
+                    logger.debug(f'HTTP response code is: {response.status_code}.')
+                    
+                    try:
+                        if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
+                            block_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
+                            
+                            #clear existing value before updating
+                            self.seconds_since_last_win = 0
+                            
+                            block_timestamp = int(block_stats_json[0]['timestamp'])
+                            
+                            if self._block_timestamp_prev != block_timestamp:
+                                self._block_timestamp_prev = block_timestamp
+                                
+                                self._block_seconds_since_last_win_stale = False
+                                
+                            elif self._block_seconds_since_last_win_stale:
+                                logger.debug('Last won block timestamp is stale. Will recheck on next update.')
+                                
+                        else:
+                            logger.warning('Failed to connect to API endpoint for block stats.')
+                    
+                    #if no results are returned then the launcher has not won any blocks in the pool
+                    except IndexError:
+                        self._block_seconds_since_last_win_stale = False
+                        
+                        logger.info('No won blocks detected for configured launcher.')
+                else:
+                    logger.info('Skipping block stats update until next block win.')
+                
+                #calculate time elapsed since last block win based on stored _prev value
+                if self._block_timestamp_prev != 0:
+                    self.seconds_since_last_win = int(datetime.timestamp(datetime.now())) - self._block_timestamp_prev
+                else:
+                    logger.debug('Last won block timestamp is 0, unable to calculate time since last win.')
+                
+                logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
+                #########################################################
+                
+                #########################################################
                 logger.info('Fetching partials stats...')
                 
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - may have to adjust later on
-                response = session.get(openchia_stats.PARTIAL_STATS_API_URL + f'?launcher={self._launcher_id}' + 
+                response = session.get(openchia_stats.PARTIAL_STATS_API_URL + f'/?launcher={self._launcher_id}' + 
                                        f'&min_timestamp={four_score_and_twenty_four_hours_ago}&limit=' +
                                        openchia_stats.PARTIAL_PAGINATION_LIMIT, timeout=openchia_stats.HTTP_TIMEOUT)
                 

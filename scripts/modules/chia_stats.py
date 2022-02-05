@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.60
-@date: 29/01/2022
+@version: 2.70
+@date: 06/02/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -50,10 +50,13 @@ class chia_stats:
         self.sp_portable_size = 0
         self.plots_og_k32 = 0
         self.plots_og_k33 = 0
+        self.plots_og_k34 = 0
         self.plots_portable_k32 = 0
         self.plots_portable_k33 = 0
+        self.plots_portable_k34 = 0
         self.plots_sp_portable_k32 = 0
         self.plots_sp_portable_k33 = 0
+        self.plots_sp_portable_k34 = 0
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
@@ -90,10 +93,13 @@ class chia_stats:
         self.sp_portable_size = 0
         self.plots_og_k32 = 0
         self.plots_og_k33 = 0
+        self.plots_og_k34 = 0
         self.plots_portable_k32 = 0
         self.plots_portable_k33 = 0
+        self.plots_portable_k34 = 0
         self.plots_sp_portable_k32 = 0
         self.plots_sp_portable_k33 = 0
+        self.plots_sp_portable_k34 = 0
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
@@ -138,6 +144,9 @@ class chia_stats:
                     elif plot['size'] == 33:
                         #logger.debug('Found k33 OG plot!')
                         self.plots_og_k33 += 1
+                    elif plot['size'] == 34:
+                        #logger.debug('Found k34 OG plot!')
+                        self.plots_og_k34 += 1
                     
                 else:
                     if (self._self_pooling_contract_address is not None and 
@@ -148,6 +157,9 @@ class chia_stats:
                         elif plot['size'] == 33:
                             #logger.debug('Found k33 self-pooling plot!')
                             self.plots_sp_portable_k33 += 1
+                        elif plot['size'] == 34:
+                            #logger.debug('Found k34 self-pooling plot!')
+                            self.plots_sp_portable_k34 += 1
                         self.sp_portable_size += plot['file_size']
                     else:
                         if plot['size'] == 32:
@@ -156,6 +168,9 @@ class chia_stats:
                         elif plot['size'] == 33:
                             #logger.debug('Found k33 portable plot!')
                             self.plots_portable_k33 += 1
+                        elif plot['size'] == 34:
+                            #logger.debug('Found k34 portable plot!')
+                            self.plots_portable_k34 += 1
                         self.portable_size += plot['file_size']
                         
             logger.debug(f'og_size: {self.og_size}')
@@ -163,10 +178,13 @@ class chia_stats:
             logger.debug(f'sp_portable_size: {self.sp_portable_size}')
             logger.debug(f'plots_og_k32: {self.plots_og_k32}')
             logger.debug(f'plots_og_k33: {self.plots_og_k33}')
+            logger.debug(f'plots_og_k34: {self.plots_og_k34}')
             logger.debug(f'plots_portable_k32: {self.plots_portable_k32}')
             logger.debug(f'plots_portable_k33: {self.plots_portable_k33}')
+            logger.debug(f'plots_portable_k34: {self.plots_portable_k34}')
             logger.debug(f'plots_sp_portable_k32: {self.plots_sp_portable_k32}')
             logger.debug(f'plots_sp_portable_k33: {self.plots_sp_portable_k33}')
+            logger.debug(f'plots_sp_portable_k34: {self.plots_sp_portable_k34}')
             #########################################################
             
             logger.info('Fetching blockchain state...')

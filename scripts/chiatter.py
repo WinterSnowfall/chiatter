@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.60
-@date: 29/01/2022
+@version: 2.70
+@date: 06/02/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -51,6 +51,7 @@ def chia_stats_worker(loop):
             chia_stats_portable_size.set(chia_stats_inst.portable_size)
             chia_stats_portable_plots_k32.set(chia_stats_inst.plots_portable_k32)
             chia_stats_portable_plots_k33.set(chia_stats_inst.plots_portable_k33)
+            chia_stats_portable_plots_k34.set(chia_stats_inst.plots_portable_k34)
             chia_stats_portable_time_to_win.set(chia_stats_inst.portable_time_to_win)
             
             chia_stats_sync_status.set(chia_stats_inst.sync_status)
@@ -66,12 +67,14 @@ def chia_stats_worker(loop):
                 chia_stats_og_size.set(chia_stats_inst.og_size)
                 chia_stats_og_plots_k32.set(chia_stats_inst.plots_og_k32)
                 chia_stats_og_plots_k33.set(chia_stats_inst.plots_og_k33)
+                chia_stats_og_plots_k34.set(chia_stats_inst.plots_og_k34)
                 chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
                 
             if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
                 chia_stats_sp_portable_size.set(chia_stats_inst.sp_portable_size)
                 chia_stats_sp_portable_plots_k32.set(chia_stats_inst.plots_sp_portable_k32)
                 chia_stats_sp_portable_plots_k33.set(chia_stats_inst.plots_sp_portable_k33)
+                chia_stats_sp_portable_plots_k34.set(chia_stats_inst.plots_sp_portable_k34)
                 chia_stats_sp_portable_time_to_win.set(chia_stats_inst.sp_portable_time_to_win)
         except:
             chia_stats_error_counter += CHIA_STATS_COLLECTION_INTERVAL
@@ -90,7 +93,6 @@ def openchia_stats_worker():
             openchia_stats_farmers.set(openchia_stats_inst.pool_farmers)
             openchia_stats_estimate_win.set(openchia_stats_inst.pool_estimate_win)
             openchia_stats_rewards_blocks.set(openchia_stats_inst.pool_rewards_blocks)
-            openchia_stats_time_since_last_win.set(openchia_stats_inst.pool_time_since_last_win)
             openchia_stats_launcher_points.set(openchia_stats_inst.launcher_points)
             openchia_stats_launcher_points_pplns.set(openchia_stats_inst.launcher_points_pplns)
             openchia_stats_launcher_difficulty.set(openchia_stats_inst.launcher_difficulty)
@@ -99,6 +101,7 @@ def openchia_stats_worker():
             openchia_stats_launcher_estimated_size.set(openchia_stats_inst.launcher_estimated_size)
             openchia_stats_launcher_ranking.set(openchia_stats_inst.launcher_ranking)
             openchia_stats_launcher_pool_earnings.set(openchia_stats_inst.launcher_pool_earnings)
+            openchia_stats_seconds_since_last_win.set(openchia_stats_inst.seconds_since_last_win)
             openchia_stats_partial_errors_24h.set(openchia_stats_inst.partial_errors_24h)
         except:
             openchia_stats_error_counter += OPENCHIA_STATS_COLLECTION_INTERVAL
@@ -145,6 +148,7 @@ if __name__ == '__main__':
     chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
     chia_stats_portable_plots_k32 = Gauge('chia_stats_portable_plots_k32', 'Number of portable k32 plots')
     chia_stats_portable_plots_k33 = Gauge('chia_stats_portable_plots_k33', 'Number of portable k33 plots')
+    chia_stats_portable_plots_k34 = Gauge('chia_stats_portable_plots_k34', 'Number of portable k34 plots')
     chia_stats_portable_time_to_win = Gauge('chia_stats_portable_time_to_win', 'Portable time to win')
     #
     chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
@@ -160,12 +164,14 @@ if __name__ == '__main__':
         chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
         chia_stats_og_plots_k32 = Gauge('chia_stats_og_plots_k32', 'Number of og k32 plots')
         chia_stats_og_plots_k33 = Gauge('chia_stats_og_plots_k33', 'Number of og k33 plots')
+        chia_stats_og_plots_k34 = Gauge('chia_stats_og_plots_k34', 'Number of og k34 plots')
         chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
     #   
     if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
         chia_stats_sp_portable_size = Gauge('chia_stats_sp_portable_size', 'Total size of portable self-pooling plots')
         chia_stats_sp_portable_plots_k32 = Gauge('chia_stats_sp_portable_plots_k32', 'Number of portable self-pooling k32 plots')
         chia_stats_sp_portable_plots_k33 = Gauge('chia_stats_sp_portable_plots_k33', 'Number of portable self-pooling k33 plots')
+        chia_stats_sp_portable_plots_k34 = Gauge('chia_stats_sp_portable_plots_k34', 'Number of portable self-pooling k34 plots')
         chia_stats_sp_portable_time_to_win = Gauge('chia_stats_sp_portable_time_to_win', 'Portable self-pooling time to win')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
@@ -183,6 +189,7 @@ if __name__ == '__main__':
     openchia_stats_launcher_estimated_size = Gauge('openchia_stats_launcher_estimated_size', 'Estimated size of a launcher\'s contribution to the pool')
     openchia_stats_launcher_ranking = Gauge('openchia_stats_launcher_ranking', 'Launcher rank, as seen on the OpenChia leaderboard')
     openchia_stats_launcher_pool_earnings = Gauge('openchia_stats_launcher_pool_earnings', 'Total amount of rewards received by the launcher from the pool')
+    openchia_stats_seconds_since_last_win = Gauge('openchia_stats_seconds_since_last_win', 'Number of seconds since last block win (launcher)')
     openchia_stats_partial_errors_24h = Gauge('openchia_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
