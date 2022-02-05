@@ -17,21 +17,14 @@ A chia collection agent/Prometheus client that gathers various stats from a loca
 
 Assuming `~/chia-blockchain` is the folder where you've installed the chia-blockchain and  `~/chiatter` is the folder where you've deployed chiatter, you need to go through the following steps in order to set up chiatter:
 
-**1.** Create a softlink to the `~/chia-blockchain/chia` folder under `~/chiatter/scripts` by running:
-
-```
-cd ~/chiatter/scripts
-ln -s ~/chia-blockchain/chia chia
-```
-
-**2.** Enable the chia python venv:
+**1.** Enable the chia python venv:
 
 ```
 cd ~/chia-blockchain
 . ./activate
 ```
 
-**3.** Install the chiatter dependencies inside the venv:
+**2.** Install the chiatter dependencies inside the venv:
 
 ```
 python -m pip install prometheus_client requests
