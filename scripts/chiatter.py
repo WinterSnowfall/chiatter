@@ -93,6 +93,7 @@ def openchia_stats_worker():
             openchia_stats_farmers.set(openchia_stats_inst.pool_farmers)
             openchia_stats_estimate_win.set(openchia_stats_inst.pool_estimate_win)
             openchia_stats_rewards_blocks.set(openchia_stats_inst.pool_rewards_blocks)
+            openchia_stats_time_since_last_win.set(openchia_stats_inst.pool_time_since_last_win)
             openchia_stats_launcher_points.set(openchia_stats_inst.launcher_points)
             openchia_stats_launcher_points_pplns.set(openchia_stats_inst.launcher_points_pplns)
             openchia_stats_launcher_difficulty.set(openchia_stats_inst.launcher_difficulty)
