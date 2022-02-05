@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.62
-@date: 02/02/2022
+@version: 2.63
+@date: 05/02/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -44,7 +44,13 @@ class openchia_stats:
     POOL_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/stats'
     LAUNCHER_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/launcher'
     PAYOUT_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/payoutaddress'
-    PARTIALS_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/partial'
+    PARTIAL_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/partial'
+    
+    ##Pagination limits for various queries
+    PAYOUT_PAGINATION_LIMIT = '2000'
+    #24h partials should average out around ~600, but also cater for increased
+    #partial count (can potentially be set to double that amount by farmers)
+    PARTIAL_PAGINATION_LIMIT = '1400'
 
     def __init__(self, logging_level):
         self._launcher_id = None
@@ -198,8 +204,8 @@ class openchia_stats:
                     
                     #can't be bothered with pagination (meant for the website anyway), 
                     #so use a resonable non-standard limit - may have to adjust later on
-                    response = session.get(openchia_stats.PAYOUT_STATS_API_URL + f'/?launcher={self._launcher_id}&limit=500', 
-                                           timeout=openchia_stats.HTTP_TIMEOUT)
+                    response = session.get(openchia_stats.PAYOUT_STATS_API_URL + f'/?launcher={self._launcher_id}&limit=' +
+                                           openchia_stats.PAYOUT_PAGINATION_LIMIT, timeout=openchia_stats.HTTP_TIMEOUT)
                     
                     logger.debug(f'HTTP response code is: {response.status_code}.')
                 
@@ -235,9 +241,9 @@ class openchia_stats:
                 
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - may have to adjust later on
-                response = session.get(openchia_stats.PARTIALS_STATS_API_URL + f'?launcher={self._launcher_id}' + 
-                                       f'&min_timestamp={four_score_and_twenty_four_hours_ago}&limit=1000', 
-                                       timeout=openchia_stats.HTTP_TIMEOUT)
+                response = session.get(openchia_stats.PARTIAL_STATS_API_URL + f'?launcher={self._launcher_id}' + 
+                                       f'&min_timestamp={four_score_and_twenty_four_hours_ago}&limit=' +
+                                       openchia_stats.PARTIAL_PAGINATION_LIMIT, timeout=openchia_stats.HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code is: {response.status_code}.')
             
