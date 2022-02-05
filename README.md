@@ -7,7 +7,7 @@ A chia collection agent/Prometheus client that gathers various stats from a loca
 
 **❄** You will need a **python3.6+** environment. Most Linux distros will come with python3 installed - make sure you pick one which comes with **python 3.6** or above.
 
-**❄** The following python3 packages need to be installed: `prometheus_client, chia-blockchain` (and dependencies). I leave the details up to you. As long as they're in the PYTHONPATH, chiatter will not complain.
+**❄** The following python3 packages need to be installed: `prometheus_client, requests, chia-blockchain` (and dependencies). I leave the details up to you. As long as they're in the PYTHONPATH, chiatter will not complain.
 
 **❄** A full chia node running on the same host. No, it's not possible to run it remotely at this point!
 
