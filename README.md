@@ -15,7 +15,7 @@ A chia collection agent/Prometheus client that gathers various stats from a loca
 
 ## If I used the chia CLI installer how do I get chiatter working?
 
-Assuming `~/chia-blockchain` is the folder where you've installed the chia-blockchain and  `~/chiatter` is the folder where you've deployed chiatter, you need to go through the following steps in order to set up chiatter:
+Assuming `~/chia-blockchain` is the folder where you've installed the chia-blockchain, you need to go through the following steps in order to set up chiatter:
 
 **1.** Enable the chia python venv:
 

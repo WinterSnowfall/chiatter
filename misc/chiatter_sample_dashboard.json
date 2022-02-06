@@ -476,6 +476,21 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "K34 (Portable)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -515,7 +530,7 @@
           "hide": false,
           "interval": "",
           "legendFormat": "K32 (Portable)",
-          "refId": "C"
+          "refId": "A"
         },
         {
           "exemplar": true,
@@ -523,7 +538,16 @@
           "hide": false,
           "interval": "",
           "legendFormat": "K33 (Portable)",
-          "refId": "D"
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "chia_stats_portable_plots_k34{}",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "K34 (Portable)",
+          "refId": "C"
         }
       ],
       "title": "Plot Type Distribution",
@@ -1250,7 +1274,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 1000,
+          "max": 2000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1744,5 +1768,5 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "G_T-VMbnz",
-  "version": 24
+  "version": 45
 }
