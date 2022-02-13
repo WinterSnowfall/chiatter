@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.70
-@date: 06/02/2022
+@version: 2.71
+@date: 12/02/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -33,7 +33,7 @@ class openchia_stats:
     _logging_level = logging.WARNING
     
     HTTP_SUCCESS_OK = 200
-    HTTP_TIMEOUT = 10
+    HTTP_TIMEOUT = 30
     
     #ordering used for the farmer ranking query
     #options: points, points_pplns (- stands for descending)
@@ -256,9 +256,6 @@ class openchia_stats:
                     try:
                         if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
                             block_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
-                            
-                            #clear existing value before updating
-                            self.seconds_since_last_win = 0
                             
                             block_timestamp = int(block_stats_json[0]['timestamp'])
                             

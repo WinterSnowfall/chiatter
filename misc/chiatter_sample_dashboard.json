@@ -1735,7 +1735,7 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -1767,6 +1767,6 @@
   },
   "timezone": "browser",
   "title": "chiatter",
-  "uid": "G_T-VMbnz",
-  "version": 45
+  "uid": "cnWbaw-7z",
+  "version": 8
 }
