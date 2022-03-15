@@ -9,7 +9,7 @@ global:
 scrape_configs:
   - job_name: 'chiatter'
 
-    # Override the global default and scrape targets from this job every 10 seconds.
+    # Override the global default and scrape targets from this job every 30 seconds.
     scrape_interval: 30s
 
     static_configs:

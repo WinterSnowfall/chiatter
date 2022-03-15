@@ -1,5 +1,6 @@
 {
   "__inputs": [],
+  "__elements": [],
   "__requires": [
     {
       "type": "panel",
@@ -17,7 +18,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.1.0-29505pre"
+      "version": "8.5.0-52524pre"
     },
     {
       "type": "panel",
@@ -52,14 +53,14 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -72,7 +73,6 @@
       "type": "row"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -124,7 +124,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -138,7 +138,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -180,7 +179,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -194,7 +193,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -236,7 +234,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -250,7 +248,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -300,7 +297,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -314,7 +311,6 @@
       "type": "gauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -356,7 +352,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -370,7 +366,6 @@
       "type": "gauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -396,7 +391,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "light-blue",
+                  "fixedColor": "blue",
                   "mode": "fixed"
                 }
               }
@@ -486,7 +481,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "semi-dark-green",
+                  "fixedColor": "light-blue",
                   "mode": "fixed"
                 }
               }
@@ -519,7 +514,8 @@
           "values": false
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.1.0-29408pre",
@@ -554,7 +550,6 @@
       "type": "piechart"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -597,7 +592,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -611,7 +606,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -653,7 +647,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -667,7 +661,6 @@
       "type": "gauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -710,7 +703,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -725,7 +718,6 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -738,7 +730,6 @@
       "type": "row"
     },
     {
-      "datasource": null,
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -781,7 +772,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -797,7 +788,6 @@
       "type": "bargauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -840,7 +830,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -854,7 +844,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -897,7 +886,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": false,
@@ -908,14 +897,11 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Total Plots Size",
       "type": "stat"
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -928,14 +914,13 @@
       "type": "row"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 250,
+          "max": 500,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -970,7 +955,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -984,13 +969,14 @@
       "type": "bargauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 2000,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1000,7 +986,7 @@
               }
             ]
           },
-          "unit": "Hours"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -1010,12 +996,12 @@
         "x": 8,
         "y": 18
       },
-      "id": 123158,
+      "id": 123155,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1023,24 +1009,22 @@
           "fields": "",
           "values": false
         },
-        "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
-          "expr": "openchia_stats_time_since_last_win{} / 3600",
+          "expr": "openchia_stats_rewards_blocks{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Time Since Last Win",
+      "title": "Blocks Won",
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1082,7 +1066,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1096,7 +1080,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1141,7 +1124,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1155,7 +1138,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1197,7 +1179,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1211,7 +1193,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1253,7 +1234,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1267,15 +1248,12 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 2000,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1285,7 +1263,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "Hours"
         },
         "overrides": []
       },
@@ -1295,9 +1273,12 @@
         "x": 8,
         "y": 23
       },
-      "id": 123155,
+      "id": 123158,
       "options": {
-        "orientation": "vertical",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1305,32 +1286,30 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
-          "expr": "openchia_stats_rewards_blocks{}",
+          "expr": "openchia_stats_time_since_last_win{} / 3600",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Blocks Won",
-      "type": "gauge"
+      "title": "Time Since Last Win",
+      "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 16,
+          "max": 50,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1369,7 +1348,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1383,7 +1362,6 @@
       "type": "gauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1428,7 +1406,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1442,7 +1420,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1486,7 +1463,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1500,7 +1477,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1543,7 +1519,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1557,7 +1533,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1600,7 +1575,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1614,7 +1589,6 @@
       "type": "stat"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1656,7 +1630,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1670,7 +1644,6 @@
       "type": "gauge"
     },
     {
-      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1713,7 +1686,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.0-29505pre",
+      "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
           "exemplar": true,
@@ -1728,7 +1701,7 @@
     }
   ],
   "refresh": "30s",
-  "schemaVersion": 30,
+  "schemaVersion": 35,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1768,5 +1741,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 12
+  "version": 4,
+  "weekStart": ""
 }
