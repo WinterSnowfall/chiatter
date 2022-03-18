@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.70
-@date: 06/02/2022
+@version: 2.80
+@date: 18/03/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -21,7 +21,7 @@ from aiohttp.client_exceptions import ClientConnectorError
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 #uncomment for debugging purposes only
-import traceback
+#import traceback
 
 ##logging configuration block
 log_file_full_path = os.path.join('..', 'logs', 'chia_stats.log')
@@ -60,6 +60,7 @@ class chia_stats:
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
+        self.mempool_size = 0
         self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
@@ -103,6 +104,7 @@ class chia_stats:
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
+        self.mempool_size = 0
         self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
@@ -191,9 +193,10 @@ class chia_stats:
             #########################################################
             blockchain = await fullnode.get_blockchain_state()
             
-            self.sync_status = blockchain['sync'].get('synced')
+            self.sync_status = blockchain['sync']['synced']
             self.difficulty = blockchain['difficulty']
             self.network_space_size = blockchain['space']
+            self.mempool_size = blockchain['mempool_size']
             
             connections = await fullnode.get_connections()
             
@@ -217,6 +220,7 @@ class chia_stats:
             logger.debug(f'sync_status: {self.sync_status}')
             logger.debug(f'difficulty: {self.difficulty}')
             logger.debug(f'network_space_size: {self.network_space_size}')
+            logger.debug(f'mempool_size: {self.mempool_size}')
             logger.debug(f'full_node_connections: {self.full_node_connections}')
             logger.debug(f'og_time_to_win: {self.og_time_to_win}')
             logger.debug(f'portable_time_to_win: {self.portable_time_to_win}')
@@ -271,9 +275,10 @@ class chia_stats:
         except ClientConnectorError:
             logger.warning('Chia RPC API call failed. Full node may be down.')
             
-        except:
+        except Exception as exception:
+            logger.error(f'Encountered following exception: {type(exception)} {exception}')
             #uncomment for debugging purposes only
-            logger.error(traceback.format_exc())
+            #logger.error(traceback.format_exc())
             raise
             
         finally:

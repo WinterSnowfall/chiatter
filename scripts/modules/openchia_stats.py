@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.71
-@date: 12/02/2022
+@version: 2.80
+@date: 18/03/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
 from collections import OrderedDict
 #uncomment for debugging purposes only
-import traceback
+#import traceback
 
 ##logging configuration block
 log_file_full_path = os.path.join('..', 'logs', 'openchia_stats.log')
@@ -69,7 +69,6 @@ class openchia_stats:
         self.launcher_points = 0
         self.launcher_points_pplns = 0
         self.launcher_difficulty = 0
-        self.launcher_points_of_total = 0
         self.launcher_share_pplns = 0
         self.launcher_estimated_size = 0
         self.launcher_ranking = 0
@@ -95,7 +94,6 @@ class openchia_stats:
         self.launcher_points = 0
         self.launcher_points_pplns = 0
         self.launcher_difficulty = 0
-        self.launcher_points_of_total = 0
         self.launcher_share_pplns = 0
         self.launcher_estimated_size = 0
         self.launcher_ranking = 0
@@ -191,14 +189,12 @@ class openchia_stats:
                     self.launcher_points = launcher_stats_json['points']
                     self.launcher_points_pplns = launcher_stats_json['points_pplns']
                     self.launcher_difficulty = launcher_stats_json['difficulty']
-                    self.launcher_points_of_total = launcher_stats_json['points_of_total']
                     self.launcher_share_pplns = launcher_stats_json['share_pplns']
                     self.launcher_estimated_size = launcher_stats_json['estimated_size']
                     
                     logger.debug(f'launcher_points: {self.launcher_points}')
                     logger.debug(f'launcher_points_pplns: {self.launcher_points_pplns}')
                     logger.debug(f'launcher_difficulty: {self.launcher_difficulty}')
-                    logger.debug(f'launcher_points_of_total: {self.launcher_points_of_total}')
                     logger.debug(f'launcher_share_pplns: {self.launcher_share_pplns}')
                     logger.debug(f'launcher_estimated_size: {self.launcher_estimated_size}')
                 else:
@@ -310,9 +306,10 @@ class openchia_stats:
                     logger.warning('Failed to connect to API endpoint for partials stats.')
                 #########################################################
                 
-        except:
+        except Exception as exception:
+            logger.error(f'Encountered following exception: {type(exception)} {exception}')
             #uncomment for debugging purposes only
-            logger.error(traceback.format_exc())
+            #logger.error(traceback.format_exc())
             raise
             
         logger.info('--- Data collection complete ---')

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.70
-@date: 06/02/2022
+@version: 2.80
+@date: 18/03/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -60,6 +60,7 @@ def chia_stats_worker(loop):
             chia_stats_chia_farmed.set(chia_stats_inst.chia_farmed)
             chia_stats_wallet_funds.set(chia_stats_inst.wallet_funds)
             chia_stats_network_space_size.set(chia_stats_inst.network_space_size)
+            chia_stats_mempool_size.set(chia_stats_inst.mempool_size)
             chia_stats_full_node_connections.set(chia_stats_inst.full_node_connections)
             chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
             
@@ -97,7 +98,6 @@ def openchia_stats_worker():
             openchia_stats_launcher_points.set(openchia_stats_inst.launcher_points)
             openchia_stats_launcher_points_pplns.set(openchia_stats_inst.launcher_points_pplns)
             openchia_stats_launcher_difficulty.set(openchia_stats_inst.launcher_difficulty)
-            openchia_stats_launcher_points_of_total.set(openchia_stats_inst.launcher_points_of_total)
             openchia_stats_launcher_share_pplns.set(openchia_stats_inst.launcher_share_pplns)
             openchia_stats_launcher_estimated_size.set(openchia_stats_inst.launcher_estimated_size)
             openchia_stats_launcher_ranking.set(openchia_stats_inst.launcher_ranking)
@@ -158,6 +158,7 @@ if __name__ == '__main__':
     chia_stats_chia_farmed = Gauge('chia_stats_chia_farmed', 'XCH farmed')
     chia_stats_wallet_funds = Gauge('chia_stats_wallet_funds', 'Funds present in the main chia wallet')
     chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
+    chia_stats_mempool_size = Gauge('chia_stats_mempool_size', 'Total size of the mempool')
     chia_stats_full_node_connections = Gauge('chia_stats_full_node_connections', 'Number of full node connections')
     chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
     #
@@ -185,7 +186,6 @@ if __name__ == '__main__':
     openchia_stats_launcher_points = Gauge('openchia_stats_launcher_points', 'Total points a launcher has for the current reward cycle')
     openchia_stats_launcher_points_pplns = Gauge('openchia_stats_launcher_points_pplns', 'Total points a launcher has over the PPLNS interval')
     openchia_stats_launcher_difficulty = Gauge('openchia_stats_launcher_difficulty', 'Current pool difficulty for the launcher')
-    openchia_stats_launcher_points_of_total = Gauge('openchia_stats_launcher_points_of_total', 'Percentage the launcher has of the overall rewards')
     openchia_stats_launcher_share_pplns = Gauge('openchia_stats_launcher_share_pplns', 'Fraction the launcher has of the pool points over the PPLNS interval')
     openchia_stats_launcher_estimated_size = Gauge('openchia_stats_launcher_estimated_size', 'Estimated size of a launcher\'s contribution to the pool')
     openchia_stats_launcher_ranking = Gauge('openchia_stats_launcher_ranking', 'Launcher rank, as seen on the OpenChia leaderboard')
