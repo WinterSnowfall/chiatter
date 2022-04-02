@@ -9,6 +9,8 @@ A chia collection agent/Prometheus client that gathers various stats from a loca
 
 **❄** The following python3 packages need to be installed: `prometheus_client, requests, chia-blockchain` (and dependencies). I leave the details up to you. As long as they're in the PYTHONPATH, chiatter will not complain.
 
+**❄** `chia-blockchain` version 1.3.0+ is required for chiatter to work. Trying to run it on earlier versions will prompt you to upgrade and will exit.
+
 **❄** A full chia node running on the same host. No, it's not possible to run it remotely at this point!
 
 **❄** HTTP port 8080 must be open for business (firewalls included), since the Prometheus server will need to access it in order to scrape and aggregate all the stats.

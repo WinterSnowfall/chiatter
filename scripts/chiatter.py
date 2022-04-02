@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.80
-@date: 18/03/2022
+@version: 2.82
+@date: 02/04/2022
 
 Warning: Built for use with python 3.6+
 '''
 
+from chia import __version__ as chia_version
 from prometheus_client import start_http_server, Gauge
 from modules.chia_stats import chia_stats
 from modules.openchia_stats import openchia_stats
@@ -61,6 +62,7 @@ def chia_stats_worker(loop):
             chia_stats_wallet_funds.set(chia_stats_inst.wallet_funds)
             chia_stats_network_space_size.set(chia_stats_inst.network_space_size)
             chia_stats_mempool_size.set(chia_stats_inst.mempool_size)
+            chia_stats_mempool_allocation.set(chia_stats_inst.mempool_allocation)
             chia_stats_full_node_connections.set(chia_stats_inst.full_node_connections)
             chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
             
@@ -117,6 +119,10 @@ if __name__ == '__main__':
     print('| Welcome to chiatter - the most basic/dense chia collection agent. Speak very slowly and clearly! |')
     print(f'----------------------------------------------------------------------------------------------------\n')
     
+    if chia_version.startswith('1.0.') or chia_version.startswith('1.1.') or chia_version.startswith('1.2.'):
+        print('chiatter needs chia-blockchain version 1.3.0+ in order to run. Please upgrade your chia client.')
+        raise SystemExit(1)
+    
     try:
         #reading from config file
         configParser.read(conf_file_full_path)
@@ -141,7 +147,7 @@ if __name__ == '__main__':
             
     except:
         print('Could not parse configuration file. Please make sure the appropriate structure is in place!')
-        raise SystemExit(1)
+        raise SystemExit(2)
     
     ### Prometheus client metrics ####################################################################################################################
     #
@@ -159,6 +165,7 @@ if __name__ == '__main__':
     chia_stats_wallet_funds = Gauge('chia_stats_wallet_funds', 'Funds present in the main chia wallet')
     chia_stats_network_space_size = Gauge('chia_stats_network_space_size', 'Total network space')
     chia_stats_mempool_size = Gauge('chia_stats_mempool_size', 'Total size of the mempool')
+    chia_stats_mempool_allocation = Gauge('chia_stats_mempool_allocation', 'Percentage of total mempool which is in use')
     chia_stats_full_node_connections = Gauge('chia_stats_full_node_connections', 'Number of full node connections')
     chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
     #
@@ -227,7 +234,7 @@ if __name__ == '__main__':
         while True:
             if chia_stats_error_counter > WATCHDOG_THRESHOLD or openchia_stats_error_counter > WATCHDOG_THRESHOLD:
                 print('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
-                raise SystemExit(2)
+                raise SystemExit(3)
             else:
                 sleep(WATCHDOG_INTERVAL)
             
