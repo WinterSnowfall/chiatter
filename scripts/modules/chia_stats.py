@@ -21,7 +21,7 @@ from aiohttp.client_exceptions import ClientConnectorError
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 #uncomment for debugging purposes only
-import traceback
+#import traceback
 
 ##logging configuration block
 log_file_full_path = os.path.join('..', 'logs', 'chia_stats.log')
@@ -140,7 +140,7 @@ class chia_stats:
             
             for plot in plots['plots']:
                 if plot['pool_public_key'] is not None:
-                    self.og_size += plot["file_size"]
+                    self.og_size += plot['file_size']
                     
                     if plot['size'] == 32:
                         #logger.debug('Found k32 OG plot!')
@@ -289,7 +289,7 @@ class chia_stats:
         except Exception as exception:
             logger.error(f'Encountered following exception: {type(exception)} {exception}')
             #uncomment for debugging purposes only
-            logger.error(traceback.format_exc())
+            #logger.error(traceback.format_exc())
             raise
             
         finally:
