@@ -233,7 +233,7 @@
               },
               {
                 "color": "light-green",
-                "value": 4
+                "value": 8
               }
             ]
           },
@@ -1059,7 +1059,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 16,
+          "max": 50,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1074,7 +1074,7 @@
               },
               {
                 "color": "semi-dark-red",
-                "value": 8
+                "value": 25
               }
             ]
           },
@@ -1771,6 +1771,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 145,
+  "version": 151,
   "weekStart": ""
 }
