@@ -1105,8 +1105,12 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
-          "expr": "openchia_stats_partial_errors_24h{}",
+          "expr": "openchia_stats_launcher_partial_errors_24h{}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1771,6 +1775,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 151,
+  "version": 3,
   "weekStart": ""
 }

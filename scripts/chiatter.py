@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.82
-@date: 02/04/2022
+@version: 2.83
+@date: 28/04/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -104,8 +104,9 @@ def openchia_stats_worker():
             openchia_stats_launcher_estimated_size.set(openchia_stats_inst.launcher_estimated_size)
             openchia_stats_launcher_ranking.set(openchia_stats_inst.launcher_ranking)
             openchia_stats_launcher_pool_earnings.set(openchia_stats_inst.launcher_pool_earnings)
+            openchia_stats_launcher_partial_errors_24h.set(openchia_stats_inst.launcher_partial_errors_24h)
             openchia_stats_seconds_since_last_win.set(openchia_stats_inst.seconds_since_last_win)
-            openchia_stats_partial_errors_24h.set(openchia_stats_inst.partial_errors_24h)
+
         except:
             openchia_stats_error_counter += OPENCHIA_STATS_COLLECTION_INTERVAL
             
@@ -197,8 +198,8 @@ if __name__ == '__main__':
     openchia_stats_launcher_estimated_size = Gauge('openchia_stats_launcher_estimated_size', 'Estimated size of a launcher\'s contribution to the pool')
     openchia_stats_launcher_ranking = Gauge('openchia_stats_launcher_ranking', 'Launcher rank, as seen on the OpenChia leaderboard')
     openchia_stats_launcher_pool_earnings = Gauge('openchia_stats_launcher_pool_earnings', 'Total amount of rewards received by the launcher from the pool')
+    openchia_stats_launcher_partial_errors_24h = Gauge('openchia_stats_launcher_partial_errors_24h', 'Number of erroneous partials in the last 24h')
     openchia_stats_seconds_since_last_win = Gauge('openchia_stats_seconds_since_last_win', 'Number of seconds since last block win (launcher)')
-    openchia_stats_partial_errors_24h = Gauge('openchia_stats_partial_errors_24h', 'Number of erroneous partials in the last 24h')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     #
     ##################################################################################################################################################
