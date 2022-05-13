@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.83
-@date: 28/04/2022
+@version: 2.84
+@date: 13/05/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -37,6 +37,9 @@ class chia_stats:
     '''gather stats using the chia RPC clients'''
     
     _logging_level = logging.WARNING
+    
+    WON_BLOCK_TRANSACTION_AMOUNT = 250000000000  #0.25  XCH
+    WON_BLOCK_TRANSACTION_FEE_DELTA = 1000000000 #0.001 XCH 
     
     def __init__(self, logging_level):
         self._self_pooling_contract_address = None
@@ -261,7 +264,11 @@ class chia_stats:
                 current_transaction_no = 0
                 for transaction_record in wallet_transactions:
                     current_transaction_no += 1
-                    if int(transaction_record.amount) == 250000000000:
+                    #use a delta interval to determine a won block, since any transaction fees 
+                    #for a won block will be received within the same transaction
+                    if (int(transaction_record.amount) >= chia_stats.WON_BLOCK_TRANSACTION_AMOUNT and
+                        int(transaction_record.amount) <= chia_stats.WON_BLOCK_TRANSACTION_AMOUNT + 
+                        chia_stats.WON_BLOCK_TRANSACTION_FEE_DELTA):
                         logger.debug(f'Transaction #{current_transaction_no} has a block win share amount.')
                         current_time = int(transaction_record.created_at_time)
                         if current_time > self._last_win_max_time:
