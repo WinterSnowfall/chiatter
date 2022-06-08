@@ -214,7 +214,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 50,
+          "max": 80,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1742,7 +1742,7 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1775,6 +1775,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }

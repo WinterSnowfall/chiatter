@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.84
-@date: 13/05/2022
+@version: 2.9
+@date: 08/06/2022
 
 Warning: Built for use with python 3.6+
 '''
 
 from chia.util.config import load_config
-from chia.rpc.harvester_rpc_client import HarvesterRpcClient
+from chia.rpc.farmer_rpc_client import FarmerRpcClient
 from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.rpc.full_node_rpc_client import FullNodeRpcClient
 from chia.util.default_root import DEFAULT_ROOT_PATH
@@ -38,8 +38,8 @@ class chia_stats:
     
     _logging_level = logging.WARNING
     
-    WON_BLOCK_TRANSACTION_AMOUNT = 250000000000  #0.25  XCH
-    WON_BLOCK_TRANSACTION_FEE_DELTA = 1000000000 #0.001 XCH 
+    _WON_BLOCK_TRANSACTION_AMOUNT = 250000000000  #0.25  XCH
+    _WON_BLOCK_TRANSACTION_FEE_DELTA = 1000000000 #0.001 XCH
     
     def __init__(self, logging_level):
         self._self_pooling_contract_address = None
@@ -88,7 +88,7 @@ class chia_stats:
         self._config = load_config(DEFAULT_ROOT_PATH, 'config.yaml')
         
         self._hostname = self._config['self_hostname']
-        self._harvester_port = self._config['harvester']['rpc_port']
+        self._farmer_port = self._config['farmer']['rpc_port']
         self._fullnode_port = self._config['full_node']['rpc_port']
         self._wallet_port = self._config['wallet']['rpc_port']
         
@@ -129,56 +129,58 @@ class chia_stats:
         
         logger.info('Initializing clients...')
         
-        harvester = await HarvesterRpcClient.create(self._hostname, self._harvester_port, 
-                                                    DEFAULT_ROOT_PATH, self._config)
+        farmer = await FarmerRpcClient.create(self._hostname, self._farmer_port, 
+                                              DEFAULT_ROOT_PATH, self._config)
         fullnode = await FullNodeRpcClient.create(self._hostname, self._fullnode_port, 
                                                   DEFAULT_ROOT_PATH, self._config)
         wallet = await WalletRpcClient.create(self._hostname, self._wallet_port, 
                                               DEFAULT_ROOT_PATH, self._config)
         
         try:
-            logger.info('Fetching harvester state...')
+            logger.info('Fetching farmer state...')
             #########################################################
-            plots = await harvester.get_plots()
+            #will scrape the local harvester as well as any remote harvesters
+            harvesters = await farmer.get_harvesters()
             
-            for plot in plots['plots']:
-                if plot['pool_public_key'] is not None:
-                    self.og_size += plot['file_size']
-                    
-                    if plot['size'] == 32:
-                        #logger.debug('Found k32 OG plot!')
-                        self.plots_og_k32 += 1
-                    elif plot['size'] == 33:
-                        #logger.debug('Found k33 OG plot!')
-                        self.plots_og_k33 += 1
-                    elif plot['size'] == 34:
-                        #logger.debug('Found k34 OG plot!')
-                        self.plots_og_k34 += 1
-                    
-                else:
-                    if (self._self_pooling_contract_address is not None and 
-                        plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
+            for harvester in harvesters['harvesters']:
+                for plot in harvester['plots']:
+                    if plot['pool_public_key'] is not None:
+                        self.og_size += plot['file_size']
+                        
                         if plot['size'] == 32:
-                            #logger.debug('Found k32 self-pooling plot!')
-                            self.plots_sp_portable_k32 += 1
+                            #logger.debug('Found k32 OG plot!')
+                            self.plots_og_k32 += 1
                         elif plot['size'] == 33:
-                            #logger.debug('Found k33 self-pooling plot!')
-                            self.plots_sp_portable_k33 += 1
+                            #logger.debug('Found k33 OG plot!')
+                            self.plots_og_k33 += 1
                         elif plot['size'] == 34:
-                            #logger.debug('Found k34 self-pooling plot!')
-                            self.plots_sp_portable_k34 += 1
-                        self.sp_portable_size += plot['file_size']
+                            #logger.debug('Found k34 OG plot!')
+                            self.plots_og_k34 += 1
+                        
                     else:
-                        if plot['size'] == 32:
-                            #logger.debug('Found k32 portable plot!')
-                            self.plots_portable_k32 += 1
-                        elif plot['size'] == 33:
-                            #logger.debug('Found k33 portable plot!')
-                            self.plots_portable_k33 += 1
-                        elif plot['size'] == 34:
-                            #logger.debug('Found k34 portable plot!')
-                            self.plots_portable_k34 += 1
-                        self.portable_size += plot['file_size']
+                        if (self._self_pooling_contract_address is not None and 
+                            plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
+                            if plot['size'] == 32:
+                                #logger.debug('Found k32 self-pooling plot!')
+                                self.plots_sp_portable_k32 += 1
+                            elif plot['size'] == 33:
+                                #logger.debug('Found k33 self-pooling plot!')
+                                self.plots_sp_portable_k33 += 1
+                            elif plot['size'] == 34:
+                                #logger.debug('Found k34 self-pooling plot!')
+                                self.plots_sp_portable_k34 += 1
+                            self.sp_portable_size += plot['file_size']
+                        else:
+                            if plot['size'] == 32:
+                                #logger.debug('Found k32 portable plot!')
+                                self.plots_portable_k32 += 1
+                            elif plot['size'] == 33:
+                                #logger.debug('Found k33 portable plot!')
+                                self.plots_portable_k33 += 1
+                            elif plot['size'] == 34:
+                                #logger.debug('Found k34 portable plot!')
+                                self.plots_portable_k34 += 1
+                            self.portable_size += plot['file_size']
                         
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
@@ -266,9 +268,9 @@ class chia_stats:
                     current_transaction_no += 1
                     #use a delta interval to determine a won block, since any transaction fees 
                     #for a won block will be received within the same transaction
-                    if (int(transaction_record.amount) >= chia_stats.WON_BLOCK_TRANSACTION_AMOUNT and
-                        int(transaction_record.amount) <= chia_stats.WON_BLOCK_TRANSACTION_AMOUNT + 
-                        chia_stats.WON_BLOCK_TRANSACTION_FEE_DELTA):
+                    if (int(transaction_record.amount) >= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT and
+                        int(transaction_record.amount) <= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT + 
+                        chia_stats._WON_BLOCK_TRANSACTION_FEE_DELTA):
                         logger.debug(f'Transaction #{current_transaction_no} has a block win share amount.')
                         current_time = int(transaction_record.created_at_time)
                         if current_time > self._last_win_max_time:
@@ -300,7 +302,7 @@ class chia_stats:
             raise
             
         finally:
-            harvester.close()
+            farmer.close()
             fullnode.close()
             wallet.close()
             

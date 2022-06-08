@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.85
-@date: 13/05/2022
+@version: 2.9
+@date: 08/06/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -139,7 +139,8 @@ if __name__ == '__main__':
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
             self_pooling_types = configParser['CHIA_STATS'].get('self_pooling_types')
-            self_pooling_types = [pooling_type.strip() for pooling_type in self_pooling_types.split(',')]
+            self_pooling_types = [pooling_type.strip() for pooling_type 
+                                  in self_pooling_types.split(',')] if self_pooling_types != '' else []
             CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS = configParser['CHIA_STATS'].get('self_pooling_contact_address').strip()
         if 'openchia_stats' in modules:
             OPENCHIA_STATS_COLLECTION_INTERVAL = configParser['OPENCHIA_STATS'].getint('collection_interval')
