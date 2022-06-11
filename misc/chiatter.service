@@ -1,0 +1,14 @@
+[Unit]
+Description=chiatter data collection agent
+After=network.target
+
+[Service]
+Type=simple
+User=username
+StandardOutput=null
+WorkingDirectory=/home/username/chiatter/bin
+ExecStart=/home/username/chiatter/bin/chiatter.py
+
+[Install]
+WantedBy=multi-user.target
+
