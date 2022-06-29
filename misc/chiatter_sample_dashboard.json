@@ -326,7 +326,7 @@
           "refId": "A"
         }
       ],
-      "title": "Current Difficulty",
+      "title": "Blockchain Difficulty",
       "type": "gauge"
     },
     {
@@ -752,6 +752,65 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 7
+      },
+      "id": 123175,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.5.0-52524pre",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "openchia_stats_xch_current_price{}",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "XCH Price",
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "decimals": 5,
           "mappings": [],
           "thresholds": {
@@ -769,8 +828,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
-        "x": 0,
+        "w": 3,
+        "x": 3,
         "y": 7
       },
       "id": 123144,
@@ -1171,7 +1230,7 @@
           "refId": "A"
         }
       ],
-      "title": "Current Difficulty",
+      "title": "Difficulty",
       "type": "gauge"
     },
     {
@@ -1392,7 +1451,7 @@
           "refId": "A"
         }
       ],
-      "title": "Current Points (PPLNS)",
+      "title": "Points (PPLNS)",
       "type": "stat"
     },
     {
@@ -1775,6 +1834,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 5,
+  "version": 18,
   "weekStart": ""
 }

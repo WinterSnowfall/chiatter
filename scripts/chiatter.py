@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.9
-@date: 08/06/2022
+@version: 2.91
+@date: 28/06/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -97,6 +97,7 @@ def openchia_stats_worker():
             openchia_stats_estimate_win.set(openchia_stats_inst.pool_estimate_win)
             openchia_stats_rewards_blocks.set(openchia_stats_inst.pool_rewards_blocks)
             openchia_stats_time_since_last_win.set(openchia_stats_inst.pool_time_since_last_win)
+            openchia_stats_xch_current_price.set(openchia_stats_inst.pool_xch_current_price)
             openchia_stats_launcher_points.set(openchia_stats_inst.launcher_points)
             openchia_stats_launcher_points_pplns.set(openchia_stats_inst.launcher_points_pplns)
             openchia_stats_launcher_difficulty.set(openchia_stats_inst.launcher_difficulty)
@@ -145,6 +146,7 @@ if __name__ == '__main__':
         if 'openchia_stats' in modules:
             OPENCHIA_STATS_COLLECTION_INTERVAL = configParser['OPENCHIA_STATS'].getint('collection_interval')
             OPENCHIA_STATS_LAUNCHER_ID = configParser['OPENCHIA_STATS'].get('launcher_id')
+            OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY = configParser['OPENCHIA_STATS'].get('xch_current_price_currency')
             OPENCHIA_STATS_LOGGING_LEVEL = configParser['OPENCHIA_STATS'].get('logging_level')
             
     except:
@@ -192,6 +194,7 @@ if __name__ == '__main__':
     openchia_stats_estimate_win = Gauge('openchia_stats_estimate_win', 'Estimated time to win')
     openchia_stats_rewards_blocks = Gauge('openchia_stats_rewards_blocks', 'Number of blocks won/rewarded by the pool')
     openchia_stats_time_since_last_win = Gauge('openchia_stats_time_since_last_win', 'Time since last block win/reward')
+    openchia_stats_xch_current_price = Gauge('openchia_stats_xch_current_price', 'XCH exchange price in the currencty of choice')
     openchia_stats_launcher_points = Gauge('openchia_stats_launcher_points', 'Total points a launcher has for the current reward cycle')
     openchia_stats_launcher_points_pplns = Gauge('openchia_stats_launcher_points_pplns', 'Total points a launcher has over the PPLNS interval')
     openchia_stats_launcher_difficulty = Gauge('openchia_stats_launcher_difficulty', 'Current pool difficulty for the launcher')
@@ -219,6 +222,9 @@ if __name__ == '__main__':
         print('*** Loading the openchia_stats module ***')
         openchia_stats_inst = openchia_stats(OPENCHIA_STATS_LOGGING_LEVEL)
         openchia_stats_inst.set_launcher_id(OPENCHIA_STATS_LAUNCHER_ID)
+        #will default to 'usd'/$ if unspecified
+        if OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY != '':
+            openchia_stats_inst.set_xch_current_price_currency(OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY)
     
     #a mere aestetic separator
     print('')

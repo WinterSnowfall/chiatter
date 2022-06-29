@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.9
-@date: 08/06/2022
+@version: 2.91
+@date: 26/06/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -50,12 +50,15 @@ class openchia_stats:
         self._pool_rewards_blocks_prev = 0
         self._block_timestamp_prev = 0
         self._block_seconds_since_last_win_stale = False
-    
+        #will default to fetching the current $ exchange value of XCH
+        self._xch_current_price_currency = 'usd'
+        
         self.pool_space = 0
         self.pool_farmers = 0
         self.pool_estimate_win = 0
         self.pool_rewards_blocks = 0
         self.pool_time_since_last_win = 0
+        self.pool_xch_current_price = 0
         self.launcher_points = 0
         self.launcher_points_pplns = 0
         self.launcher_difficulty = 0
@@ -81,6 +84,7 @@ class openchia_stats:
         self.pool_estimate_win = 0
         self.pool_rewards_blocks = 0
         self.pool_time_since_last_win = 0
+        self.pool_xch_current_price = 0
         self.launcher_points = 0
         self.launcher_points_pplns = 0
         self.launcher_difficulty = 0
@@ -93,6 +97,9 @@ class openchia_stats:
         
     def set_launcher_id(self, launcher_id):
         self._launcher_id = launcher_id
+        
+    def set_xch_current_price_currency(self, currency):
+        self._xch_current_price_currency = currency
         
     def collect_stats(self):
         if self._launcher_id is None:
@@ -120,12 +127,14 @@ class openchia_stats:
                     self.pool_estimate_win = pool_stats_json['estimate_win']
                     self.pool_rewards_blocks = pool_stats_json['rewards_blocks']
                     self.pool_time_since_last_win = pool_stats_json['time_since_last_win']
+                    self.pool_xch_current_price = pool_stats_json['xch_current_price'][self._xch_current_price_currency]
                     
                     logger.debug(f'pool_space: {self.pool_space}')
                     logger.debug(f'pool_farmers: {self.pool_farmers}')
                     logger.debug(f'pool_estimate_win: {self.pool_estimate_win}')
                     logger.debug(f'pool_rewards_blocks: {self.pool_rewards_blocks}')
                     logger.debug(f'pool_time_since_last_win: {self.pool_time_since_last_win}')
+                    logger.debug(f'pool_xch_current_price: {self.pool_xch_current_price}')
                 else:
                     logger.warning('Failed to connect to API endpoint for pool stats.')
                 #########################################################
