@@ -9,7 +9,7 @@
       "pluginName": "Prometheus"
     }
   ],
-  "__elements": [],
+  "__elements": {},
   "__requires": [
     {
       "type": "panel",
@@ -27,7 +27,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.5.0-52524pre"
+      "version": "9.1.0-72504pre"
     },
     {
       "type": "panel",
@@ -52,7 +52,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -76,6 +79,10 @@
   "panels": [
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -84,10 +91,23 @@
       },
       "id": 123135,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Full Node Stats",
       "type": "row"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -139,9 +159,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_sync_status{}",
           "interval": "",
@@ -153,6 +177,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -194,9 +222,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_current_height{}",
           "interval": "",
@@ -208,6 +240,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -261,9 +297,13 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_full_node_connections{}",
           "interval": "",
@@ -275,6 +315,10 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -316,9 +360,13 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_difficulty{}",
           "interval": "",
@@ -330,6 +378,10 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -380,7 +432,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
           "datasource": {
@@ -398,6 +450,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -553,6 +609,10 @@
       "pluginVersion": "8.1.0-29408pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_portable_plots_k32{}",
           "hide": false,
@@ -561,6 +621,10 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_portable_plots_k33{}",
           "hide": false,
@@ -569,6 +633,10 @@
           "refId": "B"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_portable_plots_k34{}",
           "hide": false,
@@ -582,6 +650,10 @@
       "type": "piechart"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -623,9 +695,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_seconds_since_last_win / 86400",
           "interval": "",
@@ -637,6 +713,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -677,9 +757,13 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_chia_farmed{} / 1000000000000",
           "interval": "",
@@ -691,6 +775,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -733,9 +821,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_network_space_size{}",
           "interval": "",
@@ -747,6 +839,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -788,7 +884,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
           "datasource": {
@@ -806,6 +902,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -847,9 +947,13 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_wallet_funds{} / 1000000000000",
           "interval": "",
@@ -862,6 +966,10 @@
     },
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -870,10 +978,23 @@
       },
       "id": 123170,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Portable Plots",
       "type": "row"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -881,7 +1002,6 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "max": 700,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -905,6 +1025,8 @@
       "interval": "5",
       "options": {
         "displayMode": "lcd",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -916,9 +1038,13 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_portable_plots_k32{} + chia_stats_portable_plots_k33{}",
           "format": "time_series",
@@ -932,6 +1058,10 @@
       "type": "bargauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -974,9 +1104,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "chia_stats_portable_time_to_win{} / 86400",
           "interval": "",
@@ -988,6 +1122,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1030,9 +1168,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": false,
           "expr": "chia_stats_portable_size{}",
           "interval": "",
@@ -1046,6 +1188,10 @@
     },
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1054,10 +1200,23 @@
       },
       "id": 123141,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "OpenChia Pool Stats",
       "type": "row"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1098,9 +1257,13 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_farmers{}",
           "interval": "",
@@ -1112,6 +1275,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1161,7 +1328,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
           "datasource": {
@@ -1179,6 +1346,10 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1220,9 +1391,13 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_launcher_difficulty{}",
           "interval": "",
@@ -1234,6 +1409,10 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1276,9 +1455,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.5.0-52524pre",
+      "pluginVersion": "9.1.0-72504pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_launcher_estimated_size{}",
           "interval": "",
@@ -1290,6 +1473,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1301,8 +1488,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-purple",
-                "value": null
+                "color": "light-purple"
               }
             ]
           },
@@ -1335,6 +1521,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_space{}",
           "interval": "",
@@ -1346,6 +1536,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1356,8 +1550,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-purple",
-                "value": null
+                "color": "light-purple"
               }
             ]
           },
@@ -1389,6 +1582,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_rewards_blocks{}",
           "interval": "",
@@ -1400,6 +1597,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1410,8 +1611,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-green",
-                "value": null
+                "color": "light-green"
               }
             ]
           },
@@ -1444,6 +1644,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_launcher_points_pplns{}",
           "interval": "",
@@ -1455,6 +1659,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1468,8 +1676,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-green",
-                "value": null
+                "color": "light-green"
               }
             ]
           },
@@ -1502,6 +1709,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_launcher_pool_earnings{} / 1000000000000",
           "interval": "",
@@ -1513,6 +1724,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1523,8 +1738,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-purple",
-                "value": null
+                "color": "light-purple"
               }
             ]
           },
@@ -1557,6 +1771,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_estimate_win{} / 60",
           "interval": "",
@@ -1568,6 +1786,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1578,8 +1800,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-purple",
-                "value": null
+                "color": "light-purple"
               }
             ]
           },
@@ -1612,6 +1833,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_time_since_last_win{} / 3600",
           "interval": "",
@@ -1623,6 +1848,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1633,8 +1862,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-green",
-                "value": null
+                "color": "light-green"
               }
             ]
           },
@@ -1667,6 +1895,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_launcher_ranking{}",
           "interval": "",
@@ -1678,6 +1910,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1690,8 +1926,7 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "light-green",
-                "value": null
+                "color": "light-green"
               }
             ]
           },
@@ -1724,6 +1959,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_launcher_share_pplns{} * 100",
           "interval": "",
@@ -1735,6 +1974,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1748,8 +1991,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-green",
-                "value": null
+                "color": "light-green"
               }
             ]
           },
@@ -1782,6 +2024,10 @@
       "pluginVersion": "8.5.0-52524pre",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "openchia_stats_launcher_share_pplns{} * 1.7325",
           "interval": "",
@@ -1794,7 +2040,7 @@
     }
   ],
   "refresh": "30s",
-  "schemaVersion": 35,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1834,6 +2080,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 18,
+  "version": 1,
   "weekStart": ""
 }
