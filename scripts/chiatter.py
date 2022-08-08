@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.91
-@date: 28/06/2022
+@version: 2.92
+@date: 07/08/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -131,6 +131,7 @@ if __name__ == '__main__':
         general_section = configParser['GENERAL']
         #parsing generic parameters
         PROMETHEUS_CLIENT_PORT = general_section.getint('prometheus_client_port')
+        WATCHDOG_MODE = general_section.getboolean('watchdog_mode')
         WATCHDOG_INTERVAL = general_section.getint('watchdog_interval')
         WATCHDOG_THRESHOLD = general_section.getint('watchdog_threshold')
         modules = general_section.get('modules')
@@ -239,12 +240,18 @@ if __name__ == '__main__':
             openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(), daemon=True)
             openchia_stats_thread.start()
                 
-        while True:
-            if chia_stats_error_counter > WATCHDOG_THRESHOLD or openchia_stats_error_counter > WATCHDOG_THRESHOLD:
-                print('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
-                raise SystemExit(3)
-            else:
-                sleep(WATCHDOG_INTERVAL)
+        if WATCHDOG_MODE:
+            while True:
+                if chia_stats_error_counter > WATCHDOG_THRESHOLD or openchia_stats_error_counter > WATCHDOG_THRESHOLD:
+                    print('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
+                    raise SystemExit(3)
+                else:
+                    sleep(WATCHDOG_INTERVAL)
+        else:
+            #outside of watchdog mode simply wait forever, as the called threads 
+            #should never terminate unless critical exceptions are encountered
+            chia_stats_thread.join()
+            openchia_stats_thread.join()
             
     except KeyboardInterrupt:
         pass
