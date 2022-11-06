@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.92
-@date: 07/08/2022
+@version: 2.94
+@date: 06/11/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -134,17 +134,19 @@ if __name__ == '__main__':
         WATCHDOG_MODE = general_section.getboolean('watchdog_mode')
         WATCHDOG_INTERVAL = general_section.getint('watchdog_interval')
         WATCHDOG_THRESHOLD = general_section.getint('watchdog_threshold')
-        modules = general_section.get('modules')
-        modules = [module.strip() for module in modules.split(',')]
+        modules = [module.strip() for module in general_section.get('modules').split(',')]
+        #determine enabled modules
+        CHIA_STATS_MODULE = 'chia_stats' in modules
+        OPENCHIA_STATS_MODULE = 'openchia_stats' in modules
         #parse collection intervals conditionally for each module
-        if 'chia_stats' in modules:
+        if CHIA_STATS_MODULE:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
             self_pooling_types = configParser['CHIA_STATS'].get('self_pooling_types')
             self_pooling_types = [pooling_type.strip() for pooling_type 
                                   in self_pooling_types.split(',')] if self_pooling_types != '' else []
             CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS = configParser['CHIA_STATS'].get('self_pooling_contact_address').strip()
-        if 'openchia_stats' in modules:
+        if OPENCHIA_STATS_MODULE:
             OPENCHIA_STATS_COLLECTION_INTERVAL = configParser['OPENCHIA_STATS'].getint('collection_interval')
             OPENCHIA_STATS_LAUNCHER_ID = configParser['OPENCHIA_STATS'].get('launcher_id')
             OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY = configParser['OPENCHIA_STATS'].get('xch_current_price_currency')
@@ -213,13 +215,13 @@ if __name__ == '__main__':
     http_server_thread = threading.Thread(target=http_server, args=(), daemon=True)
     http_server_thread.start()
     
-    if 'chia_stats' in modules:
+    if CHIA_STATS_MODULE:
         print('*** Loading the chia_stats module ***')
         chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL)
         if (CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types and 
             CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS != ''):
             chia_stats_inst.set_self_pooling_contract_address(CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS)
-    if 'openchia_stats' in modules:
+    if OPENCHIA_STATS_MODULE:
         print('*** Loading the openchia_stats module ***')
         openchia_stats_inst = openchia_stats(OPENCHIA_STATS_LOGGING_LEVEL)
         openchia_stats_inst.set_launcher_id(OPENCHIA_STATS_LAUNCHER_ID)
@@ -231,12 +233,12 @@ if __name__ == '__main__':
     print('')
     
     try:
-        if 'chia_stats' in modules:
+        if CHIA_STATS_MODULE:
             loop = asyncio.get_event_loop()
             chia_stats_thread = threading.Thread(target=chia_stats_worker, args=((loop,)), daemon=True)
             chia_stats_thread.start()
                 
-        if 'openchia_stats' in modules:
+        if OPENCHIA_STATS_MODULE:
             openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(), daemon=True)
             openchia_stats_thread.start()
                 
@@ -250,8 +252,10 @@ if __name__ == '__main__':
         else:
             #outside of watchdog mode simply wait forever, as the called threads 
             #should never terminate unless critical exceptions are encountered
-            chia_stats_thread.join()
-            openchia_stats_thread.join()
+            if CHIA_STATS_MODULE:
+                chia_stats_thread.join()
+            if OPENCHIA_STATS_MODULE:
+                openchia_stats_thread.join()
             
     except KeyboardInterrupt:
         pass
