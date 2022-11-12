@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.94
-@date: 06/11/2022
+@version: 2.95
+@date: 12/11/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -162,6 +162,7 @@ class openchia_stats:
                     found_launcher = False
                     
                     try:
+                        self.launcher_ranking = 0
                         while not found_launcher:
                             current_farmer = next(launcher_iterator)
                             self.launcher_ranking += 1

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.94
-@date: 06/11/2022
+@version: 2.95
+@date: 12/11/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -20,16 +20,13 @@ import os
 
 ##global parameters init
 configParser = ConfigParser()
+counter_lock = threading.Lock()
 
 ##conf file block
 conf_file_full_path = os.path.join('..', 'conf', 'chiatter.conf')
 
 CHIA_STATS_SELF_POOLING_OG = 'og'
 CHIA_STATS_SELF_POOLING_PORTABLE = 'portable'
-
-watchdog_counter = 0
-chia_stats_error_counter = 0
-openchia_stats_error_counter = 0
 
 def sigterm_handler(signum, frame):
     print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painful. Bye!')
@@ -38,13 +35,10 @@ def sigterm_handler(signum, frame):
 def http_server():
     start_http_server(PROMETHEUS_CLIENT_PORT)
     
-def chia_stats_worker(loop):
-    global chia_stats_error_counter
-    
+def chia_stats_worker(error_counters, loop):
+        
     while True:
-        try:
-            chia_stats_inst.clear_stats()
-                    
+        try:                    
             #you'll have to excuse me here, but I simply h8 asyncio
             coroutine = chia_stats_inst.collect_stats()
             loop.run_until_complete(coroutine)
@@ -79,17 +73,19 @@ def chia_stats_worker(loop):
                 chia_stats_sp_portable_plots_k33.set(chia_stats_inst.plots_sp_portable_k33)
                 chia_stats_sp_portable_plots_k34.set(chia_stats_inst.plots_sp_portable_k34)
                 chia_stats_sp_portable_time_to_win.set(chia_stats_inst.sp_portable_time_to_win)
+        
         except:
-            chia_stats_error_counter += CHIA_STATS_COLLECTION_INTERVAL
+            chia_stats_inst.clear_stats()
+            if WATCHDOG_MODE:
+                with counter_lock:
+                    error_counters[0] += CHIA_STATS_COLLECTION_INTERVAL
             
         sleep(CHIA_STATS_COLLECTION_INTERVAL)
     
-def openchia_stats_worker():
-    global openchia_stats_error_counter
+def openchia_stats_worker(error_counters):
     
     while True:
         try:
-            openchia_stats_inst.clear_stats()
             openchia_stats_inst.collect_stats()
             
             openchia_stats_space.set(openchia_stats_inst.pool_space)
@@ -109,7 +105,10 @@ def openchia_stats_worker():
             openchia_stats_seconds_since_last_win.set(openchia_stats_inst.seconds_since_last_win)
 
         except:
-            openchia_stats_error_counter += OPENCHIA_STATS_COLLECTION_INTERVAL
+            openchia_stats_inst.clear_stats()
+            if WATCHDOG_MODE:
+                with counter_lock:
+                    error_counters[1] += OPENCHIA_STATS_COLLECTION_INTERVAL
             
         sleep(OPENCHIA_STATS_COLLECTION_INTERVAL)
 
@@ -232,19 +231,22 @@ if __name__ == '__main__':
     #a mere aestetic separator
     print('')
     
+    #counts errors for the chia_stats_worker ([0]) & openchia_stats_worker threads ([1])
+    error_counters = [0, 0]
+    
     try:
         if CHIA_STATS_MODULE:
             loop = asyncio.get_event_loop()
-            chia_stats_thread = threading.Thread(target=chia_stats_worker, args=((loop,)), daemon=True)
+            chia_stats_thread = threading.Thread(target=chia_stats_worker, args=(error_counters, loop), daemon=True)
             chia_stats_thread.start()
                 
         if OPENCHIA_STATS_MODULE:
-            openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(), daemon=True)
+            openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(error_counters, ), daemon=True)
             openchia_stats_thread.start()
                 
         if WATCHDOG_MODE:
             while True:
-                if chia_stats_error_counter > WATCHDOG_THRESHOLD or openchia_stats_error_counter > WATCHDOG_THRESHOLD:
+                if error_counters[0] > WATCHDOG_THRESHOLD or error_counters[1] > WATCHDOG_THRESHOLD:
                     print('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
                     raise SystemExit(3)
                 else:

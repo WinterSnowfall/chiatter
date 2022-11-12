@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.94
-@date: 06/11/2022
+@version: 2.95
+@date: 12/11/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -142,6 +142,19 @@ class chia_stats:
             #will scrape the local harvester as well as any remote harvesters
             harvesters = await farmer.get_harvesters()
             
+            self.og_size = 0
+            self.plots_og_k32 = 0
+            self.plots_og_k33 = 0
+            self.plots_og_k34 = 0
+            self.portable_size = 0
+            self.plots_portable_k32 = 0
+            self.plots_portable_k33 = 0
+            self.plots_portable_k34 = 0
+            self.sp_portable_size = 0
+            self.plots_sp_portable_k32 = 0
+            self.plots_sp_portable_k33 = 0
+            self.plots_sp_portable_k34 = 0
+            
             for harvester in harvesters['harvesters']:
                 for plot in harvester['plots']:
                     if plot['pool_public_key'] is not None:
@@ -157,30 +170,32 @@ class chia_stats:
                             #logger.debug('Found k34 OG plot!')
                             self.plots_og_k34 += 1
                         
+                    elif (self._self_pooling_contract_address is not None and 
+                          plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
+                        self.sp_portable_size += plot['file_size']
+                            
+                        if plot['size'] == 32:
+                            #logger.debug('Found k32 self-pooling plot!')
+                            self.plots_sp_portable_k32 += 1
+                        elif plot['size'] == 33:
+                            #logger.debug('Found k33 self-pooling plot!')
+                            self.plots_sp_portable_k33 += 1
+                        elif plot['size'] == 34:
+                            #logger.debug('Found k34 self-pooling plot!')
+                            self.plots_sp_portable_k34 += 1
+                            
                     else:
-                        if (self._self_pooling_contract_address is not None and 
-                            plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
-                            if plot['size'] == 32:
-                                #logger.debug('Found k32 self-pooling plot!')
-                                self.plots_sp_portable_k32 += 1
-                            elif plot['size'] == 33:
-                                #logger.debug('Found k33 self-pooling plot!')
-                                self.plots_sp_portable_k33 += 1
-                            elif plot['size'] == 34:
-                                #logger.debug('Found k34 self-pooling plot!')
-                                self.plots_sp_portable_k34 += 1
-                            self.sp_portable_size += plot['file_size']
-                        else:
-                            if plot['size'] == 32:
-                                #logger.debug('Found k32 portable plot!')
-                                self.plots_portable_k32 += 1
-                            elif plot['size'] == 33:
-                                #logger.debug('Found k33 portable plot!')
-                                self.plots_portable_k33 += 1
-                            elif plot['size'] == 34:
-                                #logger.debug('Found k34 portable plot!')
-                                self.plots_portable_k34 += 1
-                            self.portable_size += plot['file_size']
+                        self.portable_size += plot['file_size']
+                        
+                        if plot['size'] == 32:
+                            #logger.debug('Found k32 portable plot!')
+                            self.plots_portable_k32 += 1
+                        elif plot['size'] == 33:
+                            #logger.debug('Found k33 portable plot!')
+                            self.plots_portable_k33 += 1
+                        elif plot['size'] == 34:
+                            #logger.debug('Found k34 portable plot!')
+                            self.plots_portable_k34 += 1
                         
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
@@ -209,6 +224,7 @@ class chia_stats:
             
             connections = await fullnode.get_connections()
             
+            self.full_node_connections = 0
             for connection in connections:
                 #only count full node connections (type 1)
                 if connection['type'] == 1:
