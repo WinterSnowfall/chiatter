@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.95
-@date: 12/11/2022
+@version: 3.00
+@date: 02/12/2022
 
 Warning: Built for use with python 3.6+
 '''
 
-from chia import __version__ as chia_version
-from prometheus_client import start_http_server, Gauge
-from modules.chia_stats import chia_stats
-from modules.openchia_stats import openchia_stats
-from configparser import ConfigParser
-from time import sleep
 import signal
 import threading
 import asyncio
 import os
-
-##global parameters init
-configParser = ConfigParser()
-counter_lock = threading.Lock()
+from configparser import ConfigParser
+from time import sleep
+from chia import __version__ as chia_version
+from prometheus_client import start_http_server, Gauge
+from modules.chia_stats import chia_stats
+from modules.openchia_stats import openchia_stats
 
 ##conf file block
 conf_file_full_path = os.path.join('..', 'conf', 'chiatter.conf')
@@ -29,16 +25,19 @@ CHIA_STATS_SELF_POOLING_OG = 'og'
 CHIA_STATS_SELF_POOLING_PORTABLE = 'portable'
 
 def sigterm_handler(signum, frame):
-    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painful. Bye!')
+    print('Stopping stats collection due to SIGTERM...')
+    
     raise SystemExit(0)
 
-def http_server():
-    start_http_server(PROMETHEUS_CLIENT_PORT)
+def sigint_handler(signum, frame):
+    print('Stopping stats collection due to SIGINT...')
     
-def chia_stats_worker(error_counters, loop):
-        
-    while True:
-        try:                    
+    raise SystemExit(0)
+
+def chia_stats_worker(loop, counter_lock, terminate_event, error_counters):
+    
+    while not terminate_event.is_set():
+        try:
             #you'll have to excuse me here, but I simply h8 asyncio
             coroutine = chia_stats_inst.collect_stats()
             loop.run_until_complete(coroutine)
@@ -66,7 +65,7 @@ def chia_stats_worker(error_counters, loop):
                 chia_stats_og_plots_k33.set(chia_stats_inst.plots_og_k33)
                 chia_stats_og_plots_k34.set(chia_stats_inst.plots_og_k34)
                 chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
-                
+            
             if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
                 chia_stats_sp_portable_size.set(chia_stats_inst.sp_portable_size)
                 chia_stats_sp_portable_plots_k32.set(chia_stats_inst.plots_sp_portable_k32)
@@ -76,15 +75,16 @@ def chia_stats_worker(error_counters, loop):
         
         except:
             chia_stats_inst.clear_stats()
+            
             if WATCHDOG_MODE:
                 with counter_lock:
                     error_counters[0] += CHIA_STATS_COLLECTION_INTERVAL
-            
+        
         sleep(CHIA_STATS_COLLECTION_INTERVAL)
+
+def openchia_stats_worker(counter_lock, terminate_event, error_counters):
     
-def openchia_stats_worker(error_counters):
-    
-    while True:
+    while not terminate_event.is_set():
         try:
             openchia_stats_inst.collect_stats()
             
@@ -103,26 +103,29 @@ def openchia_stats_worker(error_counters):
             openchia_stats_launcher_pool_earnings.set(openchia_stats_inst.launcher_pool_earnings)
             openchia_stats_launcher_partial_errors_24h.set(openchia_stats_inst.launcher_partial_errors_24h)
             openchia_stats_seconds_since_last_win.set(openchia_stats_inst.seconds_since_last_win)
-
+        
         except:
             openchia_stats_inst.clear_stats()
+            
             if WATCHDOG_MODE:
                 with counter_lock:
                     error_counters[1] += OPENCHIA_STATS_COLLECTION_INTERVAL
-            
+        
         sleep(OPENCHIA_STATS_COLLECTION_INTERVAL)
 
 if __name__ == '__main__':
     #catch SIGTERM and exit gracefully
     signal.signal(signal.SIGTERM, sigterm_handler)
+    #catch SIGINT and exit gracefully
+    signal.signal(signal.SIGINT, sigint_handler)
     
-    print('----------------------------------------------------------------------------------------------------')
-    print('| Welcome to chiatter - the most basic/dense chia collection agent. Speak very slowly and clearly! |')
-    print(f'----------------------------------------------------------------------------------------------------\n')
+    print(f'Starting chiatter - the chia stats collection agent...\n\n')
     
     if chia_version.startswith('1.0.') or chia_version.startswith('1.1.') or chia_version.startswith('1.2.'):
         print('chiatter needs chia-blockchain version 1.3.0+ in order to run. Please upgrade your chia client.')
         raise SystemExit(1)
+    
+    configParser = ConfigParser()
     
     try:
         #reading from config file
@@ -133,10 +136,10 @@ if __name__ == '__main__':
         WATCHDOG_MODE = general_section.getboolean('watchdog_mode')
         WATCHDOG_INTERVAL = general_section.getint('watchdog_interval')
         WATCHDOG_THRESHOLD = general_section.getint('watchdog_threshold')
-        modules = [module.strip() for module in general_section.get('modules').split(',')]
+        MODULES = [module.strip() for module in general_section.get('modules').split(',')]
         #determine enabled modules
-        CHIA_STATS_MODULE = 'chia_stats' in modules
-        OPENCHIA_STATS_MODULE = 'openchia_stats' in modules
+        CHIA_STATS_MODULE = 'chia_stats' in MODULES
+        OPENCHIA_STATS_MODULE = 'openchia_stats' in MODULES
         #parse collection intervals conditionally for each module
         if CHIA_STATS_MODULE:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
@@ -150,20 +153,20 @@ if __name__ == '__main__':
             OPENCHIA_STATS_LAUNCHER_ID = configParser['OPENCHIA_STATS'].get('launcher_id')
             OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY = configParser['OPENCHIA_STATS'].get('xch_current_price_currency')
             OPENCHIA_STATS_LOGGING_LEVEL = configParser['OPENCHIA_STATS'].get('logging_level')
-            
+    
     except:
         print('Could not parse configuration file. Please make sure the appropriate structure is in place!')
         raise SystemExit(2)
     
     ### Prometheus client metrics ####################################################################################################################
-    #
-    #---------------------- chia_stats ---------------------------------------------------------------------------------------------------------------
+    
+    #--------------------------------------------------------- chia_stats ----------------------------------------------------------------------------
     chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
     chia_stats_portable_plots_k32 = Gauge('chia_stats_portable_plots_k32', 'Number of portable k32 plots')
     chia_stats_portable_plots_k33 = Gauge('chia_stats_portable_plots_k33', 'Number of portable k33 plots')
     chia_stats_portable_plots_k34 = Gauge('chia_stats_portable_plots_k34', 'Number of portable k34 plots')
     chia_stats_portable_time_to_win = Gauge('chia_stats_portable_time_to_win', 'Portable time to win')
-    #
+    
     chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
     chia_stats_difficulty = Gauge('chia_stats_difficulty', 'Current difficulty on mainnet')
     chia_stats_current_height = Gauge('chia_stats_current_height', 'Current blockchain height')
@@ -174,14 +177,14 @@ if __name__ == '__main__':
     chia_stats_mempool_allocation = Gauge('chia_stats_mempool_allocation', 'Percentage of total mempool which is in use')
     chia_stats_full_node_connections = Gauge('chia_stats_full_node_connections', 'Number of full node connections')
     chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
-    #
+    
     if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
         chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
         chia_stats_og_plots_k32 = Gauge('chia_stats_og_plots_k32', 'Number of og k32 plots')
         chia_stats_og_plots_k33 = Gauge('chia_stats_og_plots_k33', 'Number of og k33 plots')
         chia_stats_og_plots_k34 = Gauge('chia_stats_og_plots_k34', 'Number of og k34 plots')
         chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
-    #   
+    
     if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
         chia_stats_sp_portable_size = Gauge('chia_stats_sp_portable_size', 'Total size of portable self-pooling plots')
         chia_stats_sp_portable_plots_k32 = Gauge('chia_stats_sp_portable_plots_k32', 'Number of portable self-pooling k32 plots')
@@ -189,8 +192,8 @@ if __name__ == '__main__':
         chia_stats_sp_portable_plots_k34 = Gauge('chia_stats_sp_portable_plots_k34', 'Number of portable self-pooling k34 plots')
         chia_stats_sp_portable_time_to_win = Gauge('chia_stats_sp_portable_time_to_win', 'Portable self-pooling time to win')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
-    #
-    #---------------------- openchia_stats -----------------------------------------------------------------------------------------------------------
+    
+    #---------------------------------------------------------- openchia_stats -----------------------------------------------------------------------
     openchia_stats_space = Gauge('openchia_stats_space', 'Estimated pool capacity')
     openchia_stats_farmers = Gauge('openchia_stats_farmers', 'Total number of pool members')
     openchia_stats_estimate_win = Gauge('openchia_stats_estimate_win', 'Estimated time to win')
@@ -207,12 +210,11 @@ if __name__ == '__main__':
     openchia_stats_launcher_partial_errors_24h = Gauge('openchia_stats_launcher_partial_errors_24h', 'Number of erroneous partials in the last 24h')
     openchia_stats_seconds_since_last_win = Gauge('openchia_stats_seconds_since_last_win', 'Number of seconds since last block win (launcher)')
     #-------------------------------------------------------------------------------------------------------------------------------------------------
-    #
+    
     ##################################################################################################################################################
     
-    #start the Prometheus http server to expose the metrics
-    http_server_thread = threading.Thread(target=http_server, args=(), daemon=True)
-    http_server_thread.start()
+    #start a Prometheus http server thread to expose the metrics
+    start_http_server(PROMETHEUS_CLIENT_PORT)
     
     if CHIA_STATS_MODULE:
         print('*** Loading the chia_stats module ***')
@@ -220,6 +222,7 @@ if __name__ == '__main__':
         if (CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types and 
             CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS != ''):
             chia_stats_inst.set_self_pooling_contract_address(CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS)
+    
     if OPENCHIA_STATS_MODULE:
         print('*** Loading the openchia_stats module ***')
         openchia_stats_inst = openchia_stats(OPENCHIA_STATS_LOGGING_LEVEL)
@@ -231,21 +234,28 @@ if __name__ == '__main__':
     #a mere aestetic separator
     print('')
     
+    counter_lock = threading.Lock()
+    terminate_event = threading.Event()
+    terminate_event.clear()
     #counts errors for the chia_stats_worker ([0]) & openchia_stats_worker threads ([1])
     error_counters = [0, 0]
     
     try:
         if CHIA_STATS_MODULE:
             loop = asyncio.get_event_loop()
-            chia_stats_thread = threading.Thread(target=chia_stats_worker, args=(error_counters, loop), daemon=True)
+            chia_stats_thread = threading.Thread(target=chia_stats_worker, args=(loop, counter_lock, 
+                                                                                 terminate_event, error_counters), 
+                                                 daemon=True)
             chia_stats_thread.start()
-                
+        
         if OPENCHIA_STATS_MODULE:
-            openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(error_counters, ), daemon=True)
+            openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(counter_lock, 
+                                                                                 terminate_event, error_counters), 
+                                                     daemon=True)
             openchia_stats_thread.start()
-                
+        
         if WATCHDOG_MODE:
-            while True:
+            while not terminate_event.is_set():
                 if error_counters[0] > WATCHDOG_THRESHOLD or error_counters[1] > WATCHDOG_THRESHOLD:
                     print('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
                     raise SystemExit(3)
@@ -254,12 +264,18 @@ if __name__ == '__main__':
         else:
             #outside of watchdog mode simply wait forever, as the called threads 
             #should never terminate unless critical exceptions are encountered
+            terminate_event.wait()
+    
+    except SystemExit:
+        print('Stopping chiatter...')
+        terminate_event.set()
+        
+    finally:
+        #only wait to join threads in watchdog mode, otherwise terminate immediately
+        if WATCHDOG_MODE:
             if CHIA_STATS_MODULE:
                 chia_stats_thread.join()
             if OPENCHIA_STATS_MODULE:
                 openchia_stats_thread.join()
-            
-    except KeyboardInterrupt:
-        pass
-
-    print(f'\n\nThank you for using chiatter. I can only hope it wasn\'t too painful. Bye!')
+    
+    print(f'\n\nThank you for using chiatter. Bye!')

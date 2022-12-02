@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.95
-@date: 12/11/2022
+@version: 3.00
+@date: 02/12/2022
 
 Warning: Built for use with python 3.6+
 '''
@@ -41,9 +41,9 @@ class openchia_stats:
     
     OPENCHIA_BASE_URL = 'https://openchia.io'
     ##API endpoint URLs
-    BLOCK_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/block'
-    POOL_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/stats'
-    LAUNCHER_STATS_API_URL = OPENCHIA_BASE_URL + '/api/v1.0/launcher'
+    BLOCK_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/block'))
+    POOL_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/stats'))
+    LAUNCHER_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/launcher'))
 
     def __init__(self, logging_level):
         self._launcher_id = None
@@ -74,7 +74,7 @@ class openchia_stats:
             self._logging_level = logging.DEBUG
         elif logging_level == 'INFO':
             self._logging_level = logging.INFO
-            
+        
         #logging level for current logger
         logger.setLevel(self._logging_level)
     
@@ -94,18 +94,18 @@ class openchia_stats:
         self.launcher_pool_earnings = 0
         self.launcher_partial_errors_24h = 0
         self.seconds_since_last_win = 0
-        
+    
     def set_launcher_id(self, launcher_id):
         self._launcher_id = launcher_id
-        
+    
     def set_xch_current_price_currency(self, currency):
         self._xch_current_price_currency = currency
-        
+    
     def collect_stats(self):
         if self._launcher_id is None:
             raise Exception('Launcher id has not been set. Pool stats can not be collected!')
         
-        logger.info('+++ Starting data collection run +++')
+        logger.info('***** Starting data collection run *****')
         
         try:
             with requests.Session() as session:
@@ -114,11 +114,11 @@ class openchia_stats:
                 
                 #########################################################
                 logger.info('Fetching pool stats...')
-                                
+                
                 response = session.get(openchia_stats.POOL_STATS_API_URL, timeout=openchia_stats.HTTP_TIMEOUT)
                 
-                logger.debug(f'HTTP response code is: {response.status_code}.')
-            
+                logger.debug(f'HTTP response code: {response.status_code}')
+                
                 if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
                     pool_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
@@ -147,14 +147,15 @@ class openchia_stats:
                 
                 #########################################################
                 logger.info('Fetching launcher stats...')
-                                
+                
                 #can't be bothered with pagination (meant for the website anyway), 
                 #so use a resonable non-standard limit - based on farmer count
-                response = session.get(openchia_stats.LAUNCHER_STATS_API_URL + f'/?ordering={openchia_stats.LAUNCHER_ORDERING}' + 
-                                       f'&limit={self.pool_farmers}', timeout=openchia_stats.HTTP_TIMEOUT)
+                response = session.get(''.join((openchia_stats.LAUNCHER_STATS_API_URL, '/?ordering=', 
+                                                openchia_stats.LAUNCHER_ORDERING, '&limit=', str(self.pool_farmers))), 
+                                        timeout=openchia_stats.HTTP_TIMEOUT)
                 
-                logger.debug(f'HTTP response code is: {response.status_code}.')
-            
+                logger.debug(f'HTTP response code: {response.status_code}')
+                
                 if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
                     global_farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
@@ -166,10 +167,11 @@ class openchia_stats:
                         while not found_launcher:
                             current_farmer = next(launcher_iterator)
                             self.launcher_ranking += 1
-                            
+
                             if current_farmer['launcher_id'].strip() == self._launcher_id:
                                 logger.debug('Found the launcher!')
                                 found_launcher = True
+                    
                     except StopIteration:
                         logger.error('Failed to find an entry based on the launcher id.')
                         raise
@@ -178,11 +180,11 @@ class openchia_stats:
                 else:
                     logger.warning('Failed to connect to API endpoint for launcher ranking stats.')
                 
-                response = session.get(openchia_stats.LAUNCHER_STATS_API_URL + f'/{self._launcher_id}', 
+                response = session.get(''.join((openchia_stats.LAUNCHER_STATS_API_URL, '/', self._launcher_id)), 
                                        timeout=openchia_stats.HTTP_TIMEOUT)
                 
-                logger.debug(f'HTTP response code is: {response.status_code}.')
-            
+                logger.debug(f'HTTP response code: {response.status_code}')
+                
                 if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
                     launcher_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
@@ -210,10 +212,11 @@ class openchia_stats:
                     logger.info('Fetching block stats...')
                     
                     #only get the latest won block for the configured launcher
-                    response = session.get(openchia_stats.BLOCK_STATS_API_URL + f'/?farmed_by={self._launcher_id}' +
-                                           '&ordering=timestamp&limit=1', timeout=openchia_stats.HTTP_TIMEOUT)
+                    response = session.get(''.join((openchia_stats.BLOCK_STATS_API_URL, '/?farmed_by=', 
+                                                    self._launcher_id, '&ordering=timestamp&limit=1')), 
+                                           timeout=openchia_stats.HTTP_TIMEOUT)
                     
-                    logger.debug(f'HTTP response code is: {response.status_code}.')
+                    logger.debug(f'HTTP response code: {response.status_code}')
                     
                     try:
                         if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
@@ -228,7 +231,7 @@ class openchia_stats:
                                 
                             elif self._block_seconds_since_last_win_stale:
                                 logger.debug('Last won block timestamp is stale. Will recheck on next update.')
-                                
+                        
                         else:
                             logger.warning('Failed to connect to API endpoint for block stats.')
                     
@@ -248,11 +251,11 @@ class openchia_stats:
                 
                 logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
                 #########################################################
-                
+        
         except Exception as exception:
             logger.error(f'Encountered following exception: {type(exception)} {exception}')
             #uncomment for debugging purposes only
             #logger.error(traceback.format_exc())
             raise
-            
-        logger.info('--- Data collection complete ---')
+        
+        logger.info('***** Data collection complete *****')

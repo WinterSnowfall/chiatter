@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 2.95
-@date: 12/11/2022
+@version: 3.00
+@date: 02/12/2022
 
 Warning: Built for use with python 3.6+
 '''
-
+import logging
+import os
+import binascii
+from datetime import datetime
+from logging.handlers import RotatingFileHandler
+from aiohttp.client_exceptions import ClientConnectorError
 from chia.util.config import load_config
 from chia.rpc.farmer_rpc_client import FarmerRpcClient
 from chia.rpc.wallet_rpc_client import WalletRpcClient
@@ -14,12 +19,6 @@ from chia.rpc.full_node_rpc_client import FullNodeRpcClient
 from chia.util.default_root import DEFAULT_ROOT_PATH
 from chia.util import bech32m
 from chia.cmds.farm_funcs import get_average_block_time
-import logging
-import os
-import binascii
-from aiohttp.client_exceptions import ClientConnectorError
-from datetime import datetime
-from logging.handlers import RotatingFileHandler
 #uncomment for debugging purposes only
 #import traceback
 
@@ -79,7 +78,7 @@ class chia_stats:
             self._logging_level = logging.DEBUG
         elif logging_level == 'INFO':
             self._logging_level = logging.INFO
-            
+        
         #logging level for current logger
         logger.setLevel(self._logging_level)
         
@@ -91,7 +90,7 @@ class chia_stats:
         self._farmer_port = self._config['farmer']['rpc_port']
         self._fullnode_port = self._config['full_node']['rpc_port']
         self._wallet_port = self._config['wallet']['rpc_port']
-        
+    
     def clear_stats(self):
         self.og_size = 0
         self.portable_size = 0
@@ -115,7 +114,7 @@ class chia_stats:
         self.portable_time_to_win = 0
         self.sp_portable_time_to_win = 0
         self.current_height = 0
-        
+    
     def set_self_pooling_contract_address(self, self_pooling_contract_address):
         self._self_pooling_contract_address = self_pooling_contract_address
         
@@ -125,7 +124,7 @@ class chia_stats:
         logger.debug(f'_decoded_puzzle_hash: {self._decoded_puzzle_hash}')
     
     async def collect_stats(self):
-        logger.info('+++ Starting data collection run +++')
+        logger.info('***** Starting data collection run *****')
         
         logger.info('Initializing clients...')
         
@@ -169,11 +168,11 @@ class chia_stats:
                         elif plot['size'] == 34:
                             #logger.debug('Found k34 OG plot!')
                             self.plots_og_k34 += 1
-                        
+                    
                     elif (self._self_pooling_contract_address is not None and 
                           plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
                         self.sp_portable_size += plot['file_size']
-                            
+                        
                         if plot['size'] == 32:
                             #logger.debug('Found k32 self-pooling plot!')
                             self.plots_sp_portable_k32 += 1
@@ -183,7 +182,7 @@ class chia_stats:
                         elif plot['size'] == 34:
                             #logger.debug('Found k34 self-pooling plot!')
                             self.plots_sp_portable_k34 += 1
-                            
+                    
                     else:
                         self.portable_size += plot['file_size']
                         
@@ -196,7 +195,7 @@ class chia_stats:
                         elif plot['size'] == 34:
                             #logger.debug('Found k34 portable plot!')
                             self.plots_portable_k34 += 1
-                        
+            
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
             logger.debug(f'sp_portable_size: {self.sp_portable_size}')
@@ -220,7 +219,7 @@ class chia_stats:
             self.network_space_size = blockchain['space']
             self.mempool_size = blockchain['mempool_size']
             self.mempool_allocation = int((blockchain['mempool_cost'] / 
-                                           blockchain['mempool_max_total_cost']) * 100) 
+                                           blockchain['mempool_max_total_cost']) * 100)
             
             connections = await fullnode.get_connections()
             
@@ -234,7 +233,7 @@ class chia_stats:
             
             if self.og_size != 0:
                 self.og_time_to_win = int((average_block_time) / 
-                                          (self.og_size / self.network_space_size))           
+                                          (self.og_size / self.network_space_size))
             if self.portable_size != 0:
                 self.portable_time_to_win = int((average_block_time) / 
                                                 (self.portable_size / self.network_space_size))
@@ -260,7 +259,7 @@ class chia_stats:
             if self.chia_farmed != self._chia_farmed_prev:
                 self._chia_farmed_prev = self.chia_farmed
                 self._seconds_since_last_win_stale = True
-                    
+            
             self.current_height = await wallet.get_height_info()
             main_wallet = await wallet.get_wallets()
             #assume only one wallet exists - might want to alter it in the future
@@ -284,18 +283,18 @@ class chia_stats:
                     current_transaction_no += 1
                     #use a delta interval to determine a won block, since any transaction fees 
                     #for a won block will be received within the same transaction
-                    if (int(transaction_record.amount) >= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT and
+                    if (int(transaction_record.amount) >= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT and 
                         int(transaction_record.amount) <= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT + 
                         chia_stats._WON_BLOCK_TRANSACTION_FEE_DELTA):
                         logger.debug(f'Transaction #{current_transaction_no} has a block win share amount.')
                         current_time = int(transaction_record.created_at_time)
                         if current_time > self._last_win_max_time:
                             self._last_win_max_time = current_time
-                            
+                
                 if self._last_win_max_time == 0:
                     #this may currently happen due to a hard limit of 50 transactions (bug) in the RPC API
                     logger.warning('Unable to find a valid block win transaction.')
-                            
+                
                 self._seconds_since_last_win_stale = False
             else:
                 logger.info('Skipping _last_win_max_time update until next block win.')
@@ -304,22 +303,22 @@ class chia_stats:
                 self.seconds_since_last_win = int(datetime.timestamp(datetime.now())) - self._last_win_max_time
             else:
                 self.seconds_since_last_win = 0
-                
+            
             logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
             #########################################################
-            
+        
         except ClientConnectorError:
             logger.warning('Chia RPC API call failed. Full node may be down.')
-            
+        
         except Exception as exception:
             logger.error(f'Encountered following exception: {type(exception)} {exception}')
             #uncomment for debugging purposes only
             #logger.error(traceback.format_exc())
             raise
-            
+        
         finally:
             farmer.close()
             fullnode.close()
             wallet.close()
-            
-        logger.info('--- Data collection complete ---')
+        
+        logger.info('***** Data collection complete *****')
