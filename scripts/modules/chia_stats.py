@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.00
-@date: 02/12/2022
+@version: 3.10
+@date: 24/01/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -47,6 +47,10 @@ class chia_stats:
         self._seconds_since_last_win_stale = False
         self._last_win_max_time = 0
         
+        self.harvesters = 0
+        self.plots_duplicates = 0
+        self.plots_failed_to_open = 0
+        self.plots_no_key = 0
         self.og_size = 0
         self.portable_size = 0
         self.sp_portable_size = 0
@@ -92,6 +96,10 @@ class chia_stats:
         self._wallet_port = self._config['wallet']['rpc_port']
     
     def clear_stats(self):
+        self.harvesters = 0
+        self.plots_duplicates = 0
+        self.plots_failed_to_open = 0
+        self.plots_no_key = 0
         self.og_size = 0
         self.portable_size = 0
         self.sp_portable_size = 0
@@ -141,6 +149,10 @@ class chia_stats:
             #will scrape the local harvester as well as any remote harvesters
             harvesters = await farmer.get_harvesters()
             
+            self.harvesters = 0
+            self.plots_duplicates = 0
+            self.plots_failed_to_open = 0
+            self.plots_no_key = 0
             self.og_size = 0
             self.plots_og_k32 = 0
             self.plots_og_k33 = 0
@@ -155,6 +167,12 @@ class chia_stats:
             self.plots_sp_portable_k34 = 0
             
             for harvester in harvesters['harvesters']:
+                self.harvesters += 1
+                
+                self.plots_duplicates += len(harvester['duplicates'])
+                self.plots_failed_to_open += len(harvester['failed_to_open_filenames'])
+                self.plots_no_key += len(harvester['no_key_filenames'])
+                
                 for plot in harvester['plots']:
                     if plot['pool_public_key'] is not None:
                         self.og_size += plot['file_size']
@@ -196,6 +214,10 @@ class chia_stats:
                             #logger.debug('Found k34 portable plot!')
                             self.plots_portable_k34 += 1
             
+            logger.debug(f'harvesters: {self.harvesters}')
+            logger.debug(f'plots_duplicates: {self.plots_duplicates}')
+            logger.debug(f'plots_failed_to_open: {self.plots_failed_to_open}')
+            logger.debug(f'plots_no_key: {self.plots_no_key}')
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
             logger.debug(f'sp_portable_size: {self.sp_portable_size}')

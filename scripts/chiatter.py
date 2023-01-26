@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.00
-@date: 02/12/2022
+@version: 3.10
+@date: 24/01/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -34,13 +34,22 @@ def sigint_handler(signum, frame):
     
     raise SystemExit(0)
 
-def chia_stats_worker(loop, counter_lock, terminate_event, error_counters):
+def chia_stats_worker(counter_lock, terminate_event, error_counters):
+    
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    coroutine = chia_stats_inst.collect_stats()
     
     while not terminate_event.is_set():
         try:
             #you'll have to excuse me here, but I simply h8 asyncio
-            coroutine = chia_stats_inst.collect_stats()
             loop.run_until_complete(coroutine)
+            
+            chia_stats_harvesters.set(chia_stats_inst.harvesters)
+            
+            chia_stats_duplicate_plots.set(chia_stats_inst.plots_duplicates)
+            chia_stats_failed_to_open_plots.set(chia_stats_inst.plots_failed_to_open)
+            chia_stats_no_key_plots.set(chia_stats_inst.plots_no_key)
             
             chia_stats_portable_size.set(chia_stats_inst.portable_size)
             chia_stats_portable_plots_k32.set(chia_stats_inst.plots_portable_k32)
@@ -161,6 +170,12 @@ if __name__ == '__main__':
     ### Prometheus client metrics ####################################################################################################################
     
     #--------------------------------------------------------- chia_stats ----------------------------------------------------------------------------
+    chia_stats_harvesters = Gauge('chia_stats_harvesters', 'Number of connected harvesters, as seen by the farmer')
+    
+    chia_stats_duplicate_plots = Gauge('chia_stats_duplicate_plots', 'Number of duplicate plots across all harvesters')
+    chia_stats_failed_to_open_plots = Gauge('chia_stats_failed_to_open_plots', 'Number of plots with access errors across all harvesters')
+    chia_stats_no_key_plots = Gauge('chia_stats_no_key_plots', 'Number of plots without a valid key across all harvesters')
+    
     chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
     chia_stats_portable_plots_k32 = Gauge('chia_stats_portable_plots_k32', 'Number of portable k32 plots')
     chia_stats_portable_plots_k33 = Gauge('chia_stats_portable_plots_k33', 'Number of portable k33 plots')
@@ -242,8 +257,7 @@ if __name__ == '__main__':
     
     try:
         if CHIA_STATS_MODULE:
-            loop = asyncio.get_event_loop()
-            chia_stats_thread = threading.Thread(target=chia_stats_worker, args=(loop, counter_lock, 
+            chia_stats_thread = threading.Thread(target=chia_stats_worker, args=(counter_lock, 
                                                                                  terminate_event, error_counters), 
                                                  daemon=True)
             chia_stats_thread.start()

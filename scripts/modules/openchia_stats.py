@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.00
-@date: 02/12/2022
+@version: 3.10
+@date: 24/01/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -32,7 +32,7 @@ class openchia_stats:
     
     _logging_level = logging.WARNING
     
-    HTTP_SUCCESS_OK = 200
+    HTTP_OK = 200
     HTTP_TIMEOUT = 30
     
     #ordering used for the farmer ranking query
@@ -119,7 +119,7 @@ class openchia_stats:
                 
                 logger.debug(f'HTTP response code: {response.status_code}')
                 
-                if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
+                if response.status_code == openchia_stats.HTTP_OK:
                     pool_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
                     self.pool_space = pool_stats_json['pool_space']
@@ -156,7 +156,7 @@ class openchia_stats:
                 
                 logger.debug(f'HTTP response code: {response.status_code}')
                 
-                if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
+                if response.status_code == openchia_stats.HTTP_OK:
                     global_farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
                     launcher_iterator = iter(global_farmer_stats_json)
@@ -185,7 +185,7 @@ class openchia_stats:
                 
                 logger.debug(f'HTTP response code: {response.status_code}')
                 
-                if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
+                if response.status_code == openchia_stats.HTTP_OK:
                     launcher_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
                     self.launcher_points = launcher_stats_json['points']
@@ -219,7 +219,7 @@ class openchia_stats:
                     logger.debug(f'HTTP response code: {response.status_code}')
                     
                     try:
-                        if response.status_code == openchia_stats.HTTP_SUCCESS_OK:
+                        if response.status_code == openchia_stats.HTTP_OK:
                             block_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                             
                             block_timestamp = int(block_stats_json[0]['timestamp'])

@@ -27,7 +27,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.2.1"
+      "version": "9.3.2"
     },
     {
       "type": "panel",
@@ -159,7 +159,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -222,7 +222,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -297,7 +297,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -360,7 +360,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -382,45 +382,42 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-green",
+                "color": "semi-dark-red",
                 "value": null
               },
               {
-                "color": "light-yellow",
-                "value": 50
+                "color": "semi-dark-red",
+                "value": 0
               },
               {
-                "color": "semi-dark-red",
-                "value": 90
+                "color": "light-green",
+                "value": 1
               }
             ]
           },
-          "unit": "percent"
+          "unit": "none"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
+        "w": 3,
         "x": 12,
         "y": 1
       },
-      "id": 123174,
+      "id": 123177,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -429,25 +426,104 @@
           "fields": "",
           "values": false
         },
-        "text": {},
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {}
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "chia_stats_mempool_allocation{}",
+          "expr": "chia_stats_harvesters{}",
           "interval": "",
           "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Mempool Allocation",
-      "type": "stat"
+      "title": "Harvesters Connected",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "light-yellow",
+                "value": 1
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 4
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 15,
+        "y": 1
+      },
+      "id": 123176,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "text": {}
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "chia_stats_duplicate_plots{} + chia_stats_failed_to_open_plots{} + chia_stats_no_key_plots{}",
+          "interval": "",
+          "legendFormat": "",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Plot File Errors",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -696,7 +772,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -758,7 +834,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -802,7 +878,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 12,
+        "w": 9,
         "x": 6,
         "y": 5
       },
@@ -822,7 +898,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -837,6 +913,78 @@
         }
       ],
       "title": "Netspace Size (Estimated)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              },
+              {
+                "color": "light-yellow",
+                "value": 50
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 15,
+        "y": 5
+      },
+      "id": 123174,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "chia_stats_mempool_allocation{}",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Mempool Allocation",
       "type": "stat"
     },
     {
@@ -885,7 +1033,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -948,7 +1096,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1039,7 +1187,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1105,7 +1253,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1169,7 +1317,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1258,7 +1406,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1329,7 +1477,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1392,7 +1540,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1456,7 +1604,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1520,7 +1668,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1582,7 +1730,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1645,7 +1793,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1711,7 +1859,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1774,7 +1922,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1837,7 +1985,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1900,7 +2048,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -1965,7 +2113,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -2031,7 +2179,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.1",
+      "pluginVersion": "9.3.2",
       "targets": [
         {
           "datasource": {
@@ -2090,6 +2238,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }
