@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.10
-@date: 24/01/2023
+@version: 3.11
+@date: 28/01/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -38,12 +38,11 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
     
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    coroutine = chia_stats_inst.collect_stats()
     
     while not terminate_event.is_set():
         try:
             #you'll have to excuse me here, but I simply h8 asyncio
-            loop.run_until_complete(coroutine)
+            loop.run_until_complete(chia_stats_inst.collect_stats())
             
             chia_stats_harvesters.set(chia_stats_inst.harvesters)
             
@@ -90,6 +89,9 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
                     error_counters[0] += CHIA_STATS_COLLECTION_INTERVAL
         
         sleep(CHIA_STATS_COLLECTION_INTERVAL)
+        
+    loop.close()
+    asyncio.set_event_loop(None)
 
 def openchia_stats_worker(counter_lock, terminate_event, error_counters):
     
