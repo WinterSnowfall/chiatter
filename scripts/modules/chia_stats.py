@@ -302,10 +302,12 @@ class chia_stats:
                 
                 current_transaction_no = 0
                 for transaction_record in wallet_transactions:
+                    logger.error(f'transaction_record: {transaction_record}')
                     current_transaction_no += 1
                     #use a delta interval to determine a won block, since any transaction fees 
                     #for a won block will be received within the same transaction
-                    if (int(transaction_record.amount) >= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT and 
+                    if (int(transaction_record.sent) == 0 and
+                        int(transaction_record.amount) >= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT and 
                         int(transaction_record.amount) <= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT + 
                         chia_stats._WON_BLOCK_TRANSACTION_FEE_DELTA):
                         logger.debug(f'Transaction #{current_transaction_no} has a block win share amount.')
