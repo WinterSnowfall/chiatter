@@ -302,7 +302,6 @@ class chia_stats:
                 
                 current_transaction_no = 0
                 for transaction_record in wallet_transactions:
-                    logger.error(f'transaction_record: {transaction_record}')
                     current_transaction_no += 1
                     #use a delta interval to determine a won block, since any transaction fees 
                     #for a won block will be received within the same transaction
