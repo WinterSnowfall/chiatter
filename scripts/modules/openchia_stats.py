@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.11
-@date: 28/01/2023
+@version: 3.12
+@date: 26/06/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -14,16 +14,16 @@ import os
 from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
 from collections import OrderedDict
-#uncomment for debugging purposes only
+# uncomment for debugging purposes only
 #import traceback
 
-##logging configuration block
-log_file_full_path = os.path.join('..', 'logs', 'openchia_stats.log')
-logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=25165824, backupCount=1, encoding='utf-8')
-logger_format = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
-logger_file_handler.setFormatter(logging.Formatter(logger_format))
-#logging level for other modules
-logging.basicConfig(format=logger_format, level=logging.ERROR)
+# logging configuration block
+LOG_FILE_PATH = os.path.join('..', 'logs', 'openchia_stats.log')
+logger_file_handler = RotatingFileHandler(LOG_FILE_PATH, maxBytes=25165824, backupCount=1, encoding='utf-8')
+LOGGER_FORMAT = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
+logger_file_handler.setFormatter(logging.Formatter(LOGGER_FORMAT))
+# logging level for other modules
+logging.basicConfig(format=LOGGER_FORMAT, level=logging.ERROR)
 logger = logging.getLogger(__name__)
 logger.addHandler(logger_file_handler)
 
@@ -35,12 +35,12 @@ class openchia_stats:
     HTTP_OK = 200
     HTTP_TIMEOUT = 30
     
-    #ordering used for the farmer ranking query
-    #options: points, points_pplns (- stands for descending)
+    # ordering used for the farmer ranking query
+    # options: points, points_pplns (- stands for descending)
     LAUNCHER_ORDERING = '-points_pplns'
     
     OPENCHIA_BASE_URL = 'https://openchia.io'
-    ##API endpoint URLs
+    # API endpoint URLs
     BLOCK_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/block'))
     POOL_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/stats'))
     LAUNCHER_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/launcher'))
@@ -50,7 +50,7 @@ class openchia_stats:
         self._pool_rewards_blocks_prev = 0
         self._block_timestamp_prev = 0
         self._block_seconds_since_last_win_stale = False
-        #will default to fetching the current $ exchange value of XCH
+        # will default to fetching the current $ exchange value of XCH
         self._xch_current_price_currency = 'usd'
         
         self.pool_space = 0
@@ -69,13 +69,13 @@ class openchia_stats:
         self.launcher_partial_errors_24h = 0
         self.seconds_since_last_win = 0
         
-        #defaults to WARNING otherwise
+        # defaults to 'WARNING' otherwise
         if logging_level == 'DEBUG':
             self._logging_level = logging.DEBUG
         elif logging_level == 'INFO':
             self._logging_level = logging.INFO
         
-        #logging level for current logger
+        # logging level for current logger
         logger.setLevel(self._logging_level)
     
     def clear_stats(self):
@@ -139,17 +139,17 @@ class openchia_stats:
                     logger.warning('Failed to connect to API endpoint for pool stats.')
                 #########################################################
                 
-                #trigger won block read if the number of reported blocks changes
+                # trigger won block read if the number of reported blocks changes
                 if self._pool_rewards_blocks_prev != self.pool_rewards_blocks:
                     self._block_seconds_since_last_win_stale = True
-                    #skip payout & won block reads until the next block win
+                    # skip payout & won block reads until the next block win
                     self._pool_rewards_blocks_prev = self.pool_rewards_blocks
                 
                 #########################################################
                 logger.info('Fetching launcher stats...')
                 
-                #can't be bothered with pagination (meant for the website anyway), 
-                #so use a resonable non-standard limit - based on farmer count
+                # can't be bothered with pagination (meant for the website anyway), 
+                # so use a resonable non-standard limit - based on farmer count
                 response = session.get(''.join((openchia_stats.LAUNCHER_STATS_API_URL, '/?ordering=', 
                                                 openchia_stats.LAUNCHER_ORDERING, '&limit=', str(self.pool_farmers))), 
                                         timeout=openchia_stats.HTTP_TIMEOUT)
@@ -211,7 +211,7 @@ class openchia_stats:
                 if self._block_seconds_since_last_win_stale:
                     logger.info('Fetching block stats...')
                     
-                    #only get the latest won block for the configured launcher
+                    # only get the latest won block for the configured launcher
                     response = session.get(''.join((openchia_stats.BLOCK_STATS_API_URL, '/?farmed_by=', 
                                                     self._launcher_id, '&ordering=timestamp&limit=1')), 
                                            timeout=openchia_stats.HTTP_TIMEOUT)
@@ -235,7 +235,7 @@ class openchia_stats:
                         else:
                             logger.warning('Failed to connect to API endpoint for block stats.')
                     
-                    #if no results are returned then the launcher has not won any blocks in the pool
+                    # if no results are returned then the launcher has not won any blocks in the pool
                     except IndexError:
                         self._block_seconds_since_last_win_stale = False
                         
@@ -243,7 +243,7 @@ class openchia_stats:
                 else:
                     logger.info('Skipping block stats update until next block win.')
                 
-                #calculate time elapsed since last block win based on stored _prev value
+                # calculate time elapsed since last block win based on stored _prev value
                 if self._block_timestamp_prev != 0:
                     self.seconds_since_last_win = int(datetime.timestamp(datetime.now())) - self._block_timestamp_prev
                 else:
@@ -254,7 +254,7 @@ class openchia_stats:
         
         except Exception as exception:
             logger.error(f'Encountered following exception: {type(exception)} {exception}')
-            #uncomment for debugging purposes only
+            # uncomment for debugging purposes only
             #logger.error(traceback.format_exc())
             raise
         

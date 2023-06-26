@@ -9,6 +9,12 @@ A chia collection agent/Prometheus client that gathers various stats from a loca
 
 **❄** The following python3 packages need to be installed: `prometheus_client, requests, chia-blockchain` (and dependencies). I leave the details up to you. As long as they're in the PYTHONPATH, chiatter will not complain.
 
+For Debian-based/derived distros, this should do the trick:
+```
+sudo apt-get install python3-prometheus-client python3-requests
+pip3 install -U chia-blockchain
+```
+
 **❄** `chia-blockchain` version 1.3.0+ is required for chiatter to work. Trying to run it on earlier versions will prompt you to upgrade and will exit.
 
 **❄** A full chia node running on the same host. No, it's not possible to run it remotely at this point!
@@ -67,10 +73,6 @@ I've included a sample dashboard of my very own design. Find the hidden import d
 ## Why "chiatter"?
 
 Because the exchange of information is key to all great things. So, you know, radio chatter... while crunching on some chia seeds.
-
-## Nothing works! What do I do?
-
-Exactly what you'd do in other situations when nothing works. Raise an issue on github and I'll reply as soon as I can.
 
 ## Disclaimer
 

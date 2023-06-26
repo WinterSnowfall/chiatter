@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.11
-@date: 28/01/2023
+@version: 3.12
+@date: 26/06/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -18,8 +18,8 @@ from prometheus_client import start_http_server, Gauge
 from modules.chia_stats import chia_stats
 from modules.openchia_stats import openchia_stats
 
-##conf file block
-conf_file_full_path = os.path.join('..', 'conf', 'chiatter.conf')
+# conf file block
+CONF_FILE_PATH = os.path.join('..', 'conf', 'chiatter.conf')
 
 CHIA_STATS_SELF_POOLING_OG = 'og'
 CHIA_STATS_SELF_POOLING_PORTABLE = 'portable'
@@ -41,7 +41,7 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
     
     while not terminate_event.is_set():
         try:
-            #you'll have to excuse me here, but I simply h8 asyncio
+            # you'll have to excuse me here, but I simply h8 asyncio
             loop.run_until_complete(chia_stats_inst.collect_stats())
             
             chia_stats_harvesters.set(chia_stats_inst.harvesters)
@@ -125,9 +125,9 @@ def openchia_stats_worker(counter_lock, terminate_event, error_counters):
         sleep(OPENCHIA_STATS_COLLECTION_INTERVAL)
 
 if __name__ == '__main__':
-    #catch SIGTERM and exit gracefully
+    # catch SIGTERM and exit gracefully
     signal.signal(signal.SIGTERM, sigterm_handler)
-    #catch SIGINT and exit gracefully
+    # catch SIGINT and exit gracefully
     signal.signal(signal.SIGINT, sigint_handler)
     
     print(f'Starting chiatter - the chia stats collection agent...\n\n')
@@ -139,19 +139,18 @@ if __name__ == '__main__':
     configParser = ConfigParser()
     
     try:
-        #reading from config file
-        configParser.read(conf_file_full_path)
+        configParser.read(CONF_FILE_PATH)
         general_section = configParser['GENERAL']
-        #parsing generic parameters
+        
         PROMETHEUS_CLIENT_PORT = general_section.getint('prometheus_client_port')
         WATCHDOG_MODE = general_section.getboolean('watchdog_mode')
         WATCHDOG_INTERVAL = general_section.getint('watchdog_interval')
         WATCHDOG_THRESHOLD = general_section.getint('watchdog_threshold')
         MODULES = [module.strip() for module in general_section.get('modules').split(',')]
-        #determine enabled modules
+        # determine enabled modules
         CHIA_STATS_MODULE = 'chia_stats' in MODULES
         OPENCHIA_STATS_MODULE = 'openchia_stats' in MODULES
-        #parse collection intervals conditionally for each module
+        # parse collection intervals conditionally for each module
         if CHIA_STATS_MODULE:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
@@ -230,7 +229,7 @@ if __name__ == '__main__':
     
     ##################################################################################################################################################
     
-    #start a Prometheus http server thread to expose the metrics
+    # start a Prometheus http server thread to expose the metrics
     start_http_server(PROMETHEUS_CLIENT_PORT)
     
     if CHIA_STATS_MODULE:
@@ -244,17 +243,16 @@ if __name__ == '__main__':
         print('*** Loading the openchia_stats module ***')
         openchia_stats_inst = openchia_stats(OPENCHIA_STATS_LOGGING_LEVEL)
         openchia_stats_inst.set_launcher_id(OPENCHIA_STATS_LAUNCHER_ID)
-        #will default to 'usd'/$ if unspecified
+        # will default to 'usd'/$ if unspecified
         if OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY != '':
             openchia_stats_inst.set_xch_current_price_currency(OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY)
     
-    #a mere aestetic separator
     print('')
     
     counter_lock = threading.Lock()
     terminate_event = threading.Event()
     terminate_event.clear()
-    #counts errors for the chia_stats_worker ([0]) & openchia_stats_worker threads ([1])
+    # counts errors for the chia_stats_worker ([0]) & openchia_stats_worker threads ([1])
     error_counters = [0, 0]
     
     try:
@@ -278,8 +276,8 @@ if __name__ == '__main__':
                 else:
                     sleep(WATCHDOG_INTERVAL)
         else:
-            #outside of watchdog mode simply wait forever, as the called threads 
-            #should never terminate unless critical exceptions are encountered
+            # outside of watchdog mode simply wait forever, as the called threads 
+            # should never terminate unless critical exceptions are encountered
             terminate_event.wait()
     
     except SystemExit:
@@ -287,7 +285,7 @@ if __name__ == '__main__':
         terminate_event.set()
         
     finally:
-        #only wait to join threads in watchdog mode, otherwise terminate immediately
+        # only wait to join threads in watchdog mode, otherwise terminate immediately
         if WATCHDOG_MODE:
             if CHIA_STATS_MODULE:
                 chia_stats_thread.join()

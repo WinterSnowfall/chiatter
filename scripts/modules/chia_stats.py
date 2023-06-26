@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.11
-@date: 28/01/2023
+@version: 3.12
+@date: 26/06/2023
 
 Warning: Built for use with python 3.6+
 '''
+
 import logging
 import os
 import binascii
@@ -19,16 +20,16 @@ from chia.rpc.full_node_rpc_client import FullNodeRpcClient
 from chia.util.default_root import DEFAULT_ROOT_PATH
 from chia.util import bech32m
 from chia.cmds.farm_funcs import get_average_block_time
-#uncomment for debugging purposes only
+# uncomment for debugging purposes only
 #import traceback
 
-##logging configuration block
-log_file_full_path = os.path.join('..', 'logs', 'chia_stats.log')
-logger_file_handler = RotatingFileHandler(log_file_full_path, maxBytes=25165824, backupCount=1, encoding='utf-8')
-logger_format = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
-logger_file_handler.setFormatter(logging.Formatter(logger_format))
-#logging level for other modules
-logging.basicConfig(format=logger_format, level=logging.ERROR)
+# logging configuration block
+LOG_FILE_PATH = os.path.join('..', 'logs', 'chia_stats.log')
+logger_file_handler = RotatingFileHandler(LOG_FILE_PATH, maxBytes=25165824, backupCount=1, encoding='utf-8')
+LOGGER_FORMAT = '%(asctime)s %(levelname)s : %(name)s >>> %(message)s'
+logger_file_handler.setFormatter(logging.Formatter(LOGGER_FORMAT))
+# logging level for other modules
+logging.basicConfig(format=LOGGER_FORMAT, level=logging.ERROR)
 logger = logging.getLogger(__name__)
 logger.addHandler(logger_file_handler)
 
@@ -37,8 +38,8 @@ class chia_stats:
     
     _logging_level = logging.WARNING
     
-    _WON_BLOCK_TRANSACTION_AMOUNT = 250000000000  #0.25  XCH
-    _WON_BLOCK_TRANSACTION_FEE_DELTA = 1000000000 #0.001 XCH
+    _WON_BLOCK_TRANSACTION_AMOUNT = 250000000000  # 0.25  XCH
+    _WON_BLOCK_TRANSACTION_FEE_DELTA = 1000000000 # 0.001 XCH
     
     def __init__(self, logging_level):
         self._self_pooling_contract_address = None
@@ -77,13 +78,13 @@ class chia_stats:
         self.chia_farmed = 0
         self.seconds_since_last_win = 0
         
-        #defaults to WARNING otherwise
+        # defaults to 'WARNING' otherwise
         if logging_level == 'DEBUG':
             self._logging_level = logging.DEBUG
         elif logging_level == 'INFO':
             self._logging_level = logging.INFO
         
-        #logging level for current logger
+        # logging level for current logger
         logger.setLevel(self._logging_level)
         
         logger.debug('Loading chia configuration...')
@@ -146,7 +147,7 @@ class chia_stats:
         try:
             logger.info('Fetching farmer state...')
             #########################################################
-            #will scrape the local harvester as well as any remote harvesters
+            # will scrape the local harvester as well as any remote harvesters
             harvesters = await farmer.get_harvesters()
             
             self.harvesters = 0
@@ -178,13 +179,10 @@ class chia_stats:
                         self.og_size += plot['file_size']
                         
                         if plot['size'] == 32:
-                            #logger.debug('Found k32 OG plot!')
                             self.plots_og_k32 += 1
                         elif plot['size'] == 33:
-                            #logger.debug('Found k33 OG plot!')
                             self.plots_og_k33 += 1
                         elif plot['size'] == 34:
-                            #logger.debug('Found k34 OG plot!')
                             self.plots_og_k34 += 1
                     
                     elif (self._self_pooling_contract_address is not None and 
@@ -192,26 +190,20 @@ class chia_stats:
                         self.sp_portable_size += plot['file_size']
                         
                         if plot['size'] == 32:
-                            #logger.debug('Found k32 self-pooling plot!')
                             self.plots_sp_portable_k32 += 1
                         elif plot['size'] == 33:
-                            #logger.debug('Found k33 self-pooling plot!')
                             self.plots_sp_portable_k33 += 1
                         elif plot['size'] == 34:
-                            #logger.debug('Found k34 self-pooling plot!')
                             self.plots_sp_portable_k34 += 1
                     
                     else:
                         self.portable_size += plot['file_size']
                         
                         if plot['size'] == 32:
-                            #logger.debug('Found k32 portable plot!')
                             self.plots_portable_k32 += 1
                         elif plot['size'] == 33:
-                            #logger.debug('Found k33 portable plot!')
                             self.plots_portable_k33 += 1
                         elif plot['size'] == 34:
-                            #logger.debug('Found k34 portable plot!')
                             self.plots_portable_k34 += 1
             
             logger.debug(f'harvesters: {self.harvesters}')
@@ -247,7 +239,7 @@ class chia_stats:
             
             self.full_node_connections = 0
             for connection in connections:
-                #only count full node connections (type 1)
+                # only count full node connections (type 1)
                 if connection['type'] == 1:
                     self.full_node_connections += 1
             
@@ -284,7 +276,7 @@ class chia_stats:
             
             self.current_height = await wallet.get_height_info()
             main_wallet = await wallet.get_wallets()
-            #assume only one wallet exists - might want to alter it in the future
+            # assume only one wallet exists - might want to alter it in the future
             main_wallet_balance = await wallet.get_wallet_balance(main_wallet[0]['id'])
             self.wallet_funds = main_wallet_balance.get('confirmed_wallet_balance')
             
@@ -292,19 +284,19 @@ class chia_stats:
             logger.debug(f'current_height: {self.current_height}')
             logger.debug(f'wallet_funds: {self.wallet_funds}')
             
-            #simple transaction-based block win time detection logic
+            # simple transaction-based block win time detection logic
             if self._seconds_since_last_win_stale:
-                #needed to determine end transaction for the transaction query below
+                # needed to determine end transaction for the transaction query below
                 wallet_transaction_count = await wallet.get_transaction_count(main_wallet[0]['id'])
                 logger.debug(f'wallet_transaction_count: {wallet_transaction_count}')
-                #0 to wallet_transaction_count will list all the transactions in the wallet
+                # 0 to wallet_transaction_count will list all the transactions in the wallet
                 wallet_transactions = await wallet.get_transactions(main_wallet[0]['id'], 0, wallet_transaction_count)
                 
                 current_transaction_no = 0
                 for transaction_record in wallet_transactions:
                     current_transaction_no += 1
-                    #use a delta interval to determine a won block, since any transaction fees 
-                    #for a won block will be received within the same transaction
+                    # use a delta interval to determine a won block, since any transaction fees 
+                    # for a won block will be received within the same transaction
                     if (int(transaction_record.sent) == 0 and
                         int(transaction_record.amount) >= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT and 
                         int(transaction_record.amount) <= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT + 
@@ -315,7 +307,6 @@ class chia_stats:
                             self._last_win_max_time = current_time
                 
                 if self._last_win_max_time == 0:
-                    #this may currently happen due to a hard limit of 50 transactions (bug) in the RPC API
                     logger.warning('Unable to find a valid block win transaction.')
                 
                 self._seconds_since_last_win_stale = False
@@ -335,7 +326,7 @@ class chia_stats:
         
         except Exception as exception:
             logger.error(f'Encountered following exception: {type(exception)} {exception}')
-            #uncomment for debugging purposes only
+            # uncomment for debugging purposes only
             #logger.error(traceback.format_exc())
             raise
         
