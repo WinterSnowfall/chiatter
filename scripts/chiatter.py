@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.12
-@date: 26/06/2023
+@version: 3.20
+@date: 10/09/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -23,6 +23,14 @@ CONF_FILE_PATH = os.path.join('..', 'conf', 'chiatter.conf')
 
 CHIA_STATS_SELF_POOLING_OG = 'og'
 CHIA_STATS_SELF_POOLING_PORTABLE = 'portable'
+
+PLOT_BASE_KSIZE = 32
+# starts at k32 and goes up to k41 (should be enough 
+# even for the k-raziest of plotters out there)
+PLOT_KSIZE_RANGE = range(10)
+# will cater for C0 to C9, although only compression 
+# levels up to C7 are oficialy supported
+PLOT_COMPRESSION_LEVEL_RANGE = range(10)
 
 def sigterm_handler(signum, frame):
     print('Stopping stats collection due to SIGTERM...')
@@ -51,10 +59,11 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
             chia_stats_no_key_plots.set(chia_stats_inst.plots_no_key)
             
             chia_stats_portable_size.set(chia_stats_inst.portable_size)
-            chia_stats_portable_plots_k32.set(chia_stats_inst.plots_portable_k32)
-            chia_stats_portable_plots_k33.set(chia_stats_inst.plots_portable_k33)
-            chia_stats_portable_plots_k34.set(chia_stats_inst.plots_portable_k34)
             chia_stats_portable_time_to_win.set(chia_stats_inst.portable_time_to_win)
+            for ksize in PLOT_KSIZE_RANGE:
+                chia_stats_portable_plots[ksize].set(chia_stats_inst.plots_portable[ksize])
+            for clevel in PLOT_COMPRESSION_LEVEL_RANGE:
+                chia_stats_plots_compression_level[clevel].set(chia_stats_inst.plots_clevel[clevel])
             
             chia_stats_sync_status.set(chia_stats_inst.sync_status)
             chia_stats_difficulty.set(chia_stats_inst.difficulty)
@@ -69,18 +78,18 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
             
             if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
                 chia_stats_og_size.set(chia_stats_inst.og_size)
-                chia_stats_og_plots_k32.set(chia_stats_inst.plots_og_k32)
-                chia_stats_og_plots_k33.set(chia_stats_inst.plots_og_k33)
-                chia_stats_og_plots_k34.set(chia_stats_inst.plots_og_k34)
                 chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
+                for ksize in PLOT_KSIZE_RANGE:
+                    chia_stats_og_plots[ksize].set(chia_stats_inst.plots_og[ksize])
             
             if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
                 chia_stats_sp_portable_size.set(chia_stats_inst.sp_portable_size)
-                chia_stats_sp_portable_plots_k32.set(chia_stats_inst.plots_sp_portable_k32)
-                chia_stats_sp_portable_plots_k33.set(chia_stats_inst.plots_sp_portable_k33)
-                chia_stats_sp_portable_plots_k34.set(chia_stats_inst.plots_sp_portable_k34)
                 chia_stats_sp_portable_time_to_win.set(chia_stats_inst.sp_portable_time_to_win)
-        
+                for ksize in PLOT_KSIZE_RANGE:
+                    chia_stats_sp_portable_plots[ksize].set(chia_stats_inst.plots_sp_portable[ksize])
+                for clevel in PLOT_COMPRESSION_LEVEL_RANGE:
+                    chia_stats_sp_plots_compression_level[clevel].set(chia_stats_inst.plots_sp_clevel[clevel])
+            
         except:
             chia_stats_inst.clear_stats()
             
@@ -130,11 +139,15 @@ if __name__ == '__main__':
     # catch SIGINT and exit gracefully
     signal.signal(signal.SIGINT, sigint_handler)
     
-    print(f'Starting chiatter - the chia stats collection agent...\n\n')
+    print(f'Starting chiatter - the chia stats collection agent...')
     
-    if chia_version.startswith('1.0.') or chia_version.startswith('1.1.') or chia_version.startswith('1.2.'):
-        print('chiatter needs chia-blockchain version 1.3.0+ in order to run. Please upgrade your chia client.')
+    print(f'Detected chia-blockchain version: {chia_version}')
+    if chia_version.startswith('0.') or chia_version.startswith('1.'):
+        print('Minimum required chia-blockchain version check: FAILED.')
+        print('chiatter needs chia-blockchain version 2.0.0+ in order to run properly. Please upgrade your chia client.')
         raise SystemExit(1)
+    else:
+        print('Minimum required chia-blockchain version check: PASSED.')
     
     configParser = ConfigParser()
     
@@ -178,10 +191,11 @@ if __name__ == '__main__':
     chia_stats_no_key_plots = Gauge('chia_stats_no_key_plots', 'Number of plots without a valid key across all harvesters')
     
     chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
-    chia_stats_portable_plots_k32 = Gauge('chia_stats_portable_plots_k32', 'Number of portable k32 plots')
-    chia_stats_portable_plots_k33 = Gauge('chia_stats_portable_plots_k33', 'Number of portable k33 plots')
-    chia_stats_portable_plots_k34 = Gauge('chia_stats_portable_plots_k34', 'Number of portable k34 plots')
     chia_stats_portable_time_to_win = Gauge('chia_stats_portable_time_to_win', 'Portable time to win')
+    chia_stats_portable_plots = [Gauge(f'chia_stats_portable_plots_k{ksize + PLOT_BASE_KSIZE}', 
+                                          f'Number of portable k{ksize + PLOT_BASE_KSIZE} plots') for ksize in PLOT_KSIZE_RANGE]
+    chia_stats_plots_compression_level = [Gauge(f'chia_stats_plots_compression_level_c{clevel}', 
+                                                   f'Number of C{clevel} compressed plots') for clevel in PLOT_COMPRESSION_LEVEL_RANGE]
     
     chia_stats_sync_status = Gauge('chia_stats_sync_status', 'Blockchain synced status')
     chia_stats_difficulty = Gauge('chia_stats_difficulty', 'Current difficulty on mainnet')
@@ -196,17 +210,18 @@ if __name__ == '__main__':
     
     if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
         chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
-        chia_stats_og_plots_k32 = Gauge('chia_stats_og_plots_k32', 'Number of og k32 plots')
-        chia_stats_og_plots_k33 = Gauge('chia_stats_og_plots_k33', 'Number of og k33 plots')
-        chia_stats_og_plots_k34 = Gauge('chia_stats_og_plots_k34', 'Number of og k34 plots')
         chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
+        chia_stats_og_plots = [Gauge(f'chia_stats_og_plots_k{ksize + PLOT_BASE_KSIZE}', 
+                                     f'Number of og k{ksize + PLOT_BASE_KSIZE} plots') for ksize in PLOT_KSIZE_RANGE]
     
     if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
         chia_stats_sp_portable_size = Gauge('chia_stats_sp_portable_size', 'Total size of portable self-pooling plots')
-        chia_stats_sp_portable_plots_k32 = Gauge('chia_stats_sp_portable_plots_k32', 'Number of portable self-pooling k32 plots')
-        chia_stats_sp_portable_plots_k33 = Gauge('chia_stats_sp_portable_plots_k33', 'Number of portable self-pooling k33 plots')
-        chia_stats_sp_portable_plots_k34 = Gauge('chia_stats_sp_portable_plots_k34', 'Number of portable self-pooling k34 plots')
         chia_stats_sp_portable_time_to_win = Gauge('chia_stats_sp_portable_time_to_win', 'Portable self-pooling time to win')
+        chia_stats_sp_portable_plots = [Gauge(f'chia_stats_sp_portable_plots_k{ksize + PLOT_BASE_KSIZE}', 
+                                              f'Number of portable self-pooling k{ksize + PLOT_BASE_KSIZE} plots') for ksize in PLOT_KSIZE_RANGE]
+        chia_stats_sp_plots_compression_level = [Gauge(f'chia_stats_sp_plots_compression_level_c{clevel}', 
+                                                       f'Number of self-pooling C{clevel} compressed plots') for clevel in PLOT_COMPRESSION_LEVEL_RANGE]
+    
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     
     #---------------------------------------------------------- openchia_stats -----------------------------------------------------------------------
@@ -246,8 +261,6 @@ if __name__ == '__main__':
         # will default to 'usd'/$ if unspecified
         if OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY != '':
             openchia_stats_inst.set_xch_current_price_currency(OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY)
-    
-    print('')
     
     counter_lock = threading.Lock()
     terminate_event = threading.Event()
@@ -292,4 +305,4 @@ if __name__ == '__main__':
             if OPENCHIA_STATS_MODULE:
                 openchia_stats_thread.join()
     
-    print(f'\n\nThank you for using chiatter. Bye!')
+    print(f'Thank you for using chiatter. Bye!')

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.12
-@date: 26/06/2023
+@version: 3.20
+@date: 10/09/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -38,6 +38,16 @@ class chia_stats:
     
     _logging_level = logging.WARNING
     
+    _PLOT_BASE_KSIZE = 32
+    # starts at k32 and goes up to k41 (should be enough 
+    # even for the k-raziest of plotters out there)
+    _PLOT_KSIZES = 10
+    _PLOT_KSIZE_RANGE = range(_PLOT_KSIZES)
+    # will cater for C0 to C9, although only compression 
+    # levels up to C7 are oficialy supported
+    _PLOT_COMPRESSION_LEVELS = 10
+    _PLOT_COMPRESSION_LEVEL_RANGE = range(_PLOT_COMPRESSION_LEVELS)
+    
     _WON_BLOCK_TRANSACTION_AMOUNT = 250000000000  # 0.25  XCH
     _WON_BLOCK_TRANSACTION_FEE_DELTA = 1000000000 # 0.001 XCH
     
@@ -55,15 +65,11 @@ class chia_stats:
         self.og_size = 0
         self.portable_size = 0
         self.sp_portable_size = 0
-        self.plots_og_k32 = 0
-        self.plots_og_k33 = 0
-        self.plots_og_k34 = 0
-        self.plots_portable_k32 = 0
-        self.plots_portable_k33 = 0
-        self.plots_portable_k34 = 0
-        self.plots_sp_portable_k32 = 0
-        self.plots_sp_portable_k33 = 0
-        self.plots_sp_portable_k34 = 0
+        self.plots_og = [0] * chia_stats._PLOT_KSIZES
+        self.plots_portable = [0] * chia_stats._PLOT_KSIZES
+        self.plots_sp_portable = [0] * chia_stats._PLOT_KSIZES
+        self.plots_clevel = [0] * chia_stats._PLOT_COMPRESSION_LEVELS
+        self.plots_sp_clevel = [0] * chia_stats._PLOT_COMPRESSION_LEVELS
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
@@ -104,15 +110,13 @@ class chia_stats:
         self.og_size = 0
         self.portable_size = 0
         self.sp_portable_size = 0
-        self.plots_og_k32 = 0
-        self.plots_og_k33 = 0
-        self.plots_og_k34 = 0
-        self.plots_portable_k32 = 0
-        self.plots_portable_k33 = 0
-        self.plots_portable_k34 = 0
-        self.plots_sp_portable_k32 = 0
-        self.plots_sp_portable_k33 = 0
-        self.plots_sp_portable_k34 = 0
+        for ksize in chia_stats._PLOT_KSIZE_RANGE:
+            self.plots_og[ksize] = 0 
+            self.plots_portable[ksize] = 0
+            self.plots_sp_portable[ksize] = 0
+        for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
+            self.plots_clevel[clevel] = 0
+            self.plots_sp_clevel[clevel] = 0
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
@@ -155,17 +159,15 @@ class chia_stats:
             self.plots_failed_to_open = 0
             self.plots_no_key = 0
             self.og_size = 0
-            self.plots_og_k32 = 0
-            self.plots_og_k33 = 0
-            self.plots_og_k34 = 0
             self.portable_size = 0
-            self.plots_portable_k32 = 0
-            self.plots_portable_k33 = 0
-            self.plots_portable_k34 = 0
             self.sp_portable_size = 0
-            self.plots_sp_portable_k32 = 0
-            self.plots_sp_portable_k33 = 0
-            self.plots_sp_portable_k34 = 0
+            for ksize in chia_stats._PLOT_KSIZE_RANGE:
+                self.plots_og[ksize] = 0 
+                self.plots_portable[ksize] = 0
+                self.plots_sp_portable[ksize] = 0
+            for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
+                self.plots_clevel[clevel] = 0
+                self.plots_sp_clevel[clevel] = 0
             
             for harvester in harvesters['harvesters']:
                 self.harvesters += 1
@@ -175,36 +177,23 @@ class chia_stats:
                 self.plots_no_key += len(harvester['no_key_filenames'])
                 
                 for plot in harvester['plots']:
+                    ksize = plot['size'] - chia_stats._PLOT_BASE_KSIZE
+                    clevel = plot['compression_level']
+                    
                     if plot['pool_public_key'] is not None:
                         self.og_size += plot['file_size']
-                        
-                        if plot['size'] == 32:
-                            self.plots_og_k32 += 1
-                        elif plot['size'] == 33:
-                            self.plots_og_k33 += 1
-                        elif plot['size'] == 34:
-                            self.plots_og_k34 += 1
+                        self.plots_og[ksize] += 1
                     
                     elif (self._self_pooling_contract_address is not None and 
                           plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
                         self.sp_portable_size += plot['file_size']
-                        
-                        if plot['size'] == 32:
-                            self.plots_sp_portable_k32 += 1
-                        elif plot['size'] == 33:
-                            self.plots_sp_portable_k33 += 1
-                        elif plot['size'] == 34:
-                            self.plots_sp_portable_k34 += 1
+                        self.plots_sp_portable[ksize] += 1
+                        self.plots_sp_clevel[clevel] += 1
                     
                     else:
                         self.portable_size += plot['file_size']
-                        
-                        if plot['size'] == 32:
-                            self.plots_portable_k32 += 1
-                        elif plot['size'] == 33:
-                            self.plots_portable_k33 += 1
-                        elif plot['size'] == 34:
-                            self.plots_portable_k34 += 1
+                        self.plots_portable[ksize] += 1
+                        self.plots_clevel[clevel] += 1
             
             logger.debug(f'harvesters: {self.harvesters}')
             logger.debug(f'plots_duplicates: {self.plots_duplicates}')
@@ -213,15 +202,16 @@ class chia_stats:
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
             logger.debug(f'sp_portable_size: {self.sp_portable_size}')
-            logger.debug(f'plots_og_k32: {self.plots_og_k32}')
-            logger.debug(f'plots_og_k33: {self.plots_og_k33}')
-            logger.debug(f'plots_og_k34: {self.plots_og_k34}')
-            logger.debug(f'plots_portable_k32: {self.plots_portable_k32}')
-            logger.debug(f'plots_portable_k33: {self.plots_portable_k33}')
-            logger.debug(f'plots_portable_k34: {self.plots_portable_k34}')
-            logger.debug(f'plots_sp_portable_k32: {self.plots_sp_portable_k32}')
-            logger.debug(f'plots_sp_portable_k33: {self.plots_sp_portable_k33}')
-            logger.debug(f'plots_sp_portable_k34: {self.plots_sp_portable_k34}')
+            for ksize in chia_stats._PLOT_KSIZE_RANGE:
+                logger.debug(f'plots_og_k{ksize + chia_stats._PLOT_BASE_KSIZE}: {self.plots_og[ksize]}')
+            for ksize in chia_stats._PLOT_KSIZE_RANGE:
+                logger.debug(f'plots_portable_k{ksize + chia_stats._PLOT_BASE_KSIZE}: {self.plots_portable[ksize]}')
+            for ksize in chia_stats._PLOT_KSIZE_RANGE:
+                logger.debug(f'plots_sp_portable_k{ksize + chia_stats._PLOT_BASE_KSIZE}: {self.plots_sp_portable[ksize]}')
+            for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
+                logger.debug(f'plots_c{clevel}: {self.plots_clevel[clevel]}')
+            for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
+                logger.debug(f'plots_sp_c{clevel}: {self.plots_sp_clevel[clevel]}')
             #########################################################
             
             logger.info('Fetching blockchain state...')

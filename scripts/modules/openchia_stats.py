@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.12
-@date: 26/06/2023
+@version: 3.20
+@date: 10/09/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -32,18 +32,18 @@ class openchia_stats:
     
     _logging_level = logging.WARNING
     
-    HTTP_OK = 200
-    HTTP_TIMEOUT = 30
+    _HTTP_OK = 200
+    _HTTP_TIMEOUT = 30
     
     # ordering used for the farmer ranking query
     # options: points, points_pplns (- stands for descending)
-    LAUNCHER_ORDERING = '-points_pplns'
+    _LAUNCHER_ORDERING = '-points_pplns'
     
-    OPENCHIA_BASE_URL = 'https://openchia.io'
+    _OPENCHIA_BASE_URL = 'https://openchia.io'
     # API endpoint URLs
-    BLOCK_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/block'))
-    POOL_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/stats'))
-    LAUNCHER_STATS_API_URL = ''.join((OPENCHIA_BASE_URL, '/api/v1.0/launcher'))
+    _BLOCK_STATS_API_URL = ''.join((_OPENCHIA_BASE_URL, '/api/v1.0/block'))
+    _POOL_STATS_API_URL = ''.join((_OPENCHIA_BASE_URL, '/api/v1.0/stats'))
+    _LAUNCHER_STATS_API_URL = ''.join((_OPENCHIA_BASE_URL, '/api/v1.0/launcher'))
 
     def __init__(self, logging_level):
         self._launcher_id = None
@@ -115,11 +115,11 @@ class openchia_stats:
                 #########################################################
                 logger.info('Fetching pool stats...')
                 
-                response = session.get(openchia_stats.POOL_STATS_API_URL, timeout=openchia_stats.HTTP_TIMEOUT)
+                response = session.get(openchia_stats._POOL_STATS_API_URL, timeout=openchia_stats._HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code: {response.status_code}')
                 
-                if response.status_code == openchia_stats.HTTP_OK:
+                if response.status_code == openchia_stats._HTTP_OK:
                     pool_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
                     self.pool_space = pool_stats_json['pool_space']
@@ -150,13 +150,13 @@ class openchia_stats:
                 
                 # can't be bothered with pagination (meant for the website anyway), 
                 # so use a resonable non-standard limit - based on farmer count
-                response = session.get(''.join((openchia_stats.LAUNCHER_STATS_API_URL, '/?ordering=', 
-                                                openchia_stats.LAUNCHER_ORDERING, '&limit=', str(self.pool_farmers))), 
-                                        timeout=openchia_stats.HTTP_TIMEOUT)
+                response = session.get(''.join((openchia_stats._LAUNCHER_STATS_API_URL, '/?ordering=', 
+                                                openchia_stats._LAUNCHER_ORDERING, '&limit=', str(self.pool_farmers))), 
+                                        timeout=openchia_stats._HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code: {response.status_code}')
                 
-                if response.status_code == openchia_stats.HTTP_OK:
+                if response.status_code == openchia_stats._HTTP_OK:
                     global_farmer_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                     
                     launcher_iterator = iter(global_farmer_stats_json)
@@ -180,12 +180,12 @@ class openchia_stats:
                 else:
                     logger.warning('Failed to connect to API endpoint for launcher ranking stats.')
                 
-                response = session.get(''.join((openchia_stats.LAUNCHER_STATS_API_URL, '/', self._launcher_id)), 
-                                       timeout=openchia_stats.HTTP_TIMEOUT)
+                response = session.get(''.join((openchia_stats._LAUNCHER_STATS_API_URL, '/', self._launcher_id)), 
+                                       timeout=openchia_stats._HTTP_TIMEOUT)
                 
                 logger.debug(f'HTTP response code: {response.status_code}')
                 
-                if response.status_code == openchia_stats.HTTP_OK:
+                if response.status_code == openchia_stats._HTTP_OK:
                     launcher_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)
                     
                     self.launcher_points = launcher_stats_json['points']
@@ -212,14 +212,14 @@ class openchia_stats:
                     logger.info('Fetching block stats...')
                     
                     # only get the latest won block for the configured launcher
-                    response = session.get(''.join((openchia_stats.BLOCK_STATS_API_URL, '/?farmed_by=', 
+                    response = session.get(''.join((openchia_stats._BLOCK_STATS_API_URL, '/?farmed_by=', 
                                                     self._launcher_id, '&ordering=timestamp&limit=1')), 
-                                           timeout=openchia_stats.HTTP_TIMEOUT)
+                                           timeout=openchia_stats._HTTP_TIMEOUT)
                     
                     logger.debug(f'HTTP response code: {response.status_code}')
                     
                     try:
-                        if response.status_code == openchia_stats.HTTP_OK:
+                        if response.status_code == openchia_stats._HTTP_OK:
                             block_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
                             
                             block_timestamp = int(block_stats_json[0]['timestamp'])

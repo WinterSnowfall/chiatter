@@ -15,7 +15,7 @@ sudo apt-get install python3-prometheus-client python3-requests
 pip3 install -U chia-blockchain
 ```
 
-**❄** `chia-blockchain` version 1.3.0+ is required for chiatter to work. Trying to run it on earlier versions will prompt you to upgrade and will exit.
+**❄** `chia-blockchain` version 2.0.0+ is required for chiatter to work. Trying to run it on earlier versions will prompt you to upgrade and will exit.
 
 **❄** A full chia node running on the same host. No, it's not possible to run it remotely at this point!
 
