@@ -27,7 +27,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.0.3"
+      "version": "10.1.1"
     },
     {
       "type": "panel",
@@ -138,7 +138,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 0,
         "y": 1
@@ -159,7 +159,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -201,7 +201,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 3,
         "y": 1
@@ -222,7 +222,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -266,7 +266,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 6,
         "y": 1
@@ -285,7 +285,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -328,7 +328,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 5,
         "x": 9,
         "y": 1
@@ -349,7 +349,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -505,7 +505,7 @@
         ]
       },
       "gridPos": {
-        "h": 12,
+        "h": 15,
         "w": 5,
         "x": 14,
         "y": 1
@@ -618,7 +618,7 @@
         ]
       },
       "gridPos": {
-        "h": 12,
+        "h": 15,
         "w": 5,
         "x": 19,
         "y": 1
@@ -719,10 +719,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 123172,
       "options": {
@@ -738,7 +738,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -789,10 +789,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 3,
-        "y": 5
+        "y": 6
       },
       "id": 123177,
       "options": {
@@ -808,7 +808,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -861,10 +861,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 6,
-        "y": 5
+        "y": 6
       },
       "id": 123176,
       "options": {
@@ -880,7 +880,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -933,10 +933,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 5,
         "x": 9,
-        "y": 5
+        "y": 6
       },
       "id": 123174,
       "options": {
@@ -954,7 +954,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -996,10 +996,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 0,
-        "y": 9
+        "y": 11
       },
       "id": 123161,
       "options": {
@@ -1017,7 +1017,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1059,10 +1059,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 3,
-        "y": 9
+        "y": 11
       },
       "id": 123129,
       "options": {
@@ -1079,7 +1079,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1122,10 +1122,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
         "x": 6,
-        "y": 9
+        "y": 11
       },
       "id": 123144,
       "options": {
@@ -1142,7 +1142,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1185,10 +1185,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 5,
         "x": 9,
-        "y": 9
+        "y": 11
       },
       "id": 123175,
       "options": {
@@ -1205,7 +1205,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1232,7 +1232,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 16
       },
       "id": 123170,
       "panels": [],
@@ -1277,7 +1277,7 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 14
+        "y": 17
       },
       "id": 123143,
       "interval": "5",
@@ -1297,7 +1297,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1345,7 +1345,7 @@
         "h": 5,
         "w": 6,
         "x": 8,
-        "y": 14
+        "y": 17
       },
       "id": 123160,
       "options": {
@@ -1363,7 +1363,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1409,7 +1409,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 14
+        "y": 17
       },
       "id": 123142,
       "options": {
@@ -1427,7 +1427,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1455,7 +1455,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 22
       },
       "id": 123141,
       "panels": [],
@@ -1499,7 +1499,7 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 20
+        "y": 23
       },
       "id": 123150,
       "options": {
@@ -1516,7 +1516,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1571,7 +1571,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 20
+        "y": 23
       },
       "id": 123152,
       "options": {
@@ -1587,7 +1587,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1633,7 +1633,7 @@
         "h": 5,
         "w": 3,
         "x": 11,
-        "y": 20
+        "y": 23
       },
       "id": 123148,
       "options": {
@@ -1649,7 +1649,7 @@
         "showThresholdMarkers": false,
         "text": {}
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1695,7 +1695,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 20
+        "y": 23
       },
       "id": 123156,
       "options": {
@@ -1713,7 +1713,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1759,7 +1759,7 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 25
+        "y": 28
       },
       "id": 123146,
       "options": {
@@ -1777,7 +1777,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1822,7 +1822,7 @@
         "h": 5,
         "w": 6,
         "x": 8,
-        "y": 25
+        "y": 28
       },
       "id": 123155,
       "options": {
@@ -1839,7 +1839,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1884,7 +1884,7 @@
         "h": 5,
         "w": 5,
         "x": 14,
-        "y": 25
+        "y": 28
       },
       "id": 123149,
       "options": {
@@ -1902,7 +1902,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -1950,7 +1950,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 25
+        "y": 28
       },
       "id": 123154,
       "options": {
@@ -1968,7 +1968,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -2013,7 +2013,7 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 30
+        "y": 33
       },
       "id": 123147,
       "options": {
@@ -2031,7 +2031,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -2076,7 +2076,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 30
+        "y": 33
       },
       "id": 123158,
       "options": {
@@ -2094,7 +2094,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -2139,7 +2139,7 @@
         "h": 5,
         "w": 3,
         "x": 11,
-        "y": 30
+        "y": 33
       },
       "id": 123153,
       "options": {
@@ -2157,7 +2157,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -2204,7 +2204,7 @@
         "h": 5,
         "w": 5,
         "x": 14,
-        "y": 30
+        "y": 33
       },
       "id": 123151,
       "options": {
@@ -2222,7 +2222,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -2270,7 +2270,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 30
+        "y": 33
       },
       "id": 123171,
       "options": {
@@ -2288,7 +2288,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "10.1.1",
       "targets": [
         {
           "datasource": {
@@ -2347,6 +2347,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 9,
+  "version": 5,
   "weekStart": ""
 }

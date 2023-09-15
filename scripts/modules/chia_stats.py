@@ -139,6 +139,21 @@ class chia_stats:
     async def collect_stats(self):
         logger.info('***** Starting data collection run *****')
         
+        self.harvesters = 0
+        self.plots_duplicates = 0
+        self.plots_failed_to_open = 0
+        self.plots_no_key = 0
+        self.og_size = 0
+        self.portable_size = 0
+        self.sp_portable_size = 0
+        for ksize in chia_stats._PLOT_KSIZE_RANGE:
+            self.plots_og[ksize] = 0 
+            self.plots_portable[ksize] = 0
+            self.plots_sp_portable[ksize] = 0
+        for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
+            self.plots_clevel[clevel] = 0
+            self.plots_sp_clevel[clevel] = 0
+        
         logger.info('Initializing clients...')
         
         farmer = await FarmerRpcClient.create(self._hostname, self._farmer_port, 
@@ -153,21 +168,6 @@ class chia_stats:
             #########################################################
             # will scrape the local harvester as well as any remote harvesters
             harvesters = await farmer.get_harvesters()
-            
-            self.harvesters = 0
-            self.plots_duplicates = 0
-            self.plots_failed_to_open = 0
-            self.plots_no_key = 0
-            self.og_size = 0
-            self.portable_size = 0
-            self.sp_portable_size = 0
-            for ksize in chia_stats._PLOT_KSIZE_RANGE:
-                self.plots_og[ksize] = 0 
-                self.plots_portable[ksize] = 0
-                self.plots_sp_portable[ksize] = 0
-            for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
-                self.plots_clevel[clevel] = 0
-                self.plots_sp_clevel[clevel] = 0
             
             for harvester in harvesters['harvesters']:
                 self.harvesters += 1

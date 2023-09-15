@@ -107,6 +107,8 @@ class openchia_stats:
         
         logger.info('***** Starting data collection run *****')
         
+        self.launcher_ranking = 0
+        
         try:
             with requests.Session() as session:
                 four_score_and_twenty_four_hours_ago = int(datetime.timestamp(datetime.now() - timedelta(hours=24)))
@@ -163,7 +165,6 @@ class openchia_stats:
                     found_launcher = False
                     
                     try:
-                        self.launcher_ranking = 0
                         while not found_launcher:
                             current_farmer = next(launcher_iterator)
                             self.launcher_ranking += 1
