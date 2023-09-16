@@ -157,7 +157,7 @@ if __name__ == '__main__':
         # parse collection intervals conditionally for each module
         if CHIA_STATS_MODULE:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
-            CHIA_STATS_CONTACT_ADDRESS_FILTER = configParser['CHIA_STATS'].get('contact_address_filter').strip()
+            CHIA_STATS_CONTRACT_ADDRESS_FILTER = configParser['CHIA_STATS'].get('contract_address_filter').strip()
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
         if OPENCHIA_STATS_MODULE:
             OPENCHIA_STATS_COLLECTION_INTERVAL = configParser['OPENCHIA_STATS'].getint('collection_interval')
@@ -231,8 +231,8 @@ if __name__ == '__main__':
     if CHIA_STATS_MODULE:
         print('*** Loading the chia_stats module ***')
         chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL)
-        if CHIA_STATS_CONTACT_ADDRESS_FILTER != '':
-            chia_stats_inst.set_contract_address_filter(CHIA_STATS_CONTACT_ADDRESS_FILTER)
+        if CHIA_STATS_CONTRACT_ADDRESS_FILTER != '':
+            chia_stats_inst.set_contract_address_filter(CHIA_STATS_CONTRACT_ADDRESS_FILTER)
     
     if OPENCHIA_STATS_MODULE:
         print('*** Loading the openchia_stats module ***')
