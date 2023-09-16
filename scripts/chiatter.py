@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.20
-@date: 10/09/2023
+@version: 3.22
+@date: 16/09/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -20,9 +20,6 @@ from modules.openchia_stats import openchia_stats
 
 # conf file block
 CONF_FILE_PATH = os.path.join('..', 'conf', 'chiatter.conf')
-
-CHIA_STATS_SELF_POOLING_OG = 'og'
-CHIA_STATS_SELF_POOLING_PORTABLE = 'portable'
 
 PLOT_BASE_KSIZE = 32
 # starts at k32 and goes up to k41 (should be enough 
@@ -58,6 +55,14 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
             chia_stats_failed_to_open_plots.set(chia_stats_inst.plots_failed_to_open)
             chia_stats_no_key_plots.set(chia_stats_inst.plots_no_key)
             
+            # OG plots
+            chia_stats_og_size.set(chia_stats_inst.og_size)
+            chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
+            for ksize in PLOT_KSIZE_RANGE:
+                chia_stats_og_plots[ksize].set(chia_stats_inst.plots_og[ksize])
+            # OG plots won't have a compression level
+            
+            # portable plots
             chia_stats_portable_size.set(chia_stats_inst.portable_size)
             chia_stats_portable_time_to_win.set(chia_stats_inst.portable_time_to_win)
             for ksize in PLOT_KSIZE_RANGE:
@@ -75,20 +80,6 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
             chia_stats_mempool_allocation.set(chia_stats_inst.mempool_allocation)
             chia_stats_full_node_connections.set(chia_stats_inst.full_node_connections)
             chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
-            
-            if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
-                chia_stats_og_size.set(chia_stats_inst.og_size)
-                chia_stats_og_time_to_win.set(chia_stats_inst.og_time_to_win)
-                for ksize in PLOT_KSIZE_RANGE:
-                    chia_stats_og_plots[ksize].set(chia_stats_inst.plots_og[ksize])
-            
-            if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
-                chia_stats_sp_portable_size.set(chia_stats_inst.sp_portable_size)
-                chia_stats_sp_portable_time_to_win.set(chia_stats_inst.sp_portable_time_to_win)
-                for ksize in PLOT_KSIZE_RANGE:
-                    chia_stats_sp_portable_plots[ksize].set(chia_stats_inst.plots_sp_portable[ksize])
-                for clevel in PLOT_COMPRESSION_LEVEL_RANGE:
-                    chia_stats_sp_plots_compression_level[clevel].set(chia_stats_inst.plots_sp_clevel[clevel])
             
         except:
             chia_stats_inst.clear_stats()
@@ -166,11 +157,8 @@ if __name__ == '__main__':
         # parse collection intervals conditionally for each module
         if CHIA_STATS_MODULE:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
+            CHIA_STATS_CONTACT_ADDRESS_FILTER = configParser['CHIA_STATS'].get('contact_address_filter').strip()
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
-            self_pooling_types = configParser['CHIA_STATS'].get('self_pooling_types')
-            self_pooling_types = [pooling_type.strip() for pooling_type 
-                                  in self_pooling_types.split(',')] if self_pooling_types != '' else []
-            CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS = configParser['CHIA_STATS'].get('self_pooling_contact_address').strip()
         if OPENCHIA_STATS_MODULE:
             OPENCHIA_STATS_COLLECTION_INTERVAL = configParser['OPENCHIA_STATS'].getint('collection_interval')
             OPENCHIA_STATS_LAUNCHER_ID = configParser['OPENCHIA_STATS'].get('launcher_id')
@@ -190,6 +178,13 @@ if __name__ == '__main__':
     chia_stats_failed_to_open_plots = Gauge('chia_stats_failed_to_open_plots', 'Number of plots with access errors across all harvesters')
     chia_stats_no_key_plots = Gauge('chia_stats_no_key_plots', 'Number of plots without a valid key across all harvesters')
     
+    # OG plots
+    chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
+    chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
+    chia_stats_og_plots = [Gauge(f'chia_stats_og_plots_k{ksize + PLOT_BASE_KSIZE}', 
+                                 f'Number of og k{ksize + PLOT_BASE_KSIZE} plots') for ksize in PLOT_KSIZE_RANGE]
+        
+    # portable plots
     chia_stats_portable_size = Gauge('chia_stats_portable_size', 'Total size of portable plots')
     chia_stats_portable_time_to_win = Gauge('chia_stats_portable_time_to_win', 'Portable time to win')
     chia_stats_portable_plots = [Gauge(f'chia_stats_portable_plots_k{ksize + PLOT_BASE_KSIZE}', 
@@ -207,20 +202,6 @@ if __name__ == '__main__':
     chia_stats_mempool_allocation = Gauge('chia_stats_mempool_allocation', 'Percentage of total mempool which is in use')
     chia_stats_full_node_connections = Gauge('chia_stats_full_node_connections', 'Number of full node connections')
     chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
-    
-    if CHIA_STATS_SELF_POOLING_OG in self_pooling_types:
-        chia_stats_og_size = Gauge('chia_stats_og_size', 'Total size of og plots')
-        chia_stats_og_time_to_win = Gauge('chia_stats_og_time_to_win', 'OG time to win')
-        chia_stats_og_plots = [Gauge(f'chia_stats_og_plots_k{ksize + PLOT_BASE_KSIZE}', 
-                                     f'Number of og k{ksize + PLOT_BASE_KSIZE} plots') for ksize in PLOT_KSIZE_RANGE]
-    
-    if CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types:
-        chia_stats_sp_portable_size = Gauge('chia_stats_sp_portable_size', 'Total size of portable self-pooling plots')
-        chia_stats_sp_portable_time_to_win = Gauge('chia_stats_sp_portable_time_to_win', 'Portable self-pooling time to win')
-        chia_stats_sp_portable_plots = [Gauge(f'chia_stats_sp_portable_plots_k{ksize + PLOT_BASE_KSIZE}', 
-                                              f'Number of portable self-pooling k{ksize + PLOT_BASE_KSIZE} plots') for ksize in PLOT_KSIZE_RANGE]
-        chia_stats_sp_plots_compression_level = [Gauge(f'chia_stats_sp_plots_compression_level_c{clevel}', 
-                                                       f'Number of self-pooling C{clevel} compressed plots') for clevel in PLOT_COMPRESSION_LEVEL_RANGE]
     
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     
@@ -250,9 +231,8 @@ if __name__ == '__main__':
     if CHIA_STATS_MODULE:
         print('*** Loading the chia_stats module ***')
         chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL)
-        if (CHIA_STATS_SELF_POOLING_PORTABLE in self_pooling_types and 
-            CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS != ''):
-            chia_stats_inst.set_self_pooling_contract_address(CHIA_STATS_SELF_POOLING_CONTACT_ADDRESS)
+        if CHIA_STATS_CONTACT_ADDRESS_FILTER != '':
+            chia_stats_inst.set_contract_address_filter(CHIA_STATS_CONTACT_ADDRESS_FILTER)
     
     if OPENCHIA_STATS_MODULE:
         print('*** Loading the openchia_stats module ***')

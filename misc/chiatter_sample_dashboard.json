@@ -390,7 +390,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "K32 (Portable)"
+              "options": "K32"
             },
             "properties": [
               {
@@ -405,7 +405,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "K33 (Portable)"
+              "options": "K33"
             },
             "properties": [
               {
@@ -426,7 +426,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "dark-purple",
                   "mode": "fixed"
                 }
               }
@@ -441,63 +441,8 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "light-green",
+                  "fixedColor": "purple",
                   "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "K32 (Portable Self-Pooling)"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "K33 (Portable Self-Pooling)"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "semi-dark-purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "K32 (Portable)",
-                  "K33 (Portable)"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
                 }
               }
             ]
@@ -541,11 +486,13 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "editorMode": "code",
           "exemplar": true,
           "expr": "chia_stats_portable_plots_k32{}",
           "hide": false,
           "interval": "",
-          "legendFormat": "K32 (Portable)",
+          "legendFormat": "K32",
+          "range": true,
           "refId": "A"
         },
         {
@@ -553,11 +500,13 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "editorMode": "code",
           "exemplar": true,
           "expr": "chia_stats_portable_plots_k33{}",
           "hide": false,
           "interval": "",
-          "legendFormat": "K33 (Portable)",
+          "legendFormat": "K33",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -588,7 +537,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "C0 (Portable)"
+              "options": "C0"
             },
             "properties": [
               {
@@ -603,7 +552,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "C4 (Portable)"
+              "options": "C4"
             },
             "properties": [
               {
@@ -659,7 +608,7 @@
           "expr": "chia_stats_plots_compression_level_c0{}",
           "hide": false,
           "interval": "",
-          "legendFormat": "C0 (Portable)",
+          "legendFormat": "C0",
           "range": true,
           "refId": "A"
         },
@@ -673,7 +622,7 @@
           "expr": "chia_stats_plots_compression_level_c4{}",
           "hide": false,
           "interval": "",
-          "legendFormat": "C4 (Portable)",
+          "legendFormat": "C4",
           "range": true,
           "refId": "B"
         }
@@ -2347,6 +2296,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 5,
+  "version": 7,
   "weekStart": ""
 }

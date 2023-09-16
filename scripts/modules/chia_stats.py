@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.20
-@date: 10/09/2023
+@version: 3.22
+@date: 16/09/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -52,7 +52,7 @@ class chia_stats:
     _WON_BLOCK_TRANSACTION_FEE_DELTA = 1000000000 # 0.001 XCH
     
     def __init__(self, logging_level):
-        self._self_pooling_contract_address = None
+        self._contract_address_filter = None
         self._decoded_puzzle_hash = None
         self._chia_farmed_prev = 0
         self._seconds_since_last_win_stale = False
@@ -64,12 +64,9 @@ class chia_stats:
         self.plots_no_key = 0
         self.og_size = 0
         self.portable_size = 0
-        self.sp_portable_size = 0
         self.plots_og = [0] * chia_stats._PLOT_KSIZES
         self.plots_portable = [0] * chia_stats._PLOT_KSIZES
-        self.plots_sp_portable = [0] * chia_stats._PLOT_KSIZES
         self.plots_clevel = [0] * chia_stats._PLOT_COMPRESSION_LEVELS
-        self.plots_sp_clevel = [0] * chia_stats._PLOT_COMPRESSION_LEVELS
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
@@ -78,7 +75,6 @@ class chia_stats:
         self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
-        self.sp_portable_time_to_win = 0
         self.current_height = 0
         self.wallet_funds = 0
         self.chia_farmed = 0
@@ -109,14 +105,11 @@ class chia_stats:
         self.plots_no_key = 0
         self.og_size = 0
         self.portable_size = 0
-        self.sp_portable_size = 0
         for ksize in chia_stats._PLOT_KSIZE_RANGE:
             self.plots_og[ksize] = 0 
             self.plots_portable[ksize] = 0
-            self.plots_sp_portable[ksize] = 0
         for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
             self.plots_clevel[clevel] = 0
-            self.plots_sp_clevel[clevel] = 0
         self.sync_status = False
         self.difficulty = 0
         self.network_space_size = 0
@@ -125,13 +118,12 @@ class chia_stats:
         self.full_node_connections = 0
         self.og_time_to_win = 0
         self.portable_time_to_win = 0
-        self.sp_portable_time_to_win = 0
         self.current_height = 0
     
-    def set_self_pooling_contract_address(self, self_pooling_contract_address):
-        self._self_pooling_contract_address = self_pooling_contract_address
+    def set_contract_address_filter(self, contract_address_filter):
+        self._contract_address_filter = contract_address_filter
         
-        decoded_bytes = bech32m.decode_puzzle_hash(self._self_pooling_contract_address)
+        decoded_bytes = bech32m.decode_puzzle_hash(self._contract_address_filter)
         self._decoded_puzzle_hash = '0x' + binascii.hexlify(decoded_bytes).decode('utf8')
         
         logger.debug(f'_decoded_puzzle_hash: {self._decoded_puzzle_hash}')
@@ -145,14 +137,11 @@ class chia_stats:
         self.plots_no_key = 0
         self.og_size = 0
         self.portable_size = 0
-        self.sp_portable_size = 0
         for ksize in chia_stats._PLOT_KSIZE_RANGE:
             self.plots_og[ksize] = 0 
             self.plots_portable[ksize] = 0
-            self.plots_sp_portable[ksize] = 0
         for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
             self.plots_clevel[clevel] = 0
-            self.plots_sp_clevel[clevel] = 0
         
         logger.info('Initializing clients...')
         
@@ -180,16 +169,21 @@ class chia_stats:
                     ksize = plot['size'] - chia_stats._PLOT_BASE_KSIZE
                     clevel = plot['compression_level']
                     
+                    # counterintuitively, pool_public key will have a value for OG plots
                     if plot['pool_public_key'] is not None:
                         self.og_size += plot['file_size']
                         self.plots_og[ksize] += 1
+                        # OG plots won't have a compression level
                     
-                    elif (self._self_pooling_contract_address is not None and 
-                          plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash):
-                        self.sp_portable_size += plot['file_size']
-                        self.plots_sp_portable[ksize] += 1
-                        self.plots_sp_clevel[clevel] += 1
-                    
+                    # only count plots that match a specific puzzle hash (based on the contract address filter)
+                    elif self._contract_address_filter is not None:
+                        if plot['pool_contract_puzzle_hash'] == self._decoded_puzzle_hash:
+                            self.portable_size += plot['file_size']
+                            self.plots_portable[ksize] += 1
+                            self.plots_clevel[clevel] += 1
+                        else:
+                            logger.debug('Different puzzle hash detected. Skipping plot.')
+                    # if no filter is specified, process all plots, regardless of their puzzle hash
                     else:
                         self.portable_size += plot['file_size']
                         self.plots_portable[ksize] += 1
@@ -201,17 +195,12 @@ class chia_stats:
             logger.debug(f'plots_no_key: {self.plots_no_key}')
             logger.debug(f'og_size: {self.og_size}')
             logger.debug(f'portable_size: {self.portable_size}')
-            logger.debug(f'sp_portable_size: {self.sp_portable_size}')
             for ksize in chia_stats._PLOT_KSIZE_RANGE:
                 logger.debug(f'plots_og_k{ksize + chia_stats._PLOT_BASE_KSIZE}: {self.plots_og[ksize]}')
             for ksize in chia_stats._PLOT_KSIZE_RANGE:
                 logger.debug(f'plots_portable_k{ksize + chia_stats._PLOT_BASE_KSIZE}: {self.plots_portable[ksize]}')
-            for ksize in chia_stats._PLOT_KSIZE_RANGE:
-                logger.debug(f'plots_sp_portable_k{ksize + chia_stats._PLOT_BASE_KSIZE}: {self.plots_sp_portable[ksize]}')
             for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
                 logger.debug(f'plots_c{clevel}: {self.plots_clevel[clevel]}')
-            for clevel in chia_stats._PLOT_COMPRESSION_LEVEL_RANGE:
-                logger.debug(f'plots_sp_c{clevel}: {self.plots_sp_clevel[clevel]}')
             #########################################################
             
             logger.info('Fetching blockchain state...')
@@ -241,9 +230,6 @@ class chia_stats:
             if self.portable_size != 0:
                 self.portable_time_to_win = int((average_block_time) / 
                                                 (self.portable_size / self.network_space_size))
-            if self.sp_portable_size != 0:
-                self.sp_portable_time_to_win = int((average_block_time) / 
-                                                   (self.sp_portable_size / self.network_space_size))
             
             logger.debug(f'sync_status: {self.sync_status}')
             logger.debug(f'difficulty: {self.difficulty}')
@@ -253,7 +239,6 @@ class chia_stats:
             logger.debug(f'full_node_connections: {self.full_node_connections}')
             logger.debug(f'og_time_to_win: {self.og_time_to_win}')
             logger.debug(f'portable_time_to_win: {self.portable_time_to_win}')
-            logger.debug(f'sp_portable_time_to_win: {self.sp_portable_time_to_win}')
             #########################################################
             
             logger.info('Fetching wallet state...')
