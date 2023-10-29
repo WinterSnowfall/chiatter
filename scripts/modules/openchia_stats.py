@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.22
-@date: 16/09/2023
+@version: 3.23
+@date: 28/10/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -47,11 +47,12 @@ class openchia_stats:
 
     def __init__(self, logging_level):
         self._launcher_id = None
+        # will default to fetching the current $ exchange value of XCH
+        self._xch_current_price_currency = 'usd'
+        
         self._pool_rewards_blocks_prev = 0
         self._block_timestamp_prev = 0
         self._block_seconds_since_last_win_stale = False
-        # will default to fetching the current $ exchange value of XCH
-        self._xch_current_price_currency = 'usd'
         
         self.pool_space = 0
         self.pool_farmers = 0
@@ -79,6 +80,10 @@ class openchia_stats:
         logger.setLevel(self._logging_level)
     
     def clear_stats(self):
+        self._pool_rewards_blocks_prev = 0
+        self._block_timestamp_prev = 0
+        self._block_seconds_since_last_win_stale = False
+        
         self.pool_space = 0
         self.pool_farmers = 0
         self.pool_estimate_win = 0
@@ -170,8 +175,8 @@ class openchia_stats:
                             self.launcher_ranking += 1
 
                             if current_farmer['launcher_id'].strip() == self._launcher_id:
-                                logger.debug('Found the launcher!')
                                 found_launcher = True
+                                logger.debug('Found the launcher!')
                     
                     except StopIteration:
                         logger.error('Failed to find an entry based on the launcher id.')
@@ -222,13 +227,13 @@ class openchia_stats:
                     try:
                         if response.status_code == openchia_stats._HTTP_OK:
                             block_stats_json = json.loads(response.text, object_pairs_hook=OrderedDict)['results']
-                            
                             block_timestamp = int(block_stats_json[0]['timestamp'])
+                            logger.debug(f'block_timestamp: {block_timestamp}')
+                            logger.debug(f'_block_timestamp_prev: {self._block_timestamp_prev}')
                             
                             if self._block_timestamp_prev != block_timestamp:
-                                self._block_timestamp_prev = block_timestamp
-                                
                                 self._block_seconds_since_last_win_stale = False
+                                self._block_timestamp_prev = block_timestamp
                                 
                             elif self._block_seconds_since_last_win_stale:
                                 logger.debug('Last won block timestamp is stale. Will recheck on next update.')
@@ -239,7 +244,6 @@ class openchia_stats:
                     # if no results are returned then the launcher has not won any blocks in the pool
                     except IndexError:
                         self._block_seconds_since_last_win_stale = False
-                        
                         logger.info('No won blocks detected for configured launcher.')
                 else:
                     logger.info('Skipping block stats update until next block win.')
@@ -252,6 +256,9 @@ class openchia_stats:
                 
                 logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
                 #########################################################
+                
+        except StopIteration:
+            raise
         
         except Exception as exception:
             logger.error(f'Encountered following exception: {type(exception)} {exception}')

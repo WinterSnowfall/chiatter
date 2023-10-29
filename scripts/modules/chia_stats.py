@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.22
-@date: 16/09/2023
+@version: 3.23
+@date: 28/10/2023
 
 Warning: Built for use with python 3.6+
 '''
@@ -43,9 +43,9 @@ class chia_stats:
     # even for the k-raziest of plotters out there)
     _PLOT_KSIZES = 10
     _PLOT_KSIZE_RANGE = range(_PLOT_KSIZES)
-    # will cater for C0 to C9, although only compression 
-    # levels up to C7 are oficialy supported
-    _PLOT_COMPRESSION_LEVELS = 10
+    # will cater for C0 to C19, although only compression 
+    # levels up to C7 are oficialy supported as of now
+    _PLOT_COMPRESSION_LEVELS = 20
     _PLOT_COMPRESSION_LEVEL_RANGE = range(_PLOT_COMPRESSION_LEVELS)
     
     _WON_BLOCK_TRANSACTION_AMOUNT = 250000000000  # 0.25  XCH
@@ -54,6 +54,7 @@ class chia_stats:
     def __init__(self, logging_level):
         self._contract_address_filter = None
         self._decoded_puzzle_hash = None
+        
         self._chia_farmed_prev = 0
         self._seconds_since_last_win_stale = False
         self._last_win_max_time = 0
@@ -99,6 +100,10 @@ class chia_stats:
         self._wallet_port = self._config['wallet']['rpc_port']
     
     def clear_stats(self):
+        self._chia_farmed_prev = 0
+        self._seconds_since_last_win_stale = False
+        self._last_win_max_time = 0
+        
         self.harvesters = 0
         self.plots_duplicates = 0
         self.plots_failed_to_open = 0
