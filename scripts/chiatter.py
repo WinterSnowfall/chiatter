@@ -39,12 +39,12 @@ PLOT_KSIZE_RANGE = range(10)
 PLOT_COMPRESSION_LEVEL_RANGE = range(10)
 
 def sigterm_handler(signum, frame):
-    logging.debug('Stopping stats collection due to SIGTERM...')
+    logger.debug('Stopping stats collection due to SIGTERM...')
 
     raise SystemExit(0)
 
 def sigint_handler(signum, frame):
-    logging.debug('Stopping stats collection due to SIGINT...')
+    logger.debug('Stopping stats collection due to SIGINT...')
 
     raise SystemExit(0)
 
@@ -139,11 +139,11 @@ if __name__ == '__main__':
     # catch SIGINT and exit gracefully
     signal.signal(signal.SIGINT, sigint_handler)
 
-    logging.info(f'Starting chiatter - the chia stats collection agent...')
+    logger.info(f'Starting chiatter - the chia stats collection agent...')
 
-    logging.info(f'Detected chia-blockchain version: {chia_version}')
+    logger.info(f'Detected chia-blockchain version: {chia_version}')
     if chia_version.startswith('0.') or chia_version.startswith('1.'):
-        logging.critical('chiatter needs chia-blockchain version 2.0.0+ in order to run properly. Please upgrade your chia client.')
+        logger.critical('chiatter needs chia-blockchain version 2.0.0+ in order to run properly. Please upgrade your chia client.')
         raise SystemExit(1)
 
     configParser = ConfigParser()
@@ -173,7 +173,7 @@ if __name__ == '__main__':
             OPENCHIA_STATS_LOGGING_LEVEL = configParser['OPENCHIA_STATS'].get('logging_level')
 
     except:
-        logging.critical('Could not parse configuration file. Please make sure the appropriate structure is in place!')
+        logger.critical('Could not parse configuration file. Please make sure the appropriate structure is in place!')
         raise SystemExit(2)
 
     ### Prometheus client metrics ####################################################################################################################
@@ -236,14 +236,14 @@ if __name__ == '__main__':
     start_http_server(PROMETHEUS_CLIENT_PORT)
 
     if CHIA_STATS_MODULE:
-        logging.info('*** Loading the chia_stats module ***')
+        logger.info('*** Loading the chia_stats module ***')
         chia_stats_inst = chia_stats(CHIA_STATS_LOGGING_LEVEL)
         chia_stats_inst.set_won_block_transaction_fee(CHIA_STATS_XCH_WON_BLOCK_TRANSACTION_FEE)
         if CHIA_STATS_CONTRACT_ADDRESS_FILTER != '':
             chia_stats_inst.set_contract_address_filter(CHIA_STATS_CONTRACT_ADDRESS_FILTER)
 
     if OPENCHIA_STATS_MODULE:
-        logging.info('*** Loading the openchia_stats module ***')
+        logger.info('*** Loading the openchia_stats module ***')
         openchia_stats_inst = openchia_stats(OPENCHIA_STATS_LOGGING_LEVEL)
         openchia_stats_inst.set_launcher_id(OPENCHIA_STATS_LAUNCHER_ID)
         # will default to 'usd'/$ if unspecified
@@ -272,7 +272,7 @@ if __name__ == '__main__':
         if WATCHDOG_MODE:
             while not terminate_event.is_set():
                 if error_counters[0] > WATCHDOG_THRESHOLD or error_counters[1] > WATCHDOG_THRESHOLD:
-                    logging.warning('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
+                    logger.warning('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
                     raise SystemExit(3)
                 else:
                     sleep(WATCHDOG_INTERVAL)
@@ -282,7 +282,7 @@ if __name__ == '__main__':
             terminate_event.wait()
 
     except SystemExit:
-        logging.info('Stopping chiatter...')
+        logger.info('Stopping chiatter...')
         terminate_event.set()
 
     finally:
@@ -293,4 +293,4 @@ if __name__ == '__main__':
             if OPENCHIA_STATS_MODULE:
                 openchia_stats_thread.join()
 
-    logging.info(f'Thank you for using chiatter. Bye!')
+    logger.info(f'Thank you for using chiatter. Bye!')
