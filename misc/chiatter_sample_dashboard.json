@@ -27,7 +27,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.1.1"
+      "version": "10.3.1"
     },
     {
       "type": "panel",
@@ -133,7 +133,8 @@
               }
             ]
           },
-          "unit": "bool_yes_no"
+          "unit": "bool_yes_no",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -156,10 +157,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -186,6 +189,72 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 5,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "XCH",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 3,
+        "y": 1
+      },
+      "id": 123144,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "chia_stats_wallet_funds{} / 1000000000000",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Wallet Funds",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -196,14 +265,15 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
       "gridPos": {
         "h": 5,
         "w": 3,
-        "x": 3,
+        "x": 6,
         "y": 1
       },
       "id": 123145,
@@ -219,10 +289,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -249,69 +321,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [],
-          "max": 4000,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-orange",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 6,
-        "y": 1
-      },
-      "id": 123173,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "text": {}
-      },
-      "pluginVersion": "10.1.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "chia_stats_difficulty{}",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Blockchain Difficulty",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "decimals": 1,
           "mappings": [],
           "thresholds": {
@@ -323,7 +332,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -346,10 +356,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -384,7 +396,8 @@
               "viz": false
             }
           },
-          "mappings": []
+          "mappings": [],
+          "unitScale": true
         },
         "overrides": [
           {
@@ -531,7 +544,8 @@
               "viz": false
             }
           },
-          "mappings": []
+          "mappings": [],
+          "unitScale": true
         },
         "overrides": [
           {
@@ -663,7 +677,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -675,6 +690,8 @@
       },
       "id": 123172,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -685,9 +702,10 @@
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": false,
+        "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -733,7 +751,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -745,6 +764,8 @@
       },
       "id": 123177,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -755,9 +776,10 @@
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": false,
+        "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -805,7 +827,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -817,6 +840,8 @@
       },
       "id": 123176,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -827,9 +852,10 @@
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": false,
+        "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -877,7 +903,8 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "percent",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -900,10 +927,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -931,6 +960,7 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -940,7 +970,8 @@
               }
             ]
           },
-          "unit": "Days"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -948,6 +979,73 @@
         "h": 5,
         "w": 3,
         "x": 0,
+        "y": 11
+      },
+      "id": 123180,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "10.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "chia_stats_blocks_won{}",
+          "interval": "",
+          "legendFormat": "",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Blocks Won (Farmer)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Days",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 3,
         "y": 11
       },
       "id": 123161,
@@ -963,10 +1061,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1003,14 +1103,15 @@
               }
             ]
           },
-          "unit": "XCH"
+          "unit": "XCH",
+          "unitScale": true
         },
         "overrides": []
       },
       "gridPos": {
         "h": 5,
         "w": 3,
-        "x": 3,
+        "x": 6,
         "y": 11
       },
       "id": 123129,
@@ -1026,9 +1127,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1055,69 +1158,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 5,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "light-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "XCH"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 6,
-        "y": 11
-      },
-      "id": 123144,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.1.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "chia_stats_wallet_funds{} / 1000000000000",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Wallet Funds",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "decimals": 2,
           "mappings": [],
           "thresholds": {
@@ -1129,7 +1169,8 @@
               }
             ]
           },
-          "unit": "currencyUSD"
+          "unit": "currencyUSD",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1152,9 +1193,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1218,7 +1261,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1232,8 +1276,10 @@
       "interval": "5",
       "options": {
         "displayMode": "lcd",
+        "maxVizHeight": 300,
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -1243,10 +1289,11 @@
           "values": false
         },
         "showUnfilled": true,
+        "sizing": "auto",
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1286,7 +1333,8 @@
               }
             ]
           },
-          "unit": "Days"
+          "unit": "Days",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1309,10 +1357,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1350,7 +1400,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1373,10 +1424,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1440,7 +1493,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1463,9 +1517,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1512,7 +1568,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1524,6 +1581,8 @@
       },
       "id": 123152,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1534,9 +1593,10 @@
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": false,
+        "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1574,7 +1634,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1586,6 +1647,8 @@
       },
       "id": 123148,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1596,9 +1659,10 @@
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": false,
+        "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1636,7 +1700,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1659,10 +1724,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1700,7 +1767,8 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "bytes",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1723,10 +1791,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1763,7 +1833,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1786,9 +1857,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1802,7 +1875,7 @@
           "refId": "A"
         }
       ],
-      "title": "Blocks Won",
+      "title": "Blocks Won (Pool)",
       "type": "stat"
     },
     {
@@ -1825,7 +1898,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1848,10 +1922,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1891,7 +1967,8 @@
               }
             ]
           },
-          "unit": "XCH"
+          "unit": "XCH",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1914,10 +1991,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -1954,7 +2033,8 @@
               }
             ]
           },
-          "unit": "Hours"
+          "unit": "Hours",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1977,10 +2057,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -2017,7 +2099,8 @@
               }
             ]
           },
-          "unit": "Hours"
+          "unit": "Hours",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -2040,10 +2123,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -2080,7 +2165,8 @@
               }
             ]
           },
-          "unit": "prefix:#"
+          "unit": "prefix:#",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -2103,10 +2189,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -2145,7 +2233,8 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "percent",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -2168,10 +2257,12 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -2211,7 +2302,8 @@
               }
             ]
           },
-          "unit": "XCH"
+          "unit": "XCH",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -2234,20 +2326,24 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.1",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "openchia_stats_launcher_share_pplns{} * 1.7325",
+          "expr": "openchia_stats_launcher_share_pplns{} * 0.7425",
           "interval": "",
           "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2256,8 +2352,7 @@
     }
   ],
   "refresh": "30s",
-  "schemaVersion": 38,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": []
@@ -2296,6 +2391,6 @@
   "timezone": "browser",
   "title": "chiatter",
   "uid": "cnWbaw-7z",
-  "version": 7,
+  "version": 6,
   "weekStart": ""
 }
