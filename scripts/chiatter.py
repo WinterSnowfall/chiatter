@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.24
-@date: 30/12/2023
+@version: 3.30
+@date: 07/03/2024
 
 Warning: Built for use with python 3.6+
 '''
@@ -88,6 +88,7 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
             chia_stats_mempool_size.set(chia_stats_inst.mempool_size)
             chia_stats_mempool_allocation.set(chia_stats_inst.mempool_allocation)
             chia_stats_full_node_connections.set(chia_stats_inst.full_node_connections)
+            chia_stats_blocks_won.set(chia_stats_inst.blocks_won)
             chia_stats_seconds_since_last_win.set(chia_stats_inst.seconds_since_last_win)
 
         except:
@@ -208,6 +209,7 @@ if __name__ == '__main__':
     chia_stats_mempool_size = Gauge('chia_stats_mempool_size', 'Total size of the mempool')
     chia_stats_mempool_allocation = Gauge('chia_stats_mempool_allocation', 'Percentage of total mempool which is in use')
     chia_stats_full_node_connections = Gauge('chia_stats_full_node_connections', 'Number of full node connections')
+    chia_stats_blocks_won = Gauge('chia_stats_blocks_won', 'Number of blocks won by the farmer')
     chia_stats_seconds_since_last_win = Gauge('chia_stats_seconds_since_last_win', 'Number of seconds since last block win (farmer)')
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------

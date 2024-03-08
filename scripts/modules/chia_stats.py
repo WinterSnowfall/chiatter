@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.24
-@date: 30/12/2023
+@version: 3.30
+@date: 07/03/2024
 
 Warning: Built for use with python 3.6+
 '''
@@ -43,12 +43,15 @@ class chia_stats:
     # even for the k-raziest of plotters out there)
     _PLOT_KSIZES = 10
     _PLOT_KSIZE_RANGE = range(_PLOT_KSIZES)
-    # will cater for C0 to C19, although only compression
+    # will cater for C0 to C33, although only compression
     # levels up to C7 are oficialy supported as of now
-    _PLOT_COMPRESSION_LEVELS = 20
+    _PLOT_COMPRESSION_LEVELS = 34
     _PLOT_COMPRESSION_LEVEL_RANGE = range(_PLOT_COMPRESSION_LEVELS)
-
-    _WON_BLOCK_TRANSACTION_AMOUNT = 250000000000 # 0.25  XCH
+    
+    # will need to be bumped every now and then
+    _HALVING_EVENTS = 1
+    # 0.25 XCH is the initial won block transaction amount
+    _WON_BLOCK_TRANSACTION_AMOUNTS = [int(250000000000 / (2 ** exp)) for exp in range(_HALVING_EVENTS + 1)]
 
     def __init__(self, logging_level):
         self._contract_address_filter = None
@@ -78,6 +81,7 @@ class chia_stats:
         self.current_height = 0
         self.wallet_funds = 0
         self.chia_farmed = 0
+        self.blocks_won = 0
         self.seconds_since_last_win = 0
 
         # defaults to 'WARNING' otherwise
@@ -281,19 +285,26 @@ class chia_stats:
                 # 0 to wallet_transaction_count will list all the transactions in the wallet
                 wallet_transactions = await wallet.get_transactions(main_wallet[0]['id'], 0, wallet_transaction_count)
 
+                self.blocks_won = 0
                 current_transaction_no = 0
+                
                 for transaction_record in wallet_transactions:
                     current_transaction_no += 1
-                    # use a delta interval to determine a won block, since any transaction fees
-                    # for a won block will be received within the same transaction
-                    if (int(transaction_record.sent) == 0 and
-                        int(transaction_record.amount) >= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT and
-                        int(transaction_record.amount) <= chia_stats._WON_BLOCK_TRANSACTION_AMOUNT +
-                        chia_stats._WON_BLOCK_TRANSACTION_FEE):
-                        logger.debug(f'Transaction #{current_transaction_no} has a block win share amount.')
-                        current_time = int(transaction_record.created_at_time)
-                        if current_time > self._last_win_max_time:
-                            self._last_win_max_time = current_time
+                    # ignore outbound transactions
+                    if int(transaction_record.sent) == 0:
+                        for won_block_amount in chia_stats._WON_BLOCK_TRANSACTION_AMOUNTS:
+                            # use a delta interval to determine a won block, since any transaction fees
+                            # for a won block will be received within the same transaction
+                            if (int(transaction_record.amount) >= won_block_amount and
+                                int(transaction_record.amount) <= won_block_amount +
+                                chia_stats._WON_BLOCK_TRANSACTION_FEE):
+                                self.blocks_won += 1
+                                logger.debug(f'Transaction #{current_transaction_no} has a block win '
+                                             f'share amount of ~{won_block_amount}.')
+                                current_time = int(transaction_record.created_at_time)
+                                if current_time > self._last_win_max_time:
+                                    self._last_win_max_time = current_time
+                                break
 
                 if self._last_win_max_time == 0:
                     logger.warning('Unable to find a valid block win transaction.')
@@ -307,6 +318,7 @@ class chia_stats:
             else:
                 self.seconds_since_last_win = 0
 
+            logger.debug(f'blocks_won: {self.blocks_won}')
             logger.debug(f'seconds_since_last_win: {self.seconds_since_last_win}')
             #########################################################
 
