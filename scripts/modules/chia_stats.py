@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.30
-@date: 07/03/2024
+@version: 3.32
+@date: 16/03/2024
 
 Warning: Built for use with python 3.6+
 '''
@@ -48,8 +48,10 @@ class chia_stats:
     _PLOT_COMPRESSION_LEVELS = 34
     _PLOT_COMPRESSION_LEVEL_RANGE = range(_PLOT_COMPRESSION_LEVELS)
     
-    # will need to be bumped every now and then
-    _HALVING_EVENTS = 1
+    # only 3 halving events are planned as per CHIP-0012
+    _HALVING_EVENTS = 3
+    # first halving occured on height 5045760, next will be on double that ammount
+    _WON_BLOCK_HALVING_HEIGHTS = [5045760 * halving for halving in range(_HALVING_EVENTS + 1)]
     # 0.25 XCH is the initial won block transaction amount
     _WON_BLOCK_TRANSACTION_AMOUNTS = [int(250000000000 / (2 ** exp)) for exp in range(_HALVING_EVENTS + 1)]
 
@@ -134,7 +136,7 @@ class chia_stats:
             logger.warning('XCH_WON_BLOCK_TRANSACTION_FEE is out of bounds. Defaulting to 0.01 XCH.')
             won_block_transaction_fee = 0.01
         # convert to mojos (1000000000000 mojos = 1 XCH)
-        chia_stats._WON_BLOCK_TRANSACTION_FEE = won_block_transaction_fee * 1000000000000
+        chia_stats._WON_BLOCK_TRANSACTION_FEE = int(won_block_transaction_fee * 1000000000000)
 
         logger.debug(f'_WON_BLOCK_TRANSACTION_FEE: {chia_stats._WON_BLOCK_TRANSACTION_FEE}')
 
@@ -287,24 +289,36 @@ class chia_stats:
 
                 self.blocks_won = 0
                 current_transaction_no = 0
+                # will be set to 0 on the initial calculation
+                height_selector = -1
+                next_halving_height = 0
+                halving_events_exhausted = False
                 
                 for transaction_record in wallet_transactions:
                     current_transaction_no += 1
                     # ignore outbound transactions
                     if int(transaction_record.sent) == 0:
-                        for won_block_amount in chia_stats._WON_BLOCK_TRANSACTION_AMOUNTS:
-                            # use a delta interval to determine a won block, since any transaction fees
-                            # for a won block will be received within the same transaction
-                            if (int(transaction_record.amount) >= won_block_amount and
-                                int(transaction_record.amount) <= won_block_amount +
-                                chia_stats._WON_BLOCK_TRANSACTION_FEE):
-                                self.blocks_won += 1
-                                logger.debug(f'Transaction #{current_transaction_no} has a block win '
-                                             f'share amount of ~{won_block_amount}.')
-                                current_time = int(transaction_record.created_at_time)
-                                if current_time > self._last_win_max_time:
-                                    self._last_win_max_time = current_time
-                                break
+                        if not halving_events_exhausted and transaction_record.confirmed_at_height >= next_halving_height:
+                            height_selector += 1
+                            won_block_amount = chia_stats._WON_BLOCK_TRANSACTION_AMOUNTS[height_selector]
+                            logger.debug(f'Won block amount is: {won_block_amount}')
+                            if height_selector == len(chia_stats._WON_BLOCK_HALVING_HEIGHTS) - 1:
+                                logger.debug(f'Halving heights exhausted.')
+                                halving_events_exhausted = True
+                            else:
+                                next_halving_height = chia_stats._WON_BLOCK_HALVING_HEIGHTS[height_selector + 1]
+                                logger.debug(f'Next halving height is: {next_halving_height}')
+                        
+                        # use a delta interval to determine a won block, since any transaction fees
+                        # for a won block will be received within the same transaction
+                        if (int(transaction_record.amount) >= won_block_amount and
+                            int(transaction_record.amount) <= won_block_amount +
+                            chia_stats._WON_BLOCK_TRANSACTION_FEE):
+                            self.blocks_won += 1
+                            logger.debug(f'Transaction #{current_transaction_no} has a block win share amount.')
+                            current_time = int(transaction_record.created_at_time)
+                            if current_time > self._last_win_max_time:
+                                self._last_win_max_time = current_time
 
                 if self._last_win_max_time == 0:
                     logger.warning('Unable to find a valid block win transaction.')
