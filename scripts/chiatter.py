@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.32
-@date: 16/03/2024
+@version: 3.40
+@date: 16/02/2025
 
 Warning: Built for use with python 3.6+
 '''
@@ -143,8 +143,10 @@ if __name__ == '__main__':
     logger.info(f'Starting chiatter - the chia stats collection agent...')
 
     logger.info(f'Detected chia-blockchain version: {chia_version}')
-    if chia_version.startswith('0.') or chia_version.startswith('1.'):
-        logger.critical('chiatter needs chia-blockchain version 2.0.0+ in order to run properly. Please upgrade your chia client.')
+    # versions will be formatted as x.y.z
+    client_version = chia_version.split('.')
+    if int(client_version[0]) < 2 or (int(client_version[0]) == 2 and int(client_version[1]) < 5 and int(client_version[2]) < 1):
+        logger.critical('chiatter needs chia-blockchain version 2.5.1+ in order to run properly. Please upgrade your chia client.')
         raise SystemExit(1)
 
     configParser = ConfigParser()

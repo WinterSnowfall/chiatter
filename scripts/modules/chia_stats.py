@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.32
-@date: 16/03/2024
+@version: 3.40
+@date: 16/02/2025
 
 Warning: Built for use with python 3.6+
 '''
@@ -242,7 +242,7 @@ class chia_stats:
                 if connection['type'] == 1:
                     self.full_node_connections += 1
 
-            average_block_time = await get_average_block_time(self._fullnode_port)
+            average_block_time = await get_average_block_time(self._fullnode_port, DEFAULT_ROOT_PATH)
 
             if self.og_size != 0:
                 self.og_time_to_win = int((average_block_time) /
@@ -269,7 +269,8 @@ class chia_stats:
                 self._chia_farmed_prev = self.chia_farmed
                 self._seconds_since_last_win_stale = True
 
-            self.current_height = await wallet.get_height_info()
+            current_height = await wallet.get_height_info()
+            self.current_height = current_height.height
             main_wallet = await wallet.get_wallets()
             # assume only one wallet exists - might want to alter it in the future
             main_wallet_balance = await wallet.get_wallet_balance(main_wallet[0]['id'])
