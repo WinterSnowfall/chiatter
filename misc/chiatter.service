@@ -6,8 +6,8 @@ After=network.target
 Type=simple
 User=username
 StandardOutput=null
-WorkingDirectory=/home/username/chiatter/bin
-ExecStart=/home/username/chiatter/bin/chiatter.py
+WorkingDirectory=/home/username/chiatter/scripts
+ExecStart=/home/username/chiatter/scripts/chiatter.py
 
 [Install]
 WantedBy=multi-user.target
