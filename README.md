@@ -40,28 +40,6 @@ python -m pip install prometheus_client requests
 
 And that's it, you can now run chiatter from within the python venv. Make sure to first activate the venv whenever you want to start chiatter!
 
-## OpenChia? What is that? Do I need it?
-
-[OpenChia](https://openchia.io/) is an open source chia pool, which I can wholeheartedly recommend. That being said, no, you don't necessarily need it and it's disabled in the config file provided with this codebase.
-
-## Ok then, let's say I join OpenChia and want to give it a spin? What then?
-
-Two things:
-
-**❄** Set the following in `chiatter.conf`:
-
-```
-modules = chia_stats,openchia_stats
-```
-
-**❄** Also replace the following placeholder with your NFT launcher id. You can get the required string either by using the chia CLI or the UI interface.
-
-```
-launcher_id = <replace_with_your_launcher_id>
-```
-
-You won't have to make any changes whatsoever if you don't plan on joining OpenChia, so just stick to the defaults in that case (boooooo!).
-
 ## A Prometheus sever? Grafana? How the heck am I supposed to get those?
 
 It's up to you, really - the simple way is to use docker. Check out my dev "deployment" script in the `misc` folder. It assumes you will want to run the Prometheus server and Grafana containers on the same machine as chiatter - otherwise some tinkering is required in `prometheus.yml` to point it to the host chiatter (and your full chia node) is actually running on. You may also need to adjust `datasources.yml` if you plan on running grafana on a different host than prometheus.

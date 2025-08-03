@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.40
-@date: 16/02/2025
+@version: 3.50
+@date: 04/08/2025
 
 Warning: Built for use with python 3.6+
 '''

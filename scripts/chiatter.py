@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''
 @author: Winter Snowfall
-@version: 3.40
-@date: 16/02/2025
+@version: 3.50
+@date: 04/08/2025
 
 Warning: Built for use with python 3.6+
 '''
@@ -17,7 +17,6 @@ from time import sleep
 from chia import __version__ as chia_version
 from prometheus_client import start_http_server, Gauge
 from modules.chia_stats import chia_stats
-from modules.openchia_stats import openchia_stats
 
 # logging configuration block
 LOGGER_FORMAT = '%(asctime)s %(levelname)s >>> %(message)s'
@@ -48,7 +47,7 @@ def sigint_handler(signum, frame):
 
     raise SystemExit(0)
 
-def chia_stats_worker(counter_lock, terminate_event, error_counters):
+def chia_stats_worker(counter_lock, terminate_event, error_counter):
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -96,43 +95,12 @@ def chia_stats_worker(counter_lock, terminate_event, error_counters):
 
             if WATCHDOG_MODE:
                 with counter_lock:
-                    error_counters[0] += CHIA_STATS_COLLECTION_INTERVAL
+                    error_counter += CHIA_STATS_COLLECTION_INTERVAL
 
         sleep(CHIA_STATS_COLLECTION_INTERVAL)
 
     loop.close()
     asyncio.set_event_loop(None)
-
-def openchia_stats_worker(counter_lock, terminate_event, error_counters):
-
-    while not terminate_event.is_set():
-        try:
-            openchia_stats_inst.collect_stats()
-
-            openchia_stats_space.set(openchia_stats_inst.pool_space)
-            openchia_stats_farmers.set(openchia_stats_inst.pool_farmers)
-            openchia_stats_estimate_win.set(openchia_stats_inst.pool_estimate_win)
-            openchia_stats_rewards_blocks.set(openchia_stats_inst.pool_rewards_blocks)
-            openchia_stats_time_since_last_win.set(openchia_stats_inst.pool_time_since_last_win)
-            openchia_stats_xch_current_price.set(openchia_stats_inst.pool_xch_current_price)
-            openchia_stats_launcher_points.set(openchia_stats_inst.launcher_points)
-            openchia_stats_launcher_points_pplns.set(openchia_stats_inst.launcher_points_pplns)
-            openchia_stats_launcher_difficulty.set(openchia_stats_inst.launcher_difficulty)
-            openchia_stats_launcher_share_pplns.set(openchia_stats_inst.launcher_share_pplns)
-            openchia_stats_launcher_estimated_size.set(openchia_stats_inst.launcher_estimated_size)
-            openchia_stats_launcher_ranking.set(openchia_stats_inst.launcher_ranking)
-            openchia_stats_launcher_pool_earnings.set(openchia_stats_inst.launcher_pool_earnings)
-            openchia_stats_launcher_partial_errors_24h.set(openchia_stats_inst.launcher_partial_errors_24h)
-            openchia_stats_seconds_since_last_win.set(openchia_stats_inst.seconds_since_last_win)
-
-        except:
-            openchia_stats_inst.clear_stats()
-
-            if WATCHDOG_MODE:
-                with counter_lock:
-                    error_counters[1] += OPENCHIA_STATS_COLLECTION_INTERVAL
-
-        sleep(OPENCHIA_STATS_COLLECTION_INTERVAL)
 
 if __name__ == '__main__':
     # catch SIGTERM and exit gracefully
@@ -162,18 +130,12 @@ if __name__ == '__main__':
         MODULES = [module.strip() for module in general_section.get('modules').split(',')]
         # determine enabled modules
         CHIA_STATS_MODULE = 'chia_stats' in MODULES
-        OPENCHIA_STATS_MODULE = 'openchia_stats' in MODULES
         # parse collection intervals conditionally for each module
         if CHIA_STATS_MODULE:
             CHIA_STATS_COLLECTION_INTERVAL = configParser['CHIA_STATS'].getint('collection_interval')
             CHIA_STATS_XCH_WON_BLOCK_TRANSACTION_FEE = configParser['CHIA_STATS'].getfloat('xch_won_block_transaction_fee')
             CHIA_STATS_CONTRACT_ADDRESS_FILTER = configParser['CHIA_STATS'].get('contract_address_filter').strip()
             CHIA_STATS_LOGGING_LEVEL = configParser['CHIA_STATS'].get('logging_level')
-        if OPENCHIA_STATS_MODULE:
-            OPENCHIA_STATS_COLLECTION_INTERVAL = configParser['OPENCHIA_STATS'].getint('collection_interval')
-            OPENCHIA_STATS_LAUNCHER_ID = configParser['OPENCHIA_STATS'].get('launcher_id')
-            OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY = configParser['OPENCHIA_STATS'].get('xch_current_price_currency')
-            OPENCHIA_STATS_LOGGING_LEVEL = configParser['OPENCHIA_STATS'].get('logging_level')
 
     except:
         logger.critical('Could not parse configuration file. Please make sure the appropriate structure is in place!')
@@ -216,24 +178,6 @@ if __name__ == '__main__':
 
     #-------------------------------------------------------------------------------------------------------------------------------------------------
 
-    #---------------------------------------------------------- openchia_stats -----------------------------------------------------------------------
-    openchia_stats_space = Gauge('openchia_stats_space', 'Estimated pool capacity')
-    openchia_stats_farmers = Gauge('openchia_stats_farmers', 'Total number of pool members')
-    openchia_stats_estimate_win = Gauge('openchia_stats_estimate_win', 'Estimated time to win')
-    openchia_stats_rewards_blocks = Gauge('openchia_stats_rewards_blocks', 'Number of blocks won/rewarded by the pool')
-    openchia_stats_time_since_last_win = Gauge('openchia_stats_time_since_last_win', 'Time since last block win/reward')
-    openchia_stats_xch_current_price = Gauge('openchia_stats_xch_current_price', 'XCH exchange price in the currencty of choice')
-    openchia_stats_launcher_points = Gauge('openchia_stats_launcher_points', 'Total points a launcher has for the current reward cycle')
-    openchia_stats_launcher_points_pplns = Gauge('openchia_stats_launcher_points_pplns', 'Total points a launcher has over the PPLNS interval')
-    openchia_stats_launcher_difficulty = Gauge('openchia_stats_launcher_difficulty', 'Current pool difficulty for the launcher')
-    openchia_stats_launcher_share_pplns = Gauge('openchia_stats_launcher_share_pplns', 'Fraction the launcher has of the pool points over the PPLNS interval')
-    openchia_stats_launcher_estimated_size = Gauge('openchia_stats_launcher_estimated_size', 'Estimated size of a launcher\'s contribution to the pool')
-    openchia_stats_launcher_ranking = Gauge('openchia_stats_launcher_ranking', 'Launcher rank, as seen on the OpenChia leaderboard')
-    openchia_stats_launcher_pool_earnings = Gauge('openchia_stats_launcher_pool_earnings', 'Total amount of rewards received by the launcher from the pool')
-    openchia_stats_launcher_partial_errors_24h = Gauge('openchia_stats_launcher_partial_errors_24h', 'Number of erroneous partials in the last 24h')
-    openchia_stats_seconds_since_last_win = Gauge('openchia_stats_seconds_since_last_win', 'Number of seconds since last block win (launcher)')
-    #-------------------------------------------------------------------------------------------------------------------------------------------------
-
     ##################################################################################################################################################
 
     # start a Prometheus http server thread to expose the metrics
@@ -246,36 +190,22 @@ if __name__ == '__main__':
         if CHIA_STATS_CONTRACT_ADDRESS_FILTER != '':
             chia_stats_inst.set_contract_address_filter(CHIA_STATS_CONTRACT_ADDRESS_FILTER)
 
-    if OPENCHIA_STATS_MODULE:
-        logger.info('*** Loading the openchia_stats module ***')
-        openchia_stats_inst = openchia_stats(OPENCHIA_STATS_LOGGING_LEVEL)
-        openchia_stats_inst.set_launcher_id(OPENCHIA_STATS_LAUNCHER_ID)
-        # will default to 'usd'/$ if unspecified
-        if OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY != '':
-            openchia_stats_inst.set_xch_current_price_currency(OPENCHIA_STATS_XCH_CURRENT_PRICE_CURRENCY)
-
     counter_lock = threading.Lock()
     terminate_event = threading.Event()
     terminate_event.clear()
-    # counts errors for the chia_stats_worker ([0]) & openchia_stats_worker threads ([1])
-    error_counters = [0, 0]
+    # counts errors for the chia_stats_worker
+    error_counter = 0
 
     try:
         if CHIA_STATS_MODULE:
             chia_stats_thread = threading.Thread(target=chia_stats_worker, args=(counter_lock,
-                                                                                 terminate_event, error_counters),
+                                                                                 terminate_event, error_counter),
                                                  daemon=True)
             chia_stats_thread.start()
 
-        if OPENCHIA_STATS_MODULE:
-            openchia_stats_thread = threading.Thread(target=openchia_stats_worker, args=(counter_lock,
-                                                                                 terminate_event, error_counters),
-                                                     daemon=True)
-            openchia_stats_thread.start()
-
         if WATCHDOG_MODE:
             while not terminate_event.is_set():
-                if error_counters[0] > WATCHDOG_THRESHOLD or error_counters[1] > WATCHDOG_THRESHOLD:
+                if error_counter > WATCHDOG_THRESHOLD:
                     logger.warning('The chiatter watchdog has reached its critical error threshold. Stopping data collection.')
                     raise SystemExit(3)
                 else:
@@ -294,7 +224,5 @@ if __name__ == '__main__':
         if WATCHDOG_MODE:
             if CHIA_STATS_MODULE:
                 chia_stats_thread.join()
-            if OPENCHIA_STATS_MODULE:
-                openchia_stats_thread.join()
 
     logger.info(f'Thank you for using chiatter. Bye!')
